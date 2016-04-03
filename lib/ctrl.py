@@ -7,7 +7,7 @@ def omg():
 	print('omg saying hi...')
 	util.sayhi()
 
-def GetControlTargetPar(ctrl):
+def GetTargetPar(ctrl):
 	targetOp = ctrl.par.Targetop.eval()
 	if not targetOp:
 		return
