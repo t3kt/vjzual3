@@ -1,0 +1,3 @@
+def sayhi():
+	print('hi')
+
