@@ -3,6 +3,8 @@ import json
 if False:
 	from _stubs import *
 
+print('core tools.py initializing')
+
 def GetActiveEditor():
 	pane = ui.panes.current
 	if pane.type == PaneType.NETWORKEDITOR:
