@@ -256,6 +256,8 @@ class ToolsExt:
 			RemoveTags(self.comp.par.Tagstomodify.eval().split(' '))
 		elif cmd == 'Copypaths':
 			CopySelectedPaths()
+		elif cmd == 'Savetox':
+			SaveToxSelectedOrContext()
 		else:
 			raise Exception('unrecognized action: ' + cmd)
 
