@@ -1,4 +1,5 @@
 from numpy import interp
+import json
 if False:
 	from _stubs import *
 
@@ -245,5 +246,72 @@ class ToolsExt:
 		elif cmd == 'Reloadconfig':
 			patterns = self.comp.par.Configops.eval().split(' ')
 			ReloadDATs(ops(*patterns))
+		elif cmd == 'Deletepars':
+			DestroyPars(self.comp.par.Parstodelete.eval().split(' '))
+		elif cmd == 'Addtags':
+			AddTags(self.comp.par.Tagstomodify.eval().split(' '))
+		elif cmd == 'Removetags':
+			RemoveTags(self.comp.par.Tagstomodify.eval().split(' '))
+		elif cmd == 'Copypaths':
+			CopySelectedPaths()
 		else:
 			raise Exception('unrecognized action: ' + cmd)
+
+	def LoadLauncherSpecs(self, table):
+		jsonstr = self.comp.par.Launcherspecjson.eval()
+		if not jsonstr:
+			jsonstr = self.comp.op('default_launcher_specs_json').text
+		try:
+			_FillTableFromJson(
+				table, jsonstr,
+				cols=['label', 'path', 'mode'],
+				defaults={'mode': 'panel'})
+		except ValueError as e:
+			raise Exception('tools.LoadLauncherSpecs - error parsing spec json: %s' % (e,))
+
+	def LoadNavigatorSpecs(self, table):
+		jsonstr = self.comp.par.Navspecjson.eval()
+		if not jsonstr:
+			jsonstr = self.comp.op('default_nav_specs_json').text
+		try:
+			_FillTableFromJson(
+				table, jsonstr,
+				cols=['label', 'path'],
+				defaults={})
+		except ValueError as e:
+			raise Exception('tools.LoadNavigatorSpecs - error parsing spec json: %s' % (e,))
+
+	def OnLaunchButtonClick(self, button):
+		specs = self.comp.op('launcher_specs')
+		i = button.digits
+		path = specs[i, 'path'].val
+		mode = specs[i, 'mode'].val
+		o = op(path)
+		if not o:
+			raise Exception('tools.OnLaunchButtonClick - path not found: %r' % (path,))
+		if mode == 'window':
+			o.par.winopen.pulse()
+		elif mode == 'panel':
+			o.openViewer()
+		elif mode == 'borderless':
+			o.openViewer(borders=False)
+		else:
+			raise Exception('tools.OnLaunchButtonClick - unrecognized launch mode: %r' % (mode,))
+
+	def OnNavigatorButtonClick(self, button):
+		specs = self.comp.op('nav_specs')
+		i = button.digits
+		path = specs[i, 'path'].val
+		if not op(path):
+			raise Exception('tools.OnNavigatorButtonClick - path not found: %r' % (path,))
+		NavigateTo(path)
+
+def _FillTableFromJson(table, jsonstr, cols, defaults):
+	table.clear()
+	table.appendRow(cols)
+	items = json.loads(jsonstr)
+	for item in items:
+		table.appendRow([
+			item.get(col, defaults.get('col', ''))
+			for col in cols
+		])
