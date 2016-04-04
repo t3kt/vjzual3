@@ -54,6 +54,12 @@ class TableMenuSource:
 	def menuLabels(self):
 		return [x.val for x in self.dat.col(self.labelCol)[1:]]
 
+def GetVisibleCOMPsHeight(comps):
+	return sum([o.par.h for o in comps if getattr(o, 'isPanel', False) and o.par.display])
+
+def GetVisibleChildCOMPsHeight(parentOp):
+	return GetVisibleCOMPsHeight([c.owner for c in parentOp.outputCOMPConnectors[0].connections])
+
 _EXPORTS = {
 	'dumpobj': dumpobj,
 	'setattrs': setattrs,
