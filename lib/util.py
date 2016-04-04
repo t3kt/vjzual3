@@ -40,6 +40,20 @@ def DumpClones(master, predicate=None):
 	print('Clones of ' + master.path)
 	_ProcessClones(master, lambda c: print('  ' + c.path), predicate=predicate)
 
+class TableMenuSource:
+	def __init__(self, dat, nameCol='name', labelCol='label'):
+		self.dat = dat
+		self.nameCol = nameCol
+		self.labelCol = labelCol
+
+	@property
+	def menuNames(self):
+		return [x.val for x in self.dat.col(self.nameCol)[1:]]
+
+	@property
+	def menuLabels(self):
+		return [x.val for x in self.dat.col(self.labelCol)[1:]]
+
 _EXPORTS = {
 	'dumpobj': dumpobj,
 	'setattrs': setattrs,
