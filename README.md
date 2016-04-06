@@ -9,6 +9,8 @@ tektcore is a library of components for use in TouchDesigner projects. It contai
 * video effects - they end up generating cruft over time since you can't change the effects later without potentially changing other projects
 * geometry stuff
 * obscure and overly-specific utility functions
+* **dependencies on anything else**
+  * It should be *really really simple* to drop tektcore into a project. Dependencies make that more complicated and error-prone.
 
 ## host project assumptions/requirements
 * project root OP is `/_`
