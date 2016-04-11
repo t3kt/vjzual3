@@ -8,6 +8,8 @@ import json
 print('core ctrl.py initializing')
 
 def GetTargetPar(ctrl):
+	if not ctrl:
+		return
 	targetOp = ctrl.par.Targetop.eval()
 	if not targetOp:
 		return
