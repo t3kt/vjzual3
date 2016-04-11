@@ -108,10 +108,10 @@ def CopySelectedPaths():
 
 def ReloadDATs(dats):
 	for dat in dats:
-		if not dat.isDAT or not hasattr(dat.par, 'reload'):
-			print('Cannot reload unsupported OP: ' + dat.path)
+		if not dat or not dat.isDAT or not hasattr(dat.par, 'reload'):
+			print('ReloadDATs - Cannot reload unsupported OP: ' + dat.path if dat else '_none_')
 		else:
-			print('Reloading DAT: ' + dat.path)
+			print('ReloadDATs - Reloading DAT: ' + dat.path)
 			dat.par.reload.pulse(1)
 
 def DestroyPars(parnames):
