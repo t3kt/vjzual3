@@ -302,12 +302,35 @@ class ToolsExt:
 		else:
 			raise Exception('tools.OnLaunchButtonClick - unrecognized launch mode: %r' % (mode,))
 
+	def OnLaunchCellClick(self, i):
+		specs = self.comp.op('launcher_specs')
+		path = specs[i, 'path'].val
+		mode = specs[i, 'mode'].val
+		o = op(path)
+		if not o:
+			raise Exception('tools.OnLaunchCellClick - path not found: %r' % (path,))
+		if mode == 'window':
+			o.par.winopen.pulse()
+		elif mode == 'panel':
+			o.openViewer()
+		elif mode == 'borderless':
+			o.openViewer(borders=False)
+		else:
+			raise Exception('tools.OnLaunchCellClick - unrecognized launch mode: %r' % (mode,))
+
 	def OnNavigatorButtonClick(self, button):
 		specs = self.comp.op('nav_specs')
 		i = button.digits
 		path = specs[i, 'path'].val
 		if not op(path):
 			raise Exception('tools.OnNavigatorButtonClick - path not found: %r' % (path,))
+		NavigateTo(path)
+
+	def OnNavigatorCellClick(self, i):
+		specs = self.comp.op('nav_specs')
+		path = specs[i, 'path'].val
+		if not op(path):
+			raise Exception('tools.OnNavigatorCellClick - path not found: %r' % (path,))
 		NavigateTo(path)
 
 def _FillTableFromJson(table, jsonstr, cols, defaults):
