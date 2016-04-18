@@ -60,6 +60,14 @@ def GetVisibleCOMPsHeight(comps):
 def GetVisibleChildCOMPsHeight(parentOp):
 	return GetVisibleCOMPsHeight([c.owner for c in parentOp.outputCOMPConnectors[0].connections])
 
+def GetOrAddCell(dat, row, col):
+	if dat[row, col] is None:
+		if not dat.row(row):
+			dat.appendRow([row])
+		if not dat.col(col):
+			dat.appendCol([col])
+	return dat[row, col]
+
 _EXPORTS = {
 	'dumpobj': dumpobj,
 	'setattrs': setattrs,
