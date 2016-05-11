@@ -227,6 +227,18 @@ def SortByName(axis):
 		val = interp(float(i), [0, n - 1], [minVal, maxVal])
 		setattr(selected[i], attr, round(val))
 
+def ApplyAutoWidth(comp):
+	if comp.python:
+		raise NotImplementedError('python auto width not yet supported')
+	else:
+		comp.par.w.expr = "par(opparent('.', 0) + '/panelw')"
+
+def ApplyAutoHeight(comp):
+	if comp.python:
+		raise NotImplementedError('python auto height not yet supported')
+	else:
+		comp.par.h.expr = "par(opparent('.', 0) + '/panelh')"
+
 class ToolsExt:
 	def __init__(self, comp):
 		self.comp = comp
