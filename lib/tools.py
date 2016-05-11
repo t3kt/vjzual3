@@ -2,6 +2,12 @@ from numpy import interp
 import json
 if False:
 	from _stubs import *
+try:
+	import core_base as base
+except ImportError:
+	import base
+
+util = base.util
 
 print('core tools.py initializing')
 
@@ -239,11 +245,12 @@ def ApplyAutoHeight(comp):
 	else:
 		comp.par.h.expr = "par(opparent('.', 0) + '/panelh')"
 
-class ToolsExt:
+class ToolsExt(base.Extension):
 	def __init__(self, comp):
-		self.comp = comp
+		super().__init__(comp)
 
 	def PerformAction(self, cmd):
+		self._LogEvent('PerformAction(%r)' % cmd)
 		if cmd.startswith('Align'):
 			Align(cmd.replace('Align', ''))
 		elif cmd.startswith('Orderby'):

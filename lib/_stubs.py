@@ -17,3 +17,12 @@ def ops(*paths):
 
 def var(name):
 	return ''
+
+td = object()
+
+class _TD_ERROR(Exception):
+	pass
+
+td.error = _TD_ERROR
+
+del _TD_ERROR
