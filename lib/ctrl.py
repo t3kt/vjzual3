@@ -57,9 +57,11 @@ def _AddBorderPars(page, sourceOp, namePrefix, menuSourcePath='', labelPrefix=''
 class ControlBase(base.Extension):
 	def __init__(self, comp):
 		super().__init__(comp)
+		self.PushState()
 
 	def Setup(self):
 		self._SetupBaseParams()
+		self.PushState()
 
 	def _SetupBaseParams(self):
 		page = self.comp.appendCustomPage('Control')
@@ -117,6 +119,17 @@ class ControlBase(base.Extension):
 	def GetValue(self):
 		raise NotImplementedError()
 
+	def _UpdateExportStatus(self):
+		chop = self.comp.op('val_out')
+		chop.export = False
+		chop.cook(force=True)
+		if self.IsExported:
+			chop.export = True
+			chop.cook(force=True)
+
+	def PushState(self):
+		self._UpdateExportStatus()
+
 class Button(ControlBase):
 	def __init__(self, comp):
 		super().__init__(comp)
@@ -136,6 +149,11 @@ class Button(ControlBase):
 	def IsPulse(self):
 		return self.comp.par.buttontype in ['momentary', 'momentaryup']
 
+	def PushState(self):
+		super().PushState()
+		if self.IsScripted:
+			self.SetValue(self.comp.panel.state)
+
 	def ResetValue(self):
 		if self.IsPulse:
 			return
@@ -146,14 +164,15 @@ class Button(ControlBase):
 			self.comp.click(1 if par.default else 0, force=True)
 
 	def SetValue(self, val):
+		self._LogEvent('SetValue(%r)' % val)
 		par = self.TargetPar
 		if self.IsScripted and par is not None:
 			if par.isPulse and val:
 				par.pulse()
 			else:
 				par.val = val
-		else:
-			self.comp.click(1 if val else 0, force=True)
+		# else:
+		self.comp.click(1 if val else 0, force=True)
 
 	def GetValue(self):
 		par = self.TargetPar

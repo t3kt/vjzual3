@@ -92,12 +92,12 @@ def IsTupleOrList(val):
 	return isinstance(val, (tuple, list))
 
 def CopyParOpts(frompars, topars, includeMenuSource=False, includeLabel=True):
-	Log('CopyParOpts(frompars=%r, topars=%r, ...)' % (frompars, topars))
+	# Log('CopyParOpts(frompars=%r, topars=%r, ...)' % (frompars, topars))
 	if not IsTupleOrList(frompars):
 		frompars = [frompars] * (len(topars) if IsTupleOrList(topars) else 1)
 	if not IsTupleOrList(topars):
 		topars = [topars] * len(frompars)
-	Log('CopyParOpts() .. after arg preproc: frompars=%r, topars=%r' % (frompars, topars))
+	# Log('CopyParOpts() .. after arg preproc: frompars=%r, topars=%r' % (frompars, topars))
 	for frompar, topar in zip(frompars, topars):
 		attrs = []
 		if includeLabel:
@@ -113,12 +113,12 @@ def CopyParOpts(frompars, topars, includeMenuSource=False, includeLabel=True):
 			try:
 				setattr(topar, attrname, getattr(frompar, attrname))
 			except td.error as e:
-				print('CopyParOpts() unable to set %s on %r from %r - %r' % (attrname, topar, frompar, e))
+				Log('CopyParOpts() .. unable to set %s on %r from %r - %r' % (attrname, topar, frompar, e))
 	return topars
 
 def CopyPar(page, sourceOp, label, style, labelPrefix='', menuSourcePath='', namePrefix='', sourceName=None, name=None, size=None, fromPattern=None, defaultVal=None):
-	Log('CopyPar(page=%r, sourceOp=%r, label=%r, style=%r, labelPrefix=%r, menuSourcePath=%r, namePrefix=%r, sourceName=%r, name=%r, size=%r, fromPattern=%r, defaultVal=%r)' % (
-	 	page, sourceOp, label, style, labelPrefix, menuSourcePath, namePrefix, sourceName, name, size, fromPattern, defaultVal))
+	# Log('CopyPar(page=%r, sourceOp=%r, label=%r, style=%r, labelPrefix=%r, menuSourcePath=%r, namePrefix=%r, sourceName=%r, name=%r, size=%r, fromPattern=%r, defaultVal=%r)' % (
+	# 	page, sourceOp, label, style, labelPrefix, menuSourcePath, namePrefix, sourceName, name, size, fromPattern, defaultVal))
 	if not sourceName:
 		sourceName = label.replace(' ', '').replace('-', '').lower()
 	if not name:
