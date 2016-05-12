@@ -57,7 +57,7 @@ def _AddBorderPars(page, sourceOp, namePrefix, menuSourcePath='', labelPrefix=''
 class ControlBase(base.Extension):
 	def __init__(self, comp):
 		super().__init__(comp)
-		self.PushState()
+		# self.PushState()
 
 	def Setup(self):
 		self._SetupBaseParams()
@@ -119,6 +119,9 @@ class ControlBase(base.Extension):
 	def GetValue(self):
 		raise NotImplementedError()
 
+	def LoadValue(self):
+		raise NotImplementedError()
+
 	def _UpdateExportStatus(self):
 		chop = self.comp.op('val_out')
 		chop.export = False
@@ -144,6 +147,7 @@ class Button(ControlBase):
 		page.appendToggle('Hidetext', label='Hide Text')
 		_AddTextPars(self.comp.appendCustomPage('Button Text'), sourceOp=self.comp.op('./bg'), namePrefix='Button', menuSourcePath='./bg')
 		_AddBorderPars(self.comp.appendCustomPage('Button Border'), sourceOp=self.comp.op('./bg'), namePrefix='Button', menuSourcePath='./bg')
+		self.LoadValue()
 
 	@property
 	def IsPulse(self):
@@ -158,13 +162,14 @@ class Button(ControlBase):
 		if self.IsPulse:
 			return
 		par = self.TargetPar
-		if self.IsScripted and par is not None:
+		if par is None:
+			return
+		if self.IsScripted:
 			par.val = par.default
 		else:
 			self.comp.click(1 if par.default else 0, force=True)
 
 	def SetValue(self, val):
-		self._LogEvent('SetValue(%r)' % val)
 		par = self.TargetPar
 		if self.IsScripted and par is not None:
 			if par.isPulse and val:
@@ -179,6 +184,108 @@ class Button(ControlBase):
 		if par is not None:
 			return par.eval()
 		return self.comp.panel.state.val
+
+	def LoadValue(self):
+		par = self.TargetPar
+		if par is None:
+			return
+		self.comp.click(1 if par.eval() else 0, force=True)
+
+class Slider(ControlBase):
+	def __init__(self, comp):
+		super().__init__(comp)
+
+	def Setup(self):
+		super().Setup()
+		page = self.comp.appendCustomPage('Slider')
+		page.appendStr('Helptext', label='Help Text')
+		page.appendStr('Label', label='Label')
+		page.appendFloat('Normrange', label='Normalized Range', size=2)
+		self.comp.par.Normrange2.default = 1
+		page.appendToggle('Hidelabel', label='Hide Label')
+		page.appendToggle('Hidevalue', label='Hide Value')
+		setattrs(page.appendInt('Decimals', label='Decimals'), min=0, clampMin=True, normMax=4, default=2)
+		page.appendPulse('Loadsettings', label='Load Settings')
+		_AddTextPars(self.comp.appendCustomPage('Label'), self.comp.op('./label_and_bg'), namePrefix='Label', menuSourcePath='./label_and_bg')
+		self.comp.par.Labelalignx.default = 'left'
+		self.comp.par.Labelborderspace1.default = 8
+		_AddTextPars(self.comp.appendCustomPage('Value'), self.comp.op('./value_text'), namePrefix='Value', menuSourcePath='./value_text')
+		self.comp.par.Valuealignx.default = 'right'
+		self.comp.par.Valueborderspace1.default = 8
+		self.LoadValue()
+
+	def PushState(self):
+		super().PushState()
+		if self.IsScripted:
+			self.SetNormalizedValue(self.comp.panel.u)
+
+	def SetNormalizedValue(self, normval):
+		par = self.TargetPar
+		if par is None:
+			self.comp.click(normval, force=True)
+		else:
+			par.normVal = normval
+
+	def _NormalizeValue(self, val):
+		return util.interp(val, self._NormRange, [0, 1])
+
+	def _DeormalizeValue(self, normval):
+		return util.interp(normval, [0, 1], self._NormRange)
+
+	@property
+	def _NormRange(self):
+		return [self.comp.par.Normrange1.eval(), self.comp.par.Normrange2.eval()]
+
+	def SetValue(self, val):
+		self._LogEvent('SetValue(%r)' % val)
+		par = self.TargetPar
+		if self.IsScripted and par is not None:
+			par.val = val
+		else:
+			normval = self._NormalizeValue(val)
+			self._LogEvent('SetValue(%r) using click with norm val %r' % (val, normval))
+			self.comp.click(normval, force=True)
+
+	def PushNormalizedValue(self, normval):
+		self._LogEvent('PushNormalizedValue(normval=%r)' % normval)
+		par = self.TargetPar
+		if self.IsScripted and par is not None:
+			par.normVal = normval
+
+	def GetValue(self):
+		par = self.TargetPar
+		if par is not None:
+			return par.eval()
+		return self.comp.panel.state.val
+
+	def ResetValue(self):
+		par = self.TargetPar
+		if par is None:
+			return
+		if self.IsScripted:
+			par.val = par.default
+		else:
+			self.comp.click(self._NormalizeValue(par.default), force=True)
+
+	def LoadValue(self):
+		par = self.TargetPar
+		if par is None:
+			return
+		self.comp.click(self._NormalizeValue(par.eval()), force=True)
+
+	def LoadSettings(self):
+		par = self.TargetPar
+		if par is None:
+			return
+		if par.isToggle:
+			self.comp.par.Normrange1 = 0
+			self.comp.par.Normrange2 = 1
+			self.comp.par.Decimals = 0
+		if par.isNumber:
+			self.comp.par.Normrange1 = par.normMin
+			self.comp.par.Normrange2 = par.normMax
+		if par.isInt:
+			self.comp.par.Decimals = 0
 
 def WarnDeprecatedComponent(comp):
 	if comp.par.clone == '':

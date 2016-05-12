@@ -8,6 +8,8 @@ except ImportError:
 import json
 import datetime
 
+from numpy import interp
+
 def Log(*args):
 	print('[%s]' % datetime.datetime.now().strftime('%m.%d %H:%M:%S'), *args)
 
