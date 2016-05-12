@@ -179,3 +179,9 @@ class Button(ControlBase):
 		if par is not None:
 			return par.eval()
 		return self.comp.panel.state.val
+
+def WarnDeprecatedComponent(comp):
+	if comp.par.clone == '':
+		# component is the master
+		return
+	util.Log('WARNING: deprecated component used: %s' % comp.path)
