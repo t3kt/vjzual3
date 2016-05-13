@@ -288,7 +288,7 @@ class Slider(ControlBase):
 			self.comp.par.Decimals = 0
 
 def WarnDeprecatedComponent(comp):
-	if comp.par.clone == '':
+	if comp.par.clone.eval() is None:
 		# component is the master
 		return
-	util.Log('WARNING: deprecated component used: %s' % comp.path)
+	util.Log('WARNING: deprecated component used: %s (clone of %r)' % (comp.path, comp.par.clone.eval()))
