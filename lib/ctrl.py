@@ -238,13 +238,13 @@ class Slider(ControlBase):
 
 	def SetValue(self, val):
 		self._LogEvent('SetValue(%r)' % val)
-		par = self.TargetPar
-		if self.IsScripted and par is not None:
-			par.val = val
-		else:
-			normval = self._NormalizeValue(val)
-			self._LogEvent('SetValue(%r) using click with norm val %r' % (val, normval))
-			self.comp.click(normval, force=True)
+		# par = self.TargetPar
+		# if self.IsScripted and par is not None:
+		# 	par.val = val
+		# else:
+		normval = self._NormalizeValue(val)
+		self._LogEvent('SetValue(%r) using click with norm val %r' % (val, normval))
+		self.comp.click(normval, force=True)
 
 	def PushNormalizedValue(self, normval):
 		self._LogEvent('PushNormalizedValue(normval=%r)' % normval)
@@ -256,7 +256,7 @@ class Slider(ControlBase):
 		par = self.TargetPar
 		if par is not None:
 			return par.eval()
-		return self.comp.panel.state.val
+		return self.comp.op('val_out')[0].eval()
 
 	def ResetValue(self):
 		par = self.TargetPar
