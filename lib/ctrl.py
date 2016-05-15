@@ -29,22 +29,33 @@ def GetTargetPar(ctrl):
 
 ParseStringList = util.ParseStringList
 
-def _AddTextPars(page, sourceOp, namePrefix=None, menuSourcePath='', labelPrefix=''):
+def _AddTextPars(
+		page, sourceOp, namePrefix=None, menuSourcePath='', labelPrefix='',
+		includeAlignment=True, includeKerning=True, includePosition=True, includeBorderSpace=True,
+		includeAutoSize=True, includeBold=True, includeItalic=True):
+
 	def _CopyPar(label, style, sourceName=None, name=None, size=None, fromPattern=None, defaultVal=None):
 		util.CopyPar(page, sourceOp, label, style, labelPrefix=labelPrefix, menuSourcePath=menuSourcePath, namePrefix=namePrefix, sourceName=sourceName, name=name, size=size, fromPattern=fromPattern, defaultVal=defaultVal)
 	_CopyPar(label='Font', style='Menu')
 	# _CopyPar(label='Font File', style='File', sourceName='fontfile')
-	_CopyPar(label='Bold', style='Toggle')
-	_CopyPar(label='Italic', style='Toggle')
-	_CopyPar(label='Auto-Size Font', style='Menu', sourceName='fontautosize', defaultVal='fitiffat')
+	if includeBold:
+		_CopyPar(label='Bold', style='Toggle')
+	if includeItalic:
+		_CopyPar(label='Italic', style='Toggle')
+	if includeAutoSize:
+		_CopyPar(label='Auto-Size Font', style='Menu', sourceName='fontautosize', defaultVal='fitiffat')
 	_CopyPar(label='Font Size X', style='Float', defaultVal=12)
 	_CopyPar(label='Font Size Y', style='Float', defaultVal=12)
 	_CopyPar(label='Keep Font Ratio', style='Toggle')
-	_CopyPar(label='Horizontal Align', style='Menu', sourceName='alignx', defaultVal='center')
-	_CopyPar(label='Vertical Align', style='Menu', sourceName='aligny', defaultVal='center')
-	_CopyPar(label='Kerning', style='Float', size=2)
-	_CopyPar(label='Position', style='Float', size=2)
-	_CopyPar(label='Border Space', style='Float', size=2)
+	if includeAlignment:
+		_CopyPar(label='Horizontal Align', style='Menu', sourceName='alignx', defaultVal='center')
+		_CopyPar(label='Vertical Align', style='Menu', sourceName='aligny', defaultVal='center')
+	if includeKerning:
+		_CopyPar(label='Kerning', style='Float', size=2)
+	if includePosition:
+		_CopyPar(label='Position', style='Float', size=2)
+	if includeBorderSpace:
+		_CopyPar(label='Border Space', style='Float', size=2)
 	_CopyPar(label='Word Wrap', style='Toggle')
 
 def _AddBorderPars(page, sourceOp, namePrefix, menuSourcePath='', labelPrefix=''):
@@ -331,11 +342,33 @@ class DropMenu(ControlBase):
 		page.appendStr('Menulabels', label='Menu Labels')
 		page.appendDAT('Menudat', label='Menu DAT')
 		setattrs(page.appendMenu('Buttondisplay', label='Button Display'), menuNames=DropMenu._DisplayModeNames, menuLabels=DropMenu._DisplayModeLabels, default='label')
+		setattrs(page.appendInt('Currentindex', label='(INTERNAL) Current Index'), normMax=10)
 
-		_AddTextPars(self.comp.appendCustomPage('Button Text'), sourceOp=self.comp.op('./button/bg_text'), namePrefix='Button', menuSourcePath='./button/bg_text')
-		_AddBorderPars(self.comp.appendCustomPage('Button Border'), sourceOp=self.comp.op('./button/bg_text'), namePrefix='Button', menuSourcePath='./button/bg_text')
+		_AddTextPars(
+			self.comp.appendCustomPage('Button Text'),
+			namePrefix='Button',
+			sourceOp=self.comp.op('./button/bg_text'),
+			menuSourcePath='./button/bg_text')
+		_AddBorderPars(
+			self.comp.appendCustomPage('Button Border'),
+			namePrefix='Button',
+			sourceOp=self.comp.op('./button/bg_text'),
+			menuSourcePath='./button/bg_text')
 		self.comp.par.Buttonalignx.default = 'left'
 		self.comp.par.Buttonborderspace1.default = 4
+
+		_AddTextPars(
+			self.comp.appendCustomPage('Popup Text'),
+			namePrefix='Popupitem',
+			sourceOp=self.comp.op('./button/bg_text'),
+			menuSourcePath='./button/bg_text',
+			includeAlignment=False,
+			includeKerning=False,
+			includePosition=False,
+			includeBorderSpace=False,
+			includeAutoSize=False,
+			includeBold=False,
+			includeItalic=False)
 
 		page = self.comp.appendCustomPage('Popup')
 		setattrs(page.appendInt('Popupwidth', label='Popup Width'), min=1, normMin=5, clampMin=True, normMax=300, default=150)
@@ -344,9 +377,6 @@ class DropMenu(ControlBase):
 		setattrs(page.appendToggle('Popuphscrollbar', label='Horizontal Scroll Bar'), default=False)
 		setattrs(page.appendToggle('Popupvscrollbar', label='Vertical Scroll Bar'), default=True)
 		setattrs(page.appendMenu('Popupitemdisplay', label='Popup Item Display'), menuNames=DropMenu._DisplayModeNames, menuLabels=DropMenu._DisplayModeLabels, default='label')
-
-		page = self.comp.appendCustomPage('Internal')
-		setattrs(page.appendInt('Currentindex', label='Current Index'), normMax=10)
 
 		self.UpdateRowHighlights()
 
@@ -476,6 +506,10 @@ class DropMenu(ControlBase):
 		attribs.rowHeight = self.comp.par.Popupitemheight
 		attribs.bgColor = DropMenu._ItemRegular['bg']
 		attribs.textColor = DropMenu._ItemRegular['text']
+		attribs.fontSizeX = self.comp.par.Popupitemfontsizex
+		attribs.fontSizeY = self.comp.par.Popupitemfontsizey if self.comp.par.Popupitemkeepfontratio else self.comp.par.Popupitemfontsizex
+		attribs.fontFace = self.comp.par.Popupitemfont
+		attribs.wordWrap = self.comp.par.Popupitemwordwrap
 
 	def List_onRollover(self, listcomp, row, col, prevrow, prevcol):
 		self.UpdateRowHighlights(row)
