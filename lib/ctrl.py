@@ -302,6 +302,23 @@ class DropMenu(ControlBase):
 		'bg': [0.43, 0.43, 0.43, 1],
 		'text': [0.9, 0.9, 0.9, 1],
 	}
+	_ItemRegularRollover = {
+		'bg': [0.4, 0.4, 0.4, 1],
+		'text': [0.73, 0.73, 0.73, 1],
+	}
+	_ItemHighlightRollover = {
+		'bg': [0.6, 0.6, 0.6, 1],
+		'text': [0.9, 0.9, 0.9, 1],
+	}
+
+	@staticmethod
+	def _ApplyItemOverrideColors(attribs, highlight, rollover):
+		if highlight:
+			colors = DropMenu._ItemHighlightRollover if rollover else DropMenu._ItemHighlight
+		else:
+			colors = DropMenu._ItemRegularRollover if rollover else None
+		attribs.bgColor = colors['bg'] if colors else None
+		attribs.textColor = colors['text'] if colors else None
 
 	def Setup(self):
 		super().Setup()
@@ -309,8 +326,11 @@ class DropMenu(ControlBase):
 		page.appendStr('Helptext', label='Help Text')
 		page.appendPulse('Loadsettings', label='Load Settings')
 		page.appendToggle('Hidetext', label='Hide Text')
+		page.appendToggle('Hidearrow', label='Hide Arrow')
 		page.appendStr('Menunames', label='Menu Names')
 		page.appendStr('Menulabels', label='Menu Labels')
+		page.appendDAT('Menudat', label='Menu DAT')
+		setattrs(page.appendMenu('Buttondisplay', label='Button Display'), menuNames=DropMenu._DisplayModeNames, menuLabels=DropMenu._DisplayModeLabels, default='label')
 
 		_AddTextPars(self.comp.appendCustomPage('Button Text'), sourceOp=self.comp.op('./button/bg_text'), namePrefix='Button', menuSourcePath='./button/bg_text')
 		_AddBorderPars(self.comp.appendCustomPage('Button Border'), sourceOp=self.comp.op('./button/bg_text'), namePrefix='Button', menuSourcePath='./button/bg_text')
@@ -326,42 +346,77 @@ class DropMenu(ControlBase):
 		setattrs(page.appendMenu('Popupitemdisplay', label='Popup Item Display'), menuNames=DropMenu._DisplayModeNames, menuLabels=DropMenu._DisplayModeLabels, default='label')
 
 		page = self.comp.appendCustomPage('Internal')
-		page.appendInt('Currentindex', label='Current Index')
-		page.appendStr('Currentname', label='Current Name')
+		setattrs(page.appendInt('Currentindex', label='Current Index'), normMax=10)
+
+		self.UpdateRowHighlights()
+
+	@property
+	def CurrentState(self):
+		return self.comp.op('current')
+
+	@property
+	def ButtonText(self):
+		current = self.CurrentState
+		mode = self.comp.par.Buttondisplay.eval()
+		if mode == 'name':
+			return current[0, 0].val
+		elif mode == 'label':
+			return current[0, 1].val
+		elif mode == 'both':
+			return '%s (%s)' % (current[0, 1], current[0, 0])
 
 	def SetValue(self, val):
+		self._LogEvent('SetValue(%r)' % val)
 		par = self.TargetPar
 		if self.IsScripted and par is not None:
 			par.val = val
-		self.comp.par.Currentname = val
-		self.comp.par.Currentindex = self._NameToIndex(val)
-		raise NotImplementedError()
+		index = self._NameToIndex(val)
+		self.comp.par.Currentindex = index if index is not None else 0
+		self.UpdateRowHighlights()
 
 	def SetValueIndex(self, index):
+		self._LogEvent('SetValueIndex(%r)' % index)
 		par = self.TargetPar
 		if self.IsScripted and par is not None:
 			par.menuIndex = index
 		self.comp.par.Currentindex = index
-		self.comp.par.Currentname = self._IndexToName(index)
-		raise NotImplementedError()
+		self.UpdateRowHighlights()
 
 	def GetValue(self):
-		par = self.TargetPar
-		if par is not None:
-			return par.eval()
-		return self.comp.par.Currentname.eval()
+		return self.CurrentState[0, 0].val
 
 	def GetValueIndex(self):
-		par = self.TargetPar
-		if par is not None:
-			return par.menuIndex
 		return self.comp.par.Currentindex.eval()
 
+	def ResetValue(self):
+		par = self.TargetPar
+		if par is None:
+			return
+		self.SetValue(par.default)
+
+	def LoadValue(self):
+		par = self.TargetPar
+		if par is None:
+			return
+		self.SetValue(par.eval())
+
+	def PushValue(self):
+		par = self.TargetPar
+		if par is None:
+			return
+		if self.IsScripted:
+			par.val = self.GetValue()
+		elif self.IsExported:
+			# get around annoying export bug
+			par.owner.cook()
+
 	def _NameToIndex(self, name):
-		raise NotImplementedError()
+		cell = self.MenuOptions[name, 0]
+		return cell.row if cell is not None else None
 
 	def _IndexToName(self, index):
-		raise NotImplementedError()
+		opts = self.MenuOptions
+		return opts[index, 0].val if index < opts.numRows else None
 
 	def FillOptionsTable(self, dat):
 		dat.clear()
@@ -376,9 +431,13 @@ class DropMenu(ControlBase):
 	def OptionsList(self):
 		return self.comp.op('options_list')
 
-	def _UpdateExportStatus(self):
-		self._LogEvent('_UpdateExportStatus() ...... NOT IMPLEMENTED')
-		pass
+	def LoadSettings(self):
+		par = self.TargetPar
+		if par is None or not par.isMenu:
+			return
+		self.comp.par.Menunames = json.dumps(par.menuNames)
+		self.comp.par.Menulabels = json.dumps(par.menuLabels)
+		self.OptionsList.par.reset.pulse()
 
 	def List_onInitCell(self, row, col, attribs):
 		opts = self.MenuOptions
@@ -409,27 +468,46 @@ class DropMenu(ControlBase):
 			attribs.help = valname
 		else:
 			attribs.help = '%s (%s)' % (vallabel, valname)
-		if valname == self.GetValue():
-			attribs.bgColor = DropMenu._ItemHighlight['bg']
-			attribs.textColor = DropMenu._ItemHighlight['text']
-			attribs.fontBold = True
-		else:
-			attribs.bgColor = None
-			attribs.textColor = None
-			attribs.fontBold = False
+		highlight = valname == self.GetValue()
+		DropMenu._ApplyItemOverrideColors(attribs, highlight=highlight, rollover=False)
+		attribs.fontBold = highlight
 
 	def List_onInitTable(self, attribs):
 		attribs.rowHeight = self.comp.par.Popupitemheight
 		attribs.bgColor = DropMenu._ItemRegular['bg']
 		attribs.textColor = DropMenu._ItemRegular['text']
 
-	def LoadSettings(self):
-		par = self.TargetPar
-		if par is None or not par.isMenu:
-			return
-		self.comp.par.Menunames = json.dumps(par.menuNames)
-		self.comp.par.Menulabels = json.dumps(par.menuLabels)
-		self.OptionsList.par.reset.pulse()
+	def List_onRollover(self, listcomp, row, col, prevrow, prevcol):
+		self.UpdateRowHighlights(row)
+
+	def List_onSelect(self, listcomp, startrow, startcol, startcoords, endrow, endcol, endcoords, start, end):
+		# self._LogEvent('List_onSelect(start: %r, end: %r, startrow: %r, endrow: %r)' % (start, end, startrow, endrow))
+		if end:
+			self.SetValueIndex(endrow)
+			self.SetPopupVisible(False)
+
+	def SetPopupVisible(self, visible):
+		window = self.comp.op('options_window')
+		if visible:
+			window.par.winopen.pulse()
+		else:
+			window.par.winclose.pulse()
+
+	def UpdateRowHighlights(self, rolloverrow=None):
+		if rolloverrow == -1:
+			rolloverrow = None
+		listcomp = self.OptionsList
+		valindex = self.GetValueIndex()
+		# self._LogEvent('UpdateRowHighlights(rolloverRow=%r) .. valindex: %r' % (rolloverrow, valindex))
+		for row, attribs in enumerate(listcomp.rowAttribs):
+			isselected = valindex == row
+			isrollover = rolloverrow is not None and row == rolloverrow
+			# self._LogEvent('UpdateRowHighlights() row=%r, val=%r, isselected=%r, isrollover=%r' % (row, self.MenuOptions[row, 0].val, isselected, isrollover))
+			DropMenu._ApplyItemOverrideColors(
+				attribs,
+				highlight=isselected,
+				rollover=isrollover)
+			attribs.fontBold = isselected
 
 	@property
 	def ListHeight(self):
