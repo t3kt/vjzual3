@@ -5,8 +5,15 @@ try:
 	import core_base as base
 except ImportError:
 	import base
+try:
+	import core_util as util
+except ImportError:
+	import util
 
-util = base.util
+if False:
+	from _stubs import JustifyType
+
+# util = base.util
 setattrs = util.setattrs
 
 def GetTargetPar(ctrl):
@@ -20,15 +27,7 @@ def GetTargetPar(ctrl):
 		return
 	return getattr(targetOp.par, parName, None)
 
-def ParseStringList(val):
-	if not val:
-		return []
-	if val.startswith('['):
-		return json.loads(val)
-	elif ',' in val:
-		return [v.strip() for v in val.split(',') if v.strip()]
-	else:
-		return [val]
+ParseStringList = util.ParseStringList
 
 def _AddTextPars(page, sourceOp, namePrefix=None, menuSourcePath='', labelPrefix=''):
 	def _CopyPar(label, style, sourceName=None, name=None, size=None, fromPattern=None, defaultVal=None):
@@ -291,21 +290,40 @@ class DropMenu(ControlBase):
 	def __init__(self, comp):
 		super().__init__(comp)
 
+	_DisplayModeNames = ['name', 'label', 'both']
+	_DisplayModeLabels = ['Value Name', 'Value Label', 'Value Name and Label']
+
+	#TODO: do something less awkward for color settings
+	_ItemRegular = {
+		'bg': [0.23, 0.23, 0.23, 1],
+		'text': [0.73, 0.73, 0.73, 1],
+	}
+	_ItemHighlight = {
+		'bg': [0.43, 0.43, 0.43, 1],
+		'text': [0.9, 0.9, 0.9, 1],
+	}
+
 	def Setup(self):
 		super().Setup()
-		page = self.comp.par.appendCustomPage('Drop Menu')
+		page = self.comp.appendCustomPage('Drop Menu')
 		page.appendStr('Helptext', label='Help Text')
 		page.appendPulse('Loadsettings', label='Load Settings')
 		page.appendToggle('Hidetext', label='Hide Text')
 		page.appendStr('Menunames', label='Menu Names')
 		page.appendStr('Menulabels', label='Menu Labels')
-		_AddTextPars(self.comp.appendCustomPage('Button Text'), sourceOp=self.comp.op('./bg'), namePrefix='Button', menuSourcePath='./bg')
-		_AddBorderPars(self.comp.appendCustomPage('Button Border'), sourceOp=self.comp.op('./bg'), namePrefix='Button', menuSourcePath='./bg')
+
+		_AddTextPars(self.comp.appendCustomPage('Button Text'), sourceOp=self.comp.op('./button/bg_text'), namePrefix='Button', menuSourcePath='./button/bg_text')
+		_AddBorderPars(self.comp.appendCustomPage('Button Border'), sourceOp=self.comp.op('./button/bg_text'), namePrefix='Button', menuSourcePath='./button/bg_text')
 		self.comp.par.Buttonalignx.default = 'left'
 		self.comp.par.Buttonborderspace1.default = 4
 
 		page = self.comp.appendCustomPage('Popup')
 		setattrs(page.appendInt('Popupwidth', label='Popup Width'), min=1, normMin=5, clampMin=True, normMax=300, default=150)
+		setattrs(page.appendInt('Popupmaxheight', label='Popup Max Height'), min=0, normMin=5, clampMin=True, normMax=500, default=0)
+		setattrs(page.appendInt('Popupitemheight', label='Item Height'), min=1, normMin=5, clampMin=True, normMax=60, default=20)
+		setattrs(page.appendToggle('Popuphscrollbar', label='Horizontal Scroll Bar'), default=False)
+		setattrs(page.appendToggle('Popupvscrollbar', label='Vertical Scroll Bar'), default=True)
+		setattrs(page.appendMenu('Popupitemdisplay', label='Popup Item Display'), menuNames=DropMenu._DisplayModeNames, menuLabels=DropMenu._DisplayModeLabels, default='label')
 
 		page = self.comp.appendCustomPage('Internal')
 		page.appendInt('Currentindex', label='Current Index')
@@ -354,10 +372,67 @@ class DropMenu(ControlBase):
 	def MenuOptions(self):
 		return self.comp.op('menu_options')
 
-	def List_onInitCell(self, listcomp, row, col, attribs):
-		opts = self.MenuOptions
-		attribs.text = opts[row, 0]
+	@property
+	def OptionsList(self):
+		return self.comp.op('options_list')
+
+	def _UpdateExportStatus(self):
+		self._LogEvent('_UpdateExportStatus() ...... NOT IMPLEMENTED')
 		pass
+
+	def List_onInitCell(self, row, col, attribs):
+		opts = self.MenuOptions
+		displaymode = self.comp.par.Popupitemdisplay.eval()
+		if displaymode == 'label' or (displaymode == 'both' and col == 1):
+			attribs.text = opts[row, 1]
+		else:
+			attribs.text = opts[row, 0]
+
+	def List_onInitCol(self, col, attribs):
+		attribs.colStretch = True
+		displaymode = self.comp.par.Popupitemdisplay.eval()
+		if displaymode != 'both':
+			attribs.textJustify = JustifyType.CENTER
+			attribs.textOffsetX = 0
+		elif col == 0:
+			attribs.textJustify = JustifyType.CENTERRIGHT
+			attribs.textOffsetX = -4
+		else:
+			attribs.textJustify = JustifyType.CENTERLEFT
+			attribs.textOffsetX = 4
+
+	def List_onInitRow(self, row, attribs):
+		opts = self.MenuOptions
+		valname = opts[row, 0].val
+		if valname == self.GetValue():
+			attribs.bgColor = DropMenu._ItemHighlight['bg']
+			attribs.textColor = DropMenu._ItemHighlight['text']
+			attribs.fontBold = True
+		else:
+			attribs.bgColor = None
+			attribs.textColor = None
+			attribs.fontBold = False
+
+	def List_onInitTable(self, attribs):
+		attribs.rowHeight = self.comp.par.Popupitemheight
+		attribs.bgColor = DropMenu._ItemRegular['bg']
+		attribs.textColor = DropMenu._ItemRegular['text']
+
+	def LoadSettings(self):
+		par = self.TargetPar
+		if par is None or not par.isMenu:
+			return
+		self.comp.par.Menunames = json.dumps(par.menuNames)
+		self.comp.par.Menulabels = json.dumps(par.menuLabels)
+		self.OptionsList.par.reset.pulse()
+
+	@property
+	def ListHeight(self):
+		maxheight = self.comp.par.Popupmaxheight.eval()
+		itemheight = self.comp.par.Popupitemheight.eval()
+		numitems = self.MenuOptions.numRows
+		height = itemheight * numitems
+		return min(height, maxheight) if maxheight > 0 else height
 
 def WarnDeprecatedComponent(comp):
 	if comp.par.clone.eval() is None:
