@@ -404,6 +404,11 @@ class DropMenu(ControlBase):
 	def List_onInitRow(self, row, attribs):
 		opts = self.MenuOptions
 		valname = opts[row, 0].val
+		vallabel = opts[row, 1].val
+		if valname == vallabel:
+			attribs.help = valname
+		else:
+			attribs.help = '%s (%s)' % (vallabel, valname)
 		if valname == self.GetValue():
 			attribs.bgColor = DropMenu._ItemHighlight['bg']
 			attribs.textColor = DropMenu._ItemHighlight['text']
