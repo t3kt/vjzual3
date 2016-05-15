@@ -287,6 +287,78 @@ class Slider(ControlBase):
 		if par.isInt:
 			self.comp.par.Decimals = 0
 
+class DropMenu(ControlBase):
+	def __init__(self, comp):
+		super().__init__(comp)
+
+	def Setup(self):
+		super().Setup()
+		page = self.comp.par.appendCustomPage('Drop Menu')
+		page.appendStr('Helptext', label='Help Text')
+		page.appendPulse('Loadsettings', label='Load Settings')
+		page.appendToggle('Hidetext', label='Hide Text')
+		page.appendStr('Menunames', label='Menu Names')
+		page.appendStr('Menulabels', label='Menu Labels')
+		_AddTextPars(self.comp.appendCustomPage('Button Text'), sourceOp=self.comp.op('./bg'), namePrefix='Button', menuSourcePath='./bg')
+		_AddBorderPars(self.comp.appendCustomPage('Button Border'), sourceOp=self.comp.op('./bg'), namePrefix='Button', menuSourcePath='./bg')
+		self.comp.par.Buttonalignx.default = 'left'
+		self.comp.par.Buttonborderspace1.default = 4
+
+		page = self.comp.appendCustomPage('Popup')
+		setattrs(page.appendInt('Popupwidth', label='Popup Width'), min=1, normMin=5, clampMin=True, normMax=300, default=150)
+
+		page = self.comp.appendCustomPage('Internal')
+		page.appendInt('Currentindex', label='Current Index')
+		page.appendStr('Currentname', label='Current Name')
+
+	def SetValue(self, val):
+		par = self.TargetPar
+		if self.IsScripted and par is not None:
+			par.val = val
+		self.comp.par.Currentname = val
+		self.comp.par.Currentindex = self._NameToIndex(val)
+		raise NotImplementedError()
+
+	def SetValueIndex(self, index):
+		par = self.TargetPar
+		if self.IsScripted and par is not None:
+			par.menuIndex = index
+		self.comp.par.Currentindex = index
+		self.comp.par.Currentname = self._IndexToName(index)
+		raise NotImplementedError()
+
+	def GetValue(self):
+		par = self.TargetPar
+		if par is not None:
+			return par.eval()
+		return self.comp.par.Currentname.eval()
+
+	def GetValueIndex(self):
+		par = self.TargetPar
+		if par is not None:
+			return par.menuIndex
+		return self.comp.par.Currentindex.eval()
+
+	def _NameToIndex(self, name):
+		raise NotImplementedError()
+
+	def _IndexToName(self, index):
+		raise NotImplementedError()
+
+	def FillOptionsTable(self, dat):
+		dat.clear()
+		dat.appendCol(ParseStringList(self.comp.par.Menunames.eval()))
+		dat.appendCol(ParseStringList(self.comp.par.Menulabels.eval()))
+
+	@property
+	def MenuOptions(self):
+		return self.comp.op('menu_options')
+
+	def List_onInitCell(self, listcomp, row, col, attribs):
+		opts = self.MenuOptions
+		attribs.text = opts[row, 0]
+		pass
+
 def WarnDeprecatedComponent(comp):
 	if comp.par.clone.eval() is None:
 		# component is the master
