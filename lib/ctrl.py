@@ -102,23 +102,10 @@ class ControlBase(base.Extension):
 	def IsUnbound(self):
 		return self.comp.par.Bindmode == 'none'
 
-	def UNUSED_PushValue(self, val):
-		# assert self.IsScripted
+	@property
+	def DefaultValue(self):
 		par = self.TargetPar
-		if par is None:
-			return
-		if par.isPulse:
-			par.pulse()
-		else:
-			par.val = val
-
-	def UNUSED_PushDefault(self):
-		# assert self.IsScripted
-		par = self.TargetPar
-		if par is None:
-			return
-		if not par.isPulse:
-			par.val = par.default
+		return par.default if par is not None else None
 
 	def ResetValue(self):
 		raise NotImplementedError()
@@ -550,6 +537,106 @@ class DropMenu(ControlBase):
 		numitems = self.MenuOptions.numRows
 		height = itemheight * numitems
 		return min(height, maxheight) if maxheight > 0 else height
+
+class TextField(ControlBase):
+	def __init__(self, comp):
+		super().__init__(comp)
+
+	def Setup(self):
+		super().Setup()
+		page = self.comp.appendCustomPage('Field')
+		page.appendStr('Helptext', label='Help Text')
+		page.appendToggle('Hidelabel', label='Hide Label')
+		util.CopyPar(page, self.comp.op('field'), 'Field Type', 'Menu')
+		page.appendStr('Label')
+		setattrs(page.appendInt('Labelwidth', label='Label Width'), min=0, normMin=5, normMax=200, default=60)
+		_AddTextPars(
+			self.comp.appendCustomPage('Label Text'),
+			namePrefix='Label',
+			sourceOp=self.comp.op('./label/bg'),
+			menuSourcePath='./label/bg')
+		_AddTextPars(
+			self.comp.appendCustomPage('Field Text'),
+			namePrefix='Field',
+			sourceOp=self.comp.op('./field/text'),
+			menuSourcePath='./field/text')
+		self.comp.par.Fieldalignx.default = 'left'
+		self.comp.par.Fieldposition1.default = 2
+		self.comp.par.Fieldborderspace1.default = 2
+		_AddBorderPars(
+			self.comp.appendCustomPage('Border'),
+			namePrefix='Label',
+			labelPrefix='Label ',
+			sourceOp=self.comp.op('./label/bg'),
+			menuSourcePath='./label/bg')
+		_AddBorderPars(
+			self.comp.appendCustomPage('Border'),
+			namePrefix='Field',
+			labelPrefix='Field ',
+			sourceOp=self.comp.op('./field/text'),
+			menuSourcePath='./field/text')
+		self.LoadValue()
+
+	@property
+	def FieldType(self):
+		return self.comp.par.Fieldtype.eval()
+
+	@property
+	def IsString(self):
+		return self.FieldType == 'string'
+
+	@property
+	def IsNumber(self):
+		return self.FieldType in ['float', 'integer']
+
+	def _GetValueCell(self):
+		return self.comp.op('./field/string')[0, 0]
+
+	def GetValue(self):
+		cell = self._GetValueCell()
+		if self.IsNumber:
+			return util.ParseFloat(cell.val)
+		return cell.val
+
+	def PushState(self):
+		super().PushState()
+		if self.IsScripted:
+			self.SetValue(self.GetValue())
+		elif self.IsExported:
+			par = self.TargetPar
+			if par is not None:
+				par.owner.cook()
+
+	def ResetValue(self):
+		defaultVal = self.DefaultValue
+		if defaultVal is None:
+			return
+		self.SetValue(defaultVal)
+
+	def SetValue(self, val):
+		par = self.TargetPar
+		if self.IsNumber:
+			val = util.ParseFloat(val, defaultVal=par.default if par is not None else 0)
+		if self.IsScripted and par is not None:
+			if par.isMenu and self.IsNumber:
+				par.menuIndex = val
+			else:
+				par.val = val
+		self._GetValueCell().val = val
+
+	def LoadValue(self):
+		par = self.TargetPar
+		if par is None:
+			return
+		self.SetValue(par.eval())
+
+	def _UpdateExportStatus(self):
+		export = self.comp.op('val_out_export')
+		if self.IsExported:
+			export.cook(force=True)
+			par = self.TargetPar
+			if par is not None:
+				par.owner.cook()
 
 def WarnDeprecatedComponent(comp):
 	if comp.par.clone.eval() is None:

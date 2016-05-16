@@ -154,6 +154,12 @@ def MergeDicts(*dicts):
 		out.update(d)
 	return out
 
+def ParseFloat(text, defaultVal=None):
+	try:
+		return float(text)
+	except ValueError:
+		return defaultVal
+
 _EXPORTS = {
 	'dumpobj': dumpobj,
 	'setattrs': setattrs,
