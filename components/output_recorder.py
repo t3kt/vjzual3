@@ -5,11 +5,11 @@ import re
 if False:
 	import util
 else:
-	import core_util as util
+	import common_util as util
 if False:
 	from _stubs import *
 
-print('core output_recording.py initializing')
+print('common output_recording.py initializing')
 
 class OutputRecorderExt:
 	def __init__(self, comp):

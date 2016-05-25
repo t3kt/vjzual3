@@ -3,13 +3,13 @@ import json
 if False:
 	from _stubs import *
 try:
-	import core_base as base
+	import common_base as base
 except ImportError:
 	import base
 
 util = base.util
 
-print('core tools.py initializing')
+print('common tools.py initializing')
 
 def GetActiveEditor():
 	pane = ui.panes.current

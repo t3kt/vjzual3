@@ -1,7 +1,7 @@
-print('core/base.py initializing')
+print('common/base.py initializing')
 
 try:
-	import core_util as util
+	import common_util as util
 except ImportError:
 	import util
 

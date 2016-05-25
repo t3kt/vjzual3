@@ -1,12 +1,12 @@
-print('core/ctrl.py initializing')
+print('common/ctrl.py initializing')
 
 import json
 try:
-	import core_base as base
+	import common_base as base
 except ImportError:
 	import base
 try:
-	import core_util as util
+	import common_util as util
 except ImportError:
 	import util
 

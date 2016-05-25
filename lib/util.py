@@ -1,4 +1,4 @@
-print('core/util.py initializing')
+print('common/util.py initializing')
 
 try:
 	import td
