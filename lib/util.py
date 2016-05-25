@@ -3,7 +3,11 @@ print('common/util.py initializing')
 try:
 	import td
 except ImportError:
-	from _stubs import td
+	try:
+		from _stubs import td
+	except ImportError:
+		from common.lib._stubs import td
+
 
 import json
 import datetime
@@ -58,13 +62,19 @@ class TableMenuSource:
 		self.nameCol = nameCol
 		self.labelCol = labelCol
 
+	def _GetCol(self, name):
+		if not self.dat:
+			return []
+		cells = self.dat.col(name)
+		return [x.val for x in cells[1:]] if cells else []
+
 	@property
 	def menuNames(self):
-		return [x.val for x in self.dat.col(self.nameCol)[1:]]
+		return self._GetCol(self.nameCol)
 
 	@property
 	def menuLabels(self):
-		return [x.val for x in self.dat.col(self.labelCol)[1:]]
+		return self._GetCol(self.labelCol)
 
 def GetVisibleCOMPsHeight(comps):
 	return sum([o.par.h for o in comps if getattr(o, 'isPanel', False) and o.par.display])
@@ -89,6 +99,9 @@ def ParseStringList(val):
 		return [v.strip() for v in val.split(',') if v.strip()]
 	else:
 		return [val]
+
+def ToJson(val):
+	return json.dumps(val)
 
 def IsTupleOrList(val):
 	return isinstance(val, (tuple, list))

@@ -36,4 +36,7 @@ JustifyType.TOPLEFT, JustifyType.TOPCENTER, JustifyType.TOPRIGHT, JustifyType.CE
 JustifyType.CENTER = 0
 JustifyType.CENTERRIGHT, JustifyType.BOTTOMLEFT, JustifyType.BOTTOMCENTER, JustifyType.BOTTOMRIGHT = 0, 0, 0, 0
 
+ParMode = _Expando()
+ParMode.CONSTANT = ParMode.EXPRESSION = ParMode.EXPORT = 0
+
 del _Expando
