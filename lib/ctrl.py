@@ -375,6 +375,8 @@ class DropMenu(ControlBase):
 	def ButtonText(self):
 		current = self.CurrentState
 		mode = self.comp.par.Buttondisplay.eval()
+		if current.numRows == 0 or current.numCols == 0:
+			return ''
 		if mode == 'name':
 			return current[0, 0].val
 		elif mode == 'label':
