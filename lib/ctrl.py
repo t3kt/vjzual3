@@ -11,7 +11,10 @@ except ImportError:
 	import util
 
 if False:
-	from _stubs import JustifyType
+	try:
+		from _stubs import JustifyType
+	except ImportError:
+		from common.lib._stubs import JustifyType
 
 # util = base.util
 setattrs = util.setattrs
@@ -63,6 +66,24 @@ def _AddBorderPars(page, sourceOp, namePrefix, menuSourcePath='', labelPrefix=''
 		util.CopyPar(page, sourceOp, label=side + ' Border', style='Menu', defaultVal='bordera', namePrefix=namePrefix, labelPrefix=labelPrefix, menuSourcePath=menuSourcePath)
 	for side in ['Left', 'Right', 'Top', 'Bottom']:
 		util.CopyPar(page, sourceOp, label=side + ' Border Inside', style='Menu', sourceName=side.lower() + 'borderi', defaultVal='off', namePrefix=namePrefix, labelPrefix=labelPrefix, menuSourcePath=menuSourcePath)
+
+class Settings(base.Extension):
+	def __init__(self, comp):
+		super().__init__(comp)
+
+	@property
+	def ParamTable(self):
+		return self.comp.op('./params')
+
+	def FillTable(self, dat):
+		util.CopyParPagesToTable(dat, *self.comp.customPages)
+
+	@staticmethod
+	def FillExportTable(dat, paramtable, exportpath):
+		dat.clear()
+		dat.appendRow(['path', 'parameter', 'value'])
+		for name, val in paramtable.rows():
+			dat.appendRow([exportpath, name.val.lower(), val])
 
 class ControlBase(base.Extension):
 	def __init__(self, comp):
@@ -142,9 +163,17 @@ class Button(ControlBase):
 		page.appendStr('Buttontext', label='Button Text')
 		page.appendStr('Buttonofftext', label='Off Button Text')
 		page.appendToggle('Hidetext', label='Hide Text')
-		_AddTextPars(self.comp.appendCustomPage('Button Text'), sourceOp=self.comp.op('./bg'), namePrefix='Button', menuSourcePath='./bg')
-		_AddBorderPars(self.comp.appendCustomPage('Button Border'), sourceOp=self.comp.op('./bg'), namePrefix='Button', menuSourcePath='./bg')
 		self.LoadValue()
+
+	@property
+	def ButtonTextParams(self):
+		settings = self.comp.par.Textsettings.eval() or self.comp.op('/_/common/defaults/button_text')
+		return settings.op('./params') if settings else None
+
+	@property
+	def ButtonBorderParams(self):
+		settings = self.comp.par.Bordersettings.eval() or self.comp.op('/_/common/defaults/button_border')
+		return settings.op('./params') if settings else None
 
 	@property
 	def IsPulse(self):

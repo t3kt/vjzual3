@@ -173,6 +173,15 @@ def ParseFloat(text, defaultVal=None):
 	except ValueError:
 		return defaultVal
 
+def _AddParsToTable(dat, *pars):
+	for par in pars:
+		dat.appendRow([par.name, par.eval()])
+
+def CopyParPagesToTable(dat, *pages):
+	dat.clear()
+	for page in pages:
+		_AddParsToTable(dat, *page.pars)
+
 _EXPORTS = {
 	'dumpobj': dumpobj,
 	'setattrs': setattrs,
