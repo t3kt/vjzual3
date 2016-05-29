@@ -166,16 +166,6 @@ class Button(ControlBase):
 		self.LoadValue()
 
 	@property
-	def ButtonTextParams(self):
-		settings = self.comp.par.Textsettings.eval() or self.comp.op('/_/common/defaults/button_text')
-		return settings.op('./params') if settings else None
-
-	@property
-	def ButtonBorderParams(self):
-		settings = self.comp.par.Bordersettings.eval() or self.comp.op('/_/common/defaults/button_border')
-		return settings.op('./params') if settings else None
-
-	@property
 	def IsPulse(self):
 		return self.comp.par.buttontype in ['momentary', 'momentaryup']
 
@@ -232,12 +222,6 @@ class Slider(ControlBase):
 		page.appendToggle('Hidevalue', label='Hide Value')
 		setattrs(page.appendInt('Decimals', label='Decimals'), min=0, clampMin=True, normMax=4, default=2)
 		page.appendPulse('Loadsettings', label='Load Settings')
-		_AddTextPars(self.comp.appendCustomPage('Label'), self.comp.op('./label_and_bg'), namePrefix='Label', menuSourcePath='./label_and_bg')
-		self.comp.par.Labelalignx.default = 'left'
-		self.comp.par.Labelborderspace1.default = 8
-		_AddTextPars(self.comp.appendCustomPage('Value'), self.comp.op('./value_text'), namePrefix='Value', menuSourcePath='./value_text')
-		self.comp.par.Valuealignx.default = 'right'
-		self.comp.par.Valueborderspace1.default = 8
 		self.LoadValue()
 
 	def PushState(self):
