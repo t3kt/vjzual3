@@ -463,6 +463,10 @@ class DropMenu(ControlBase):
 	def OptionsList(self):
 		return self.comp.op('options_list')
 
+	@property
+	def PopupSettings(self):
+		return self.comp.op('popup_settings')
+
 	def LoadSettings(self):
 		par = self.TargetPar
 		if par is None or not par.isMenu:
@@ -505,13 +509,14 @@ class DropMenu(ControlBase):
 		attribs.fontBold = highlight
 
 	def List_onInitTable(self, attribs):
+		settings = self.PopupSettings
 		attribs.rowHeight = self.comp.par.Popupitemheight
 		attribs.bgColor = DropMenu._ItemRegular['bg']
 		attribs.textColor = DropMenu._ItemRegular['text']
-		attribs.fontSizeX = self.comp.par.Popupitemfontsizex
-		attribs.fontSizeY = self.comp.par.Popupitemfontsizey if self.comp.par.Popupitemkeepfontratio else self.comp.par.Popupitemfontsizex
-		attribs.fontFace = self.comp.par.Popupitemfont
-		attribs.wordWrap = self.comp.par.Popupitemwordwrap
+		attribs.fontSizeX = float(settings['Fontsizex', 1])
+		attribs.fontSizeY = float(settings['Fontsizey', 1]) if bool(settings['Keepfontratio', 1]) else float(settings['Fontsizex', 1])
+		attribs.fontFace = settings['Font', 1]
+		attribs.wordWrap = bool(settings['Wordwrap', 1])
 
 	def List_onRollover(self, listcomp, row, col, prevrow, prevcol):
 		self.UpdateRowHighlights(row)
