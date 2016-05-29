@@ -76,7 +76,7 @@ class Settings(base.Extension):
 		return self.comp.op('./params')
 
 	def FillTable(self, dat):
-		util.CopyParPagesToTable(dat, *self.comp.customPages)
+		util.CopyParPagesToTable(dat, *self.comp.customPages, quotestrings=True)
 
 	@staticmethod
 	def FillExportTable(dat, paramtable, exportpath):

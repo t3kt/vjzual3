@@ -173,14 +173,18 @@ def ParseFloat(text, defaultVal=None):
 	except ValueError:
 		return defaultVal
 
-def _AddParsToTable(dat, *pars):
+def _AddParsToTable(dat, *pars, quotestrings=False):
 	for par in pars:
-		dat.appendRow([par.name, par.eval()])
+		if quotestrings and (par.isString or par.isMenu):
+			val = repr(par.eval())
+		else:
+			val = par.eval()
+		dat.appendRow([par.name, val])
 
-def CopyParPagesToTable(dat, *pages):
+def CopyParPagesToTable(dat, *pages, quotestrings=False):
 	dat.clear()
 	for page in pages:
-		_AddParsToTable(dat, *page.pars)
+		_AddParsToTable(dat, *page.pars, quotestrings=quotestrings)
 
 _EXPORTS = {
 	'dumpobj': dumpobj,
