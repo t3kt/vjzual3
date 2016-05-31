@@ -384,7 +384,12 @@ class DropMenu(ControlBase):
 		self._LogEvent('SetValueIndex(%r)' % index)
 		par = self.TargetPar
 		if self.IsScripted and par is not None:
-			par.menuIndex = index
+			if par.isString:
+				par.val = self._IndexToName(index)
+			elif par.isMenu:
+				par.menuIndex = index
+			else:
+				par.val = index
 		self.comp.par.Currentindex = index
 		self.UpdateRowHighlights()
 
