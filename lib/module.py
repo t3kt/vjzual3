@@ -28,6 +28,10 @@ class Module(base.Extension):
 		return self.comp.op('./body_panel')
 
 	@property
+	def ControlPanel(self):
+		return self.comp.op('./controls_panel')
+
+	@property
 	def _HeaderHeight(self):
 		return 20 if self.comp.par.Collapsed else 40
 
@@ -39,6 +43,7 @@ class Module(base.Extension):
 		return panel.par.h if panel else 20
 
 	def UpdateHeight(self):
+		self._UpdateControlPanelHeight()
 		self._UpdateBodyPanelHeight()
 		h = self._HeaderHeight
 		h += self._BodyHeight
@@ -46,6 +51,10 @@ class Module(base.Extension):
 
 	def _UpdateBodyPanelHeight(self):
 		panel = self.BodyPanel
-		if not panel:
-			return
-		panel.par.h = util.GetVisibleChildCOMPsHeight(panel)
+		if panel:
+			panel.par.h = util.GetVisibleChildCOMPsHeight(panel)
+
+	def _UpdateControlPanelHeight(self):
+		panel = self.ControlPanel
+		if panel:
+			panel.par.h = util.GetVisibleChildCOMPsHeight(panel)
