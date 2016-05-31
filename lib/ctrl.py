@@ -344,32 +344,6 @@ class DropMenu(ControlBase):
 		setattrs(page.appendMenu('Buttondisplay', label='Button Display'), menuNames=DropMenu._DisplayModeNames, menuLabels=DropMenu._DisplayModeLabels, default='label')
 		setattrs(page.appendInt('Currentindex', label='(INTERNAL) Current Index'), normMax=10)
 
-		_AddTextPars(
-			self.comp.appendCustomPage('Button Text'),
-			namePrefix='Button',
-			sourceOp=self.comp.op('./button/bg_text'),
-			menuSourcePath='./button/bg_text')
-		_AddBorderPars(
-			self.comp.appendCustomPage('Button Border'),
-			namePrefix='Button',
-			sourceOp=self.comp.op('./button/bg_text'),
-			menuSourcePath='./button/bg_text')
-		self.comp.par.Buttonalignx.default = 'left'
-		self.comp.par.Buttonborderspace1.default = 4
-
-		_AddTextPars(
-			self.comp.appendCustomPage('Popup Text'),
-			namePrefix='Popupitem',
-			sourceOp=self.comp.op('./button/bg_text'),
-			menuSourcePath='./button/bg_text',
-			includeAlignment=False,
-			includeKerning=False,
-			includePosition=False,
-			includeBorderSpace=False,
-			includeAutoSize=False,
-			includeBold=False,
-			includeItalic=False)
-
 		page = self.comp.appendCustomPage('Popup')
 		setattrs(page.appendInt('Popupwidth', label='Popup Width'), min=1, normMin=5, clampMin=True, normMax=300, default=150)
 		setattrs(page.appendInt('Popupmaxheight', label='Popup Max Height'), min=0, normMin=5, clampMin=True, normMax=500, default=0)
