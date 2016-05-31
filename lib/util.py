@@ -95,9 +95,10 @@ def ParseStringList(val):
 		return []
 	if val.startswith('['):
 		return json.loads(val)
-	elif ',' in val:
-		return [v.strip() for v in val.split(',') if v.strip()]
 	else:
+		for sep in [',', ' ']:
+			if sep in val:
+				return [v.strip() for v in val.split(sep) if v.strip()]
 		return [val]
 
 def ToJson(val):
