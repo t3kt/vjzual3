@@ -27,12 +27,22 @@ class Module(base.Extension):
 	def BodyPanel(self):
 		return self.comp.op('./body_panel')
 
-	def UpdateHeight(self):
-		pass
+	@property
+	def _HeaderHeight(self):
+		return 20 if self.comp.par.Collapsed else 40
 
 	@property
-	def BodyHeight(self):
-		raise NotImplementedError()
+	def _BodyHeight(self):
+		if self.comp.par.Collapsed:
+			return 0
+		panel = self.BodyPanel
+		return panel.par.h if panel else 20
+
+	def UpdateHeight(self):
+		self._UpdateBodyPanelHeight()
+		h = self._HeaderHeight
+		h += self._BodyHeight
+		self.comp.par.h = h
 
 	def _UpdateBodyPanelHeight(self):
 		panel = self.BodyPanel
