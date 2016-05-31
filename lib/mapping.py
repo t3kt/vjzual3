@@ -9,24 +9,6 @@ try:
 except ImportError:
 	import util
 
-# if False:
-# 	try:
-# 		from _stubs import *
-# 	except ImportError:
-# 		from common.lib._stubs import *
-
-# class ControlMappings(base.Extension):
-# 	def __init__(self, comp):
-# 		super().__init__(comp)
-#
-# 	@property
-# 	def ControlTable(self):
-# 		table = self.comp.par.Ctrltable.eval()
-# 		if table:
-# 			return table.path
-# 		table = self.comp.op(self.comp.var('ctrltable'))
-# 		return table.path if table else ''
-
 def _GetHost(comp, settings):
 	return comp.op(settings['hostop', 1]) or comp
 
@@ -55,22 +37,14 @@ def LoadMappings(comp, settings, dat):
 			1 if mapping.get('on') else 0,
 		])
 
-# def UpdateMapping(comp, settings, name, ctrl, on):
-# 	hostop = comp.op(settings['hostop', 1]) or comp
-# 	mappings = hostop.fetch('ctrlMappings', {}, search=False)
-# 	mappings[name] = {
-# 		'ctrl': ctrl,
-# 		'on': on,
-# 	}
-# 	hostop.store('ctrlMappings', mappings)
-
 def StoreMappings(comp, settings, dat):
 	hostop = _GetHost(comp, settings)
 	mappings = _GetMappingsFromHost(hostop)
 	for name in dat.col('name')[1:]:
 		name = name.val
+		ctrl = dat[name, 'ctrl']
 		mappings[name] = {
-			'ctrl': dat[name, 'ctrl'].val,
+			'ctrl': ctrl.val if ctrl is not None or ctrl == 'none' else '',
 			'on': dat[name, 'on'] == '1',
 		}
 	hostop.store('ctrlMappings', mappings)
@@ -87,3 +61,16 @@ def FillMappingNamesTable(comp, settings, dat):
 	dat.clear()
 	dat.appendRow([' '.join(names)])
 	dat.appendRow([' '.join(ctrls)])
+
+def InitMappingUI(mapui, name, ctrl, on):
+	mapui.op('./name_label').par.Label = name or ''
+	mapui.op('./ctrl_menu/ext').SetValue(ctrl or 'none')
+	mapui.op('./on_button/ext').SetValue(on or False)
+
+def DisconnectAllExceptHeader(merge, header):
+	conns = list(merge.inputConnectors)
+	for conn in conns:
+		if len(conn.connections) == 0 or conn.connections[0].owner == header:
+			continue
+		while len(conn.connections):
+			conn.disconnect()
