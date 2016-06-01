@@ -12,13 +12,13 @@ except ImportError:
 def _GetHost(comp, settings):
 	return comp.op(settings['hostop', 1]) or comp
 
-def _GetMappingsFromHost(hostop):
+def GetMappingsFromHost(hostop):
 	return hostop.fetch('ctrlMappings', {}, search=False)
 
 def LoadMappings(comp, settings, dat):
 	hostop = _GetHost(comp, settings)
 	mapnames = util.ParseStringList(comp.par.Mapnames.eval())
-	mappings = _GetMappingsFromHost(hostop)
+	mappings = GetMappingsFromHost(hostop)
 	dat.clear()
 	dat.appendRow(['name', 'ctrl', 'on'])
 	for name in mapnames:
@@ -39,7 +39,7 @@ def LoadMappings(comp, settings, dat):
 
 def StoreMappings(comp, settings, dat):
 	hostop = _GetHost(comp, settings)
-	mappings = _GetMappingsFromHost(hostop)
+	mappings = GetMappingsFromHost(hostop)
 	for name in dat.col('name')[1:]:
 		name = name.val
 		ctrl = dat[name, 'ctrl']
@@ -51,7 +51,7 @@ def StoreMappings(comp, settings, dat):
 
 def FillMappingNamesTable(comp, settings, dat):
 	hostop = _GetHost(comp, settings)
-	mappings = _GetMappingsFromHost(hostop)
+	mappings = GetMappingsFromHost(hostop)
 	names, ctrls = [], []
 	for name, mapping in mappings.items():
 		ctrl = mapping.get('ctrl')
