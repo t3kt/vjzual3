@@ -40,3 +40,6 @@ ParMode = _Expando()
 ParMode.CONSTANT = ParMode.EXPRESSION = ParMode.EXPORT = 0
 
 del _Expando
+
+class Par:
+	pass
