@@ -22,6 +22,7 @@ if False:
 class Module(base.Extension):
 	def __init__(self, comp):
 		super().__init__(comp)
+		self.parAccessor = ParAccessor(comp)
 
 	@property
 	def Shell(self):
@@ -63,53 +64,38 @@ class Module(base.Extension):
 		if panel:
 			panel.par.h = util.GetVisibleChildCOMPsHeight(panel)
 
-	@property
-	def ModParams(self):
-		parnames = util.ParseStringList(self.Shell.par.Modparams.eval())
+	def _GetModParamTuplets(self):
+		tupletnames = util.ParseStringList(self.Shell.par.Modtuples.eval())
 		pagenames = util.ParseStringList(self.Shell.par.Modparampages.eval())
-		pars = self.comp.pars(*parnames)
+		tuplets = []
 		for page in self.comp.customPages:
 			if page.name in pagenames:
-				pars += page.pars
-		return pars
+				tuplets += page.parTuplets
+		for t in self.comp.customTuplets:
+			if t[0].tupletName in tupletnames:
+				tuplets.append(t)
+		return tuplets
 
 	def _GetModParamsDict(self):
-		return {
-			par.name.lower(): par.eval()
-			for par in self.ModParams
-		}
+		return self.parAccessor.GetParTupletVals(self._GetModParamTuplets())
 
 	def _LoadModParamsDict(self, params):
 		self._LogEvent('_LoadModParamsDict(%r)' % params)
 		if not params:
 			return
-		for name, val in params.items():
-			par = self.comp.pars(name.capitalize())[0]
-			if par is None:
-				self._LogEvent('_LoadModParamsDict() - cannot find parameter %r' % name)
-			elif par.mode != ParMode.CONSTANT:
-				self._LogEvent('_LoadModParamsDict() - cannot set parameter %r which has mode %r' % (name, par.mode))
-			else:
-				par.val = val
+		self.parAccessor.SetParTupletVals(self._GetModParamTuplets(), params)
 
 	def GetStateDict(self):
-		state = {
-			'modname': self.comp.par.Modname.eval(),
-			'label': self.comp.par.Uilabel.eval(),
-			'path': self.comp.path,
-			'bypass': self.comp.par.Bypass.eval(),
-			'solo': self.comp.par.Solo.eval(),
-			'uistate': {
-				'collapsed': self.comp.par.Collapsed.eval(),
-				'uimode': self.comp.par.Uimode.eval(),
-				'showadvanced': self.comp.par.Showadvanced.eval(),
-				'showviewers': self.comp.par.Showviewers.eval(),
+		state = util.MergeDicts(
+			self.parAccessor.GetParTupletVals(self.parAccessor.GetCustomPage('Module').parTuplets),
+			{
+				'path': self.comp.path,
+				'params': self._GetModParamsDict(),
 			},
-			'params': self._GetModParamsDict(),
-		}
+		)
 		ctrlmappings = mapping.GetMappingsFromHost(self.comp)
 		ctrlmappings = {
-			name: opts for name, opts in ctrlmappings.items() if opts.get('ctrl')
+			parname: opts for parname, opts in ctrlmappings.items() if opts.get('ctrl')
 		}
 		if ctrlmappings:
 			state['mappings'] = ctrlmappings
@@ -119,53 +105,33 @@ class Module(base.Extension):
 		self._LogEvent('LoadStateDict(%r)' % state)
 		if not state:
 			return
-		self.comp.par.Bypass = state.get('bypass', state.comp.par.Bypass)
-		self._LoadParVals(
-			state,
-			[
-				'Bypass',
-				'Solo'
-			])
-		self._LoadParVal('Solo', state)
-		raise NotImplementedError()
+		self.parAccessor.SetParTupletVals(self.parAccessor.GetCustomPage('Module').parTuplets, state)
+		self.parAccessor.SetParTupletVals(self._GetModParamTuplets(), state.get('params', {}))
 
-	def _LoadParVal(self, state, parname, key=None):
-		if not key:
-			key = parname.lower()
-		if key not in state:
-			return
-		par = self.comp.pars(parname)[0]
-		if par is None:
-			self._LogEvent('_LoadParVal(parname=%r, key=%r) - parameter not found' % (parname, key))
-		if par.mode != ParMode.CONSTANT:
-			self._LogEvent('_LoadParVal(parname=%r, key=%r) - cannot set parameter because it has mode %r' % (parname, key, par.mode))
-		val = state.get(key)
-		if val is not None:
-			par.val = val
-
-	def _LoadParVals(self, state, parnames=None, getkey=None):
-		if parnames is None:
-			parnames = state.keys()
-		for parname in parnames:
-			self._LoadParVal(state, parname, key=getkey(parname) if getkey else None)
-
-class ParTypeHandler:
-	def __init__(self, floatdecimals=4):
+class ParAccessor(base.Extension):
+	def __init__(self, comp, getkey=None, floatdecimals=4):
+		super().__init__(comp)
+		self.getkey = getkey
 		self.floatdecimals = floatdecimals
 
-	def PrepValueForPar(self, par, value):
+	def SetParVal(self, par, value):
 		if par.isToggle:
-			return self._CoerceBool(value)
-		return value
+			value = self._CoerceBool(value)
+		if par.mode != ParMode.CONSTANT:
+			self._LogEvent('SetParVal() - cannot set value of par %r which has mode %r' % (par, par.mode))
+		elif par.isPulse:
+			self._LogEvent('SetParVal() - cannot set value of pulse par %r' % par)
+		else:
+			par.val = value
 
-	def CleanValueFromPar(self, par):
+	def GetParVal(self, par):
 		val = par.eval()
 		if isinstance(val, float):
 			return self._CleanFloat(val)
 		return val
 
 	def _CleanFloat(self, value):
-		return round(value, self.floatdecimals)
+		return round(value, self.floatdecimals) if self.floatdecimals else value
 
 	def _CoerceBool(self, value):
 		if isinstance(value, bool):
@@ -174,5 +140,56 @@ class ParTypeHandler:
 			return bool(value)
 		return value in ('1', 'true', 'TRUE', 't', 'T')
 
-_DefaultParTypeHandler = ParTypeHandler()
+	def _GetKey(self, parname):
+		return self.getkey(parname) if self.getkey else parname.lower()
+
+	def _GetPars(self, parnames):
+		if isinstance(parnames, str):
+			parnames = [parnames]
+		if not parnames:
+			return []
+		pars = []
+		for parname in parnames:
+			if isinstance(parname, str):
+				pars += self.comp.pars(parname)
+			else:
+				pars += [parname]
+		return pars
+
+	def GetParTupletVals(self, tuplets):
+		if hasattr(tuplets, 'parTuplets'):
+			tuplets = tuplets.parTuplets
+		return {
+			self._GetKey(t[0].tupletName):
+				[self.GetParVal(p) for p in t] if len(t) > 1 else self.GetParVal(t[0])
+			for t in tuplets
+		}
+
+	def GetParVals(self, parnames):
+		return {
+			self._GetKey(p.name): self.GetParVal(p)
+			for p in self._GetPars(parnames)
+		}
+
+	def SetParTupletVals(self, tuplets, state, usedefaults=False):
+		if hasattr(tuplets, 'parTuplets'):
+			tuplets = tuplets.parTuplets
+		for t in tuplets:
+			key = self._GetKey(t[0].tupletName)
+			vals = state.get(key)
+			if vals is None or vals == '' or vals == []:
+				if usedefaults:
+					vals = [p.default for p in t]
+				else:
+					continue
+			if not isinstance(vals, (list, tuple)):
+				vals = [vals]
+			for i, p in enumerate(t):
+				val = vals[i if i < len(vals) else 0]
+				self.SetParVal(p, val)
+
+	def GetCustomPage(self, pagename):
+		for page in self.comp.customPages:
+			if page.name == pagename:
+				return page
 
