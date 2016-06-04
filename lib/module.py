@@ -74,7 +74,7 @@ class Module(base.Extension):
 		for t in self.comp.customTuplets:
 			if t[0].tupletName in tupletnames:
 				tuplets.append(t)
-		return tuplets
+		return _ExcludePulsePars(tuplets)
 
 	def _GetModParamsDict(self):
 		return self.parAccessor.GetParTupletVals(self._GetModParamTuplets())
@@ -193,3 +193,10 @@ class ParAccessor(base.Extension):
 			if page.name == pagename:
 				return page
 
+def _IsNotPulse(t):
+	if isinstance(t, tuple):
+		t = t[0]
+	return getattr(t, 'isPulse', False)
+
+def _ExcludePulsePars(pars):
+	return filter(_IsNotPulse, pars)
