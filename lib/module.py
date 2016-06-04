@@ -65,7 +65,7 @@ class Module(base.Extension):
 			panel.par.h = util.GetVisibleChildCOMPsHeight(panel)
 
 	def _GetModParamTuplets(self):
-		tupletnames = util.ParseStringList(self.Shell.par.Modtuples.eval())
+		tupletnames = util.ParseStringList(self.Shell.par.Modparamtuples.eval())
 		pagenames = util.ParseStringList(self.Shell.par.Modparampages.eval())
 		tuplets = []
 		for page in self.comp.customPages:
