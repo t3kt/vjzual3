@@ -9,11 +9,13 @@ try:
 except ImportError:
 	import util
 
+_STORAGE_KEY = 'ctrlMappings'
+
 def _GetHost(comp, settings):
 	return comp.op(settings['hostop', 1]) or comp
 
 def GetMappingsFromHost(hostop):
-	return hostop.fetch('ctrlMappings', {}, search=False)
+	return hostop.fetch(_STORAGE_KEY, {}, search=False)
 
 def LoadMappings(comp, settings, dat):
 	hostop = _GetHost(comp, settings)
@@ -28,18 +30,10 @@ def LoadMappings(comp, settings, dat):
 			mapping.get('ctrl') or '',
 			1 if mapping.get('on') else 0,
 		])
-	for name, mapping in mappings.items():
-		if name in mapnames:
-			continue
-		dat.appendRow([
-			name,
-			mapping.get('ctrl'),
-			1 if mapping.get('on') else 0,
-		])
 
 def StoreMappings(comp, settings, dat):
 	hostop = _GetHost(comp, settings)
-	mappings = GetMappingsFromHost(hostop)
+	mappings = {}
 	for name in dat.col('name')[1:]:
 		name = name.val
 		ctrl = dat[name, 'ctrl']
@@ -47,7 +41,11 @@ def StoreMappings(comp, settings, dat):
 			'ctrl': ctrl.val if ctrl is not None or ctrl == 'none' else '',
 			'on': dat[name, 'on'] == '1',
 		}
-	hostop.store('ctrlMappings', mappings)
+	hostop.store(_STORAGE_KEY, mappings)
+
+def ClearMappings(comp, settings):
+	hostop = _GetHost(comp, settings)
+	hostop.unstore(_STORAGE_KEY)
 
 def FillMappingNamesTable(comp, settings, dat):
 	hostop = _GetHost(comp, settings)
