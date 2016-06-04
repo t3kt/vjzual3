@@ -6,19 +6,77 @@ except ImportError:
 	try:
 		from _stubs import td
 	except ImportError:
-		from common.lib._stubs import td
+		try:
+			from common.lib._stubs import td
+		except ImportError:
+			td = object()
+if False:
+	try:
+		from _stubs import op
+	except ImportError:
+		op = object()
 
 
 import json
 import datetime
+import logging
+
+logging.basicConfig(format='%(asctime)s %(message)s')
+logger = logging.getLogger('tdapp')
+logger.setLevel(logging.INFO)
 
 from numpy import interp
 
-def Log(*args):
-	print('[%s]' % datetime.datetime.now().strftime('%m.%d %H:%M:%S'), *args)
+# class Logger:
+# 	def __init__(self, comp):
+# 		self.comp = comp
+# 		self.buffer = comp.op('./buffer')
+#
+# 	@property
+# 	def _FilePath(self):
+# 		path = self.comp.par.Folder.eval() or self.comp.par.Folder.default
+# 		if not path.endswith('/'):
+# 			path += '/'
+# 		path += self.comp.par.Fileprefix.eval() or self.comp.par.Fileprefix.default or ''
+# 		return self._TimestampClean + '.log'
+#
+# 	@property
+# 	def _Timestamp(self):
+# 		return datetime.datetime.now().strftime('%Y.%m.%d %H:%M:%S')
+#
+# 	@property
+# 	def _TimestampClean(self):
+# 		return datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
+#
+# 	def ClearBuffer(self):
+# 		self.buffer.text = ''
+#
+# 	def FlushToFile(self):
+# 		path = self._FilePath
+# 		if not self.buffer.text:
+# 			# nothing to flush
+# 			return
+# 		self.buffer.save(path)
+# 		self.ClearBuffer()
+#
+# 	def Log(self, message, verbose=False, skipfile=False, skipconsole=False):
+# 		if self.comp.par.Silent:
+# 			return
+# 		if verbose and not self.comp.par.Verbose:
+# 			return
+# 		text = '[%s] %s' % (self._Timestamp, message)
+# 		if not skipconsole:
+# 			print(text)
+# 		if skipfile or (verbose and not self.comp.par.Verbosetofile):
+# 			return
+# 		print(text, file=self.buffer)
+
+def Log(msg):
+	logger.info('%s', msg)
+	#print('[%s]' % datetime.datetime.now().strftime('%m.%d %H:%M:%S'), *args)
 
 def dumpobj(obj, underscores=False, methods=False):
-	print('Dump ' + repr(obj) + ' type:' + repr(type(obj)))
+	print('Dump %r type: %r' % (obj, type(obj)))
 	if isinstance(obj, (list, tuple)):
 		for i in range(len(obj)):
 			print('  [' + str(i) + ']: ' + repr(obj[i]))
@@ -53,7 +111,6 @@ def _ProcessClones(master, action, predicate=None):
 		action(c)
 
 def DumpClones(master, predicate=None):
-	print('Clones of ' + master.path)
 	_ProcessClones(master, lambda c: print('  ' + c.path), predicate=predicate)
 
 class TableMenuSource:
