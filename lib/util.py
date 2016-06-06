@@ -19,11 +19,11 @@ if False:
 
 import json
 import datetime
-import logging
-
-logging.basicConfig(format='%(asctime)s %(message)s')
-logger = logging.getLogger('tdapp')
-logger.setLevel(logging.INFO)
+# import logging
+#
+# logging.basicConfig(format='%(asctime)s %(message)s')
+# logger = logging.getLogger('tdapp')
+# logger.setLevel(logging.INFO)
 
 from numpy import interp
 
@@ -72,8 +72,8 @@ from numpy import interp
 # 		print(text, file=self.buffer)
 
 def Log(msg):
-	logger.info('%s', msg)
-	#print('[%s]' % datetime.datetime.now().strftime('%m.%d %H:%M:%S'), *args)
+	#logger.info('%s', msg)
+	print('[%s]' % datetime.datetime.now().strftime('%m.%d %H:%M:%S'), *args)
 
 def dumpobj(obj, underscores=False, methods=False):
 	print('Dump %r type: %r' % (obj, type(obj)))
