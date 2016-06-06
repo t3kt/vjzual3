@@ -73,7 +73,7 @@ from numpy import interp
 
 def Log(msg):
 	#logger.info('%s', msg)
-	print('[%s]' % datetime.datetime.now().strftime('%m.%d %H:%M:%S'), *args)
+	print('[%s]' % datetime.datetime.now().strftime('%m.%d %H:%M:%S'), msg)
 
 def dumpobj(obj, underscores=False, methods=False):
 	print('Dump %r type: %r' % (obj, type(obj)))
