@@ -19,6 +19,16 @@ if False:
 	except ImportError:
 		from common.lib._stubs import *
 
+def InitializeModule(comp):
+	if not comp:
+		return
+	util.Log('InitializeModule(%r)' % comp)
+	comp.par.parentshortcut = 'tmod'
+	if not comp.par.extension1:
+		comp.par.extension1 = 'mod.shell_module.Module(me)'
+		comp.par.promoteextension1 = True
+		comp.initializeExtensions()
+
 class Module(base.Extension):
 	def __init__(self, comp):
 		super().__init__(comp)
