@@ -372,7 +372,7 @@ class DropMenu(ControlBase):
 			return '%s (%s)' % (current[0, 1], current[0, 0])
 
 	def SetValue(self, val):
-		self._LogEvent('SetValue(%r)' % val)
+		# self._LogEvent('SetValue(%r)' % val)
 		par = self.TargetPar
 		if self.IsScripted and par is not None:
 			par.val = val
@@ -381,7 +381,7 @@ class DropMenu(ControlBase):
 		self.UpdateRowHighlights()
 
 	def SetValueIndex(self, index):
-		self._LogEvent('SetValueIndex(%r)' % index)
+		# self._LogEvent('SetValueIndex(%r)' % index)
 		par = self.TargetPar
 		if self.IsScripted and par is not None:
 			if par.isString:
