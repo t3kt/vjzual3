@@ -9,6 +9,8 @@ try:
 except ImportError:
 	import util
 
+import ast
+
 _STORAGE_KEY = 'ctrlMappings'
 
 def _GetHost(comp, settings):
@@ -17,19 +19,44 @@ def _GetHost(comp, settings):
 def GetMappingsFromHost(hostop):
 	return hostop.fetch(_STORAGE_KEY, {}, search=False)
 
-def LoadMappings(comp, settings, dat):
-	hostop = _GetHost(comp, settings)
-	mapnames = util.ParseStringList(comp.par.Mapnames.eval())
-	mappings = GetMappingsFromHost(hostop)
+# def LoadMappings(comp, settings, dat):
+# 	hostop = _GetHost(comp, settings)
+# 	mapnames = util.ParseStringList(comp.par.Mapnames.eval())
+# 	mappings = GetMappingsFromHost(hostop)
+# 	dat.clear()
+# 	dat.appendRow(['name', 'ctrl', 'on'])
+# 	for name in mapnames:
+# 		mapping = mappings.get(name, {})
+# 		dat.appendRow([
+# 			name,
+# 			mapping.get('ctrl') or '',
+# 			1 if mapping.get('on') else 0,
+# 		])
+
+def ConvertStorageTableToMappingsTable(storagedat, dat):
 	dat.clear()
 	dat.appendRow(['name', 'ctrl', 'on'])
-	for name in mapnames:
-		mapping = mappings.get(name, {})
-		dat.appendRow([
-			name,
-			mapping.get('ctrl') or '',
-			1 if mapping.get('on') else 0,
-		])
+	for key, val in storagedat.rows()[1:]:
+		mapping = ast.literal_eval(val.val)
+		if not mapping:
+			mapping = {}
+		dat.appendRow([key, mapping.get('ctrl', ''), 1 if mapping.get('on') else 0])
+
+def LoadMappingsFromTable(comp, dat, opprefix):
+	for i in range(1, dat.numRows):
+		mname = dat[i, 'name']
+		mapui = comp.op('./%s%s' % (opprefix, mname))
+		if not mapui:
+			# TODO: logging?
+			continue
+		ctrl = dat[i, 'ctrl'].val
+		on = dat[i, 'on'] == '1'
+		SetMappingValues(mapui, ctrl, on)
+
+def FillMappingNamesTable(comp, dat):
+	mapnames = util.ParseStringList(comp.par.Mapnames.eval())
+	dat.clear()
+	dat.appendCol(mapnames)
 
 def StoreMappings(comp, settings, dat):
 	hostop = _GetHost(comp, settings)
@@ -47,7 +74,7 @@ def ClearMappings(comp, settings):
 	hostop = _GetHost(comp, settings)
 	hostop.unstore(_STORAGE_KEY)
 
-def FillMappingNamesTable(comp, settings, dat):
+def FillMappingNameSelectTable(comp, settings, dat):
 	hostop = _GetHost(comp, settings)
 	mappings = GetMappingsFromHost(hostop)
 	names, ctrls = [], []
@@ -60,8 +87,10 @@ def FillMappingNamesTable(comp, settings, dat):
 	dat.appendRow([' '.join(names)])
 	dat.appendRow([' '.join(ctrls)])
 
-def InitMappingUI(mapui, name, ctrl, on):
+def SetMappingLabel(mapui, name):
 	mapui.op('./name_label').par.Label = name or ''
+
+def SetMappingValues(mapui, ctrl, on):
 	mapui.op('./ctrl_menu/ext').SetValue(ctrl or 'none')
 	mapui.op('./on_button/ext').SetValue(on or False)
 
