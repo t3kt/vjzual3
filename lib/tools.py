@@ -85,8 +85,29 @@ def _saveTox(comp):
 	ui.status = 'Saved TOX %s to %s' % (comp.path, toxfile)
 	return True
 
-def SaveToxSelectedOrContext():
-	_doOnSelectedOrContext(_saveTox)
+def SaveToxSelectedOrContext(ancestors=False):
+	if not ancestors:
+		_doOnSelectedOrContext(_saveTox)
+	else:
+		allcomps = dict()
+		selected = _getSelected()
+		for o in selected:
+			if not o.isCOMP:
+				continue
+			allcomps[o.path] = o
+		if not allcomps:
+			pane = _getTargetPane()
+			allcomps[pane.owner.path] = pane.owner
+		for o in list(allcomps.values()):
+			i = 1
+			while True:
+				p = o.parent(i)
+				if not p or p.path in allcomps:
+					break
+				allcomps[p.path] = p
+				i += 1
+		for o in allcomps.values():
+			_saveTox(o)
 
 _orderAxes = {
 	'x': {'attr': 'nodeX', 'reverse': False},
@@ -277,6 +298,8 @@ class ToolsExt(base.Extension):
 			CopySelectedPaths()
 		elif cmd == 'Savetox':
 			SaveToxSelectedOrContext()
+		elif cmd == 'Savetoxancestors':
+			SaveToxSelectedOrContext(ancestors=True)
 		else:
 			raise Exception('unrecognized action: ' + cmd)
 
