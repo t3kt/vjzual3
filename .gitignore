@@ -1,0 +1,6 @@
+.idea
+*.stackdump
+*-output-*.*
+*.dmp
+CrashAutoSave.toe
+TEMP*
