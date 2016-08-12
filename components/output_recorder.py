@@ -38,15 +38,25 @@ class OutputRecorderExt:
 			f += '-' + suffix
 		return f
 
+	@property
+	def NextFileFullPath(self):
+		name = self.NextFileName
+		path = self.comp.par.Folder.eval()
+		if not path:
+			return name
+		if not path.endswith('/'):
+			path += '/'
+		return path + name
+
 	def CaptureImage(self):
-		f = self.NextFileName + '.' + self.comp.par.Imageext
+		f = self.NextFileFullPath + '.' + self.comp.par.Imageext
 		print('saving image ' + f)
 		self.comp.op('video').save(f)
 		ui.status = 'saved image ' + f
 		self.UpdateFileNameLabel()
 
 	def StartVideoCapture(self):
-		f = self.NextFileName + '.' + self.comp.par.Videoext
+		f = self.NextFileFullPath + '.' + self.comp.par.Videoext
 		m = self.comp.op('moviefileout')
 		print('starting video recording ' + f)
 		m.par.file = f
