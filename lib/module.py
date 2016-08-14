@@ -32,6 +32,7 @@ def InitializeModule(comp):
 class Module(base.Extension):
 	def __init__(self, comp):
 		super().__init__(comp)
+		comp.tags.add('tmod')
 		self.parAccessor = ParAccessor(comp)
 
 	@property
@@ -117,6 +118,21 @@ class Module(base.Extension):
 			return
 		self.parAccessor.SetParTupletVals(self.parAccessor.GetCustomPage('Module').parTuplets, state)
 		self.parAccessor.SetParTupletVals(self._GetModParamTuplets(), state.get('params', {}))
+
+	def UpdateSolo(self):
+		solo = self.comp.par.Solo.eval()
+		outnode = self.comp.op(self.Shell.par.Solonode.eval() or self.Shell.par.Solonode.default)
+		mainoutsrc = _GetGlobalSourcePar()
+		if solo and outnode:
+			for m in _GetOtherModules(self.comp.path):
+				m.par.Solo = False
+			nodeId = outnode.par.Nodeid.eval()
+		elif outnode and mainoutsrc == outnode.par.Nodeid:
+			nodeId = mainoutsrc.default
+		else:
+			return
+		self._LogEvent('UpdateSolo() - setting solo to %r' % nodeId)
+		mainoutsrc.val = nodeId
 
 class ParAccessor(base.Extension):
 	def __init__(self, comp, getkey=None, floatdecimals=4):
@@ -210,3 +226,9 @@ def _IsNotPulse(t):
 
 def _ExcludePulsePars(pars):
 	return filter(_IsNotPulse, pars)
+
+def _GetGlobalSourcePar():
+	return op.App.OutputSource
+
+def _GetOtherModules(exceptPath):
+	return [m for m in op.App.AllModules if m.path != exceptPath]

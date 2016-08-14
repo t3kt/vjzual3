@@ -18,13 +18,18 @@ if False:
 		from _stubs import *
 	except ImportError:
 		from common.lib._stubs import *
+	COMP = object()
 
 class ShellApp(base.Extension):
 	def __init__(self, comp):
 		self.comp = comp
 
 	@property
-	def GlobalChain(self):
+	def AllModules(self):
+		return self.comp.findChildren(type=COMP, tags=['tmod'])
+
+	@property
+	def _GlobalChain(self):
 		g = getattr(op, 'Global')
 		if not g:
 			raise Exception('Global chain not found!')
@@ -32,18 +37,4 @@ class ShellApp(base.Extension):
 
 	@property
 	def OutputSource(self):
-		return self.GlobalChain.par.Source
-
-	@OutputSource.setter
-	def OutputSource(self, val):
-		self.GlobalChain.par.Source = val
-
-	def ResetOutputSource(self):
-		p = self.OutputSource
-		p.val = p.default
-
-	def ToggleOutputSource(self, source):
-		if source is None or self.OutputSource == source:
-			self.ResetOutputSource()
-		else:
-			self.OutputSource = source
+		return self._GlobalChain.par.Source
