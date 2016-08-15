@@ -24,6 +24,10 @@ class ShellApp(base.Extension):
 	def __init__(self, comp):
 		self.comp = comp
 
+	def Setup(self):
+		page = self.comp.appendCustomPage('App')
+		util.setattrs(page.appendCHOP('Ctrlinvals', label='Control In Vals'), default='./ctrlin_vals')
+
 	@property
 	def AllModules(self):
 		return self.comp.findChildren(type=COMP, tags=['tmod'])
