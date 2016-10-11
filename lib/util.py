@@ -25,7 +25,13 @@ import datetime
 # logger = logging.getLogger('tdapp')
 # logger.setLevel(logging.INFO)
 
-from numpy import interp
+def _interp(x, inrange, outrange):
+	return ((outrange[1]-outrange[0])*(x-inrange[0])/(inrange[1]-inrange[0])) + outrange[0]
+
+try:
+  from numpy import interp
+except ImportError:
+  interp = _interp
 
 # class Logger:
 # 	def __init__(self, comp):

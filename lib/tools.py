@@ -1,4 +1,3 @@
-from numpy import interp
 import json
 if False:
 	from _stubs import *
@@ -8,6 +7,7 @@ except ImportError:
 	import base
 
 util = base.util
+interp = util.interp
 
 print('common tools.py initializing')
 
