@@ -1,6 +1,9 @@
 import json
 if False:
-	from _stubs import *
+	try:
+		from _stubs import *
+	except ImportError:
+		from common.lib._stubs import *
 try:
 	import common_base as base
 except ImportError:
@@ -21,6 +24,14 @@ def GetActiveEditor():
 
 def _getTargetPane():
 	return GetActiveEditor()
+
+def OpenNetworkOf(path):
+	pane = _getTargetPane()
+	if not pane:
+		return
+	target = op(path)
+	newpane = ui.panes.createFloating(type=PaneType.NETWORKEDITOR)
+	newpane.owner = target
 
 def NavigateTo(path):
 	pane = _getTargetPane()
@@ -360,20 +371,15 @@ class ToolsExt(base.Extension):
 		else:
 			raise Exception('tools.OnLaunchCellClick - unrecognized launch mode: %r' % (mode,))
 
-	def OnNavigatorButtonClick(self, button):
-		specs = self.comp.op('nav_specs')
-		i = button.digits
-		path = specs[i, 'path'].val
-		if not op(path):
-			raise Exception('tools.OnNavigatorButtonClick - path not found: %r' % (path,))
-		NavigateTo(path)
-
-	def OnNavigatorCellClick(self, i):
+	def OnNavigatorCellClick(self, i, mode):
 		specs = self.comp.op('nav_specs')
 		path = specs[i, 'path'].val
 		if not op(path):
 			raise Exception('tools.OnNavigatorCellClick - path not found: %r' % (path,))
-		NavigateTo(path)
+		if mode == 'nav':
+			NavigateTo(path)
+		elif mode == 'opennet':
+			OpenNetworkOf(path)
 
 def _FillTableFromJson(table, jsonstr, cols, defaults):
 	table.clear()
