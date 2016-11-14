@@ -31,6 +31,11 @@ class NodeSelectorPopup(base.Extension):
 		# self._List = comp.op('./data_node_list')
 		# self._ListSettings = comp.op('./list_settings')
 
+	def Initialize(self, targetop, targetpar, nodetype='video'):
+		self.comp.par.Targetop = targetop
+		self.comp.par.Targetpar = targetpar
+		self.comp.par.Nodetype = nodetype
+
 	@property
 	def _Nodes(self):
 		return self.comp.op('./data_nodes')
@@ -177,3 +182,22 @@ class NodeSelectorPopup(base.Extension):
 				highlight=isselected,
 				rollover=isrollover)
 			attribs.fontBold = isselected
+
+class NodeBank(base.Extension):
+	def __init__(self, comp):
+		super().__init__(comp)
+
+	@property
+	def _Popup(self):
+		if False:
+			# trick pycharm
+			return NodeSelectorPopup(None)
+		return self.comp.op('./selector_popup')
+
+	@property
+	def _PopupWindow(self):
+		return self.comp.op('./selector_popup_window')
+
+	def ShowPopup(self, targetop, targetpar, nodetype='video'):
+		self._Popup.Initialize(targetop, targetpar, nodetype=nodetype)
+		self._PopupWindow.par.winopen.pulse()
