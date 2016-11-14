@@ -44,7 +44,7 @@ class MenuTableBuilder(base.Extension):
 		if fmt == 'gal':
 			dat.appendRow(['name', 'short', 'token', 'icon', 'command'])
 			for name, label in items:
-				dat.appendRow([name, label.replace(' ', ''), name, '', ''])
+				dat.appendRow([label, label.replace(' ', ''), name, '', ''])
 				pass
 		elif fmt == 'raw':
 			for item in items:
