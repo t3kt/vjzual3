@@ -25,3 +25,9 @@ class PopupMenu(base.Extension):
 				item.get('action', ''),
 				item.get('help', ''),
 			])
+
+	def ExecuteAction(self, actioncode):
+		if not actioncode:
+			return
+		targetop = self.comp.par.Targetop.eval()
+		exec(actioncode, None, {'targetop': targetop})
