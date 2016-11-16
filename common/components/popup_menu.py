@@ -62,7 +62,7 @@ class PopupMenu(base.Extension):
 		if not self.comp.par.Useautowidth:
 			return self.comp.par.Width.eval()
 		itemlen = self._MaxMenuItemLength
-		w = itemlen * self.comp.par.Widthperchar
+		w = itemlen * self.comp.par.Widthperchar * self.comp.par.Cols
 		maxw = self.comp.par.Maxwidth.eval()
 		if maxw > 0:
 			return min(w, maxw)
