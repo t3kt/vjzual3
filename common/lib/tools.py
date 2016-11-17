@@ -187,6 +187,15 @@ def RemoveTags(tags):
 		else:
 			o.tags.clear()
 
+def WipeAndReclone():
+	selected = _getSelected()
+	for o in selected:
+		if o.par.clone.eval():
+			print('wiping and recloning ' + o.path)
+			for x in o.ops('./*'):
+				x.destroy()
+			o.par.enablecloningpulse.pulse()
+
 def _getMiddle(vals):
 	low, high = min(vals), max(vals)
 	return low + (high - low) / 2
@@ -311,6 +320,8 @@ class ToolsExt(base.Extension):
 			SaveToxSelectedOrContext()
 		elif cmd == 'Savetoxancestors':
 			SaveToxSelectedOrContext(ancestors=True)
+		elif cmd == 'Wipeandreclone':
+			WipeAndReclone()
 		else:
 			raise Exception('unrecognized action: ' + cmd)
 
