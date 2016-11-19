@@ -167,6 +167,14 @@ def ParseStringList(val):
 def ToJson(val):
 	return json.dumps(val)
 
+def FromJson(val, defaultVal=None):
+	if val is None or val == '':
+		return defaultVal
+	try:
+		return json.loads(val)
+	except ValueError or TypeError:
+		return defaultVal
+
 def IsTupleOrList(val):
 	return isinstance(val, (tuple, list))
 
