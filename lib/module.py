@@ -3,11 +3,17 @@ print('shell/module.py initializing')
 try:
 	import common_base as base
 except ImportError:
-	import base
+	try:
+		import base
+	except ImportError:
+		import common.lib.base
 try:
 	import common_util as util
 except ImportError:
-	import util
+	try:
+		import util
+	except ImportError:
+		import common.lib.util
 try:
 	import shell_mapping as mapping
 except ImportError:
@@ -232,3 +238,60 @@ def _GetGlobalSourcePar():
 
 def _GetOtherModules(exceptPath):
 	return [m for m in op.App.AllModules if m.path != exceptPath]
+
+
+class SubModules(base.Extension):
+	def __init__(self, comp):
+		super().__init__(comp)
+
+	@property
+	def _ModuleSlotCount(self):
+		return 8
+
+	def BuildModuleTable(self, dat):
+		dat.clear()
+		dat.appendRow(['name', 'label', 'master'])
+		for i in range(1, self._ModuleSlotCount + 1):
+			spec = self._ParseModuleSpec(i)
+			if spec:
+				dat.appendRow([spec['name'], spec['label'], spec['master']])
+
+	def _GetSpecPar(self, i):
+		return getattr(self.comp.par, 'Modspec%d' % i)
+
+	def _ParseModuleSpec(self, i):
+		specjson = self._GetSpecPar(i).eval()
+		spec = util.FromJson(specjson)
+		if not spec or not spec.get('name') or not spec.get('master'):
+			return None
+		if not spec.get('label'):
+			spec['label'] = spec['name']
+		return spec
+
+	@property
+	def _HostOP(self):
+		return self.comp.par.Hostop.eval() or self.comp
+
+	def OnReplicate(self, allOps, template):
+		self._LogBegin('OnReplicate()')
+		try:
+			for i, submod in enumerate(allOps):
+				masterpath = template[i + 1, 'master']
+				master = op(masterpath)
+				self._LogEvent('OnReplicate() - i: %d submod: %s master path: %r master: %r' % (i+1, submod.path, masterpath, master))
+				submod.par.clone = master.path
+				submod.par.enablecloningpulse.pulse()
+				submod.par.extension1 = master.par.extension1
+				submod.par.promoteextension1 = True
+				submod.initializeExtensions()
+				mname = template[i + 1, 'name'].val
+				submod.par.Modname.val = mname
+				submod.par.Uilabel.val = mname # TODO: fix this
+		finally:
+			self._LogEnd()
+
+	def _GetModule(self, i):
+		pass
+
+	def _LoadModuleSpec(self, spec, i):
+		pass
