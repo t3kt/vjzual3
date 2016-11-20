@@ -243,18 +243,27 @@ def _GetOtherModules(exceptPath):
 class SubModules(base.Extension):
 	def __init__(self, comp):
 		super().__init__(comp)
-
-	@property
-	def _ModuleSlotCount(self):
-		return 8
+		self._opNamePrefix = "mod__"
+		self._slotCount = 8
 
 	def BuildModuleTable(self, dat):
 		dat.clear()
-		dat.appendRow(['name', 'label', 'master'])
-		for i in range(1, self._ModuleSlotCount + 1):
+		dat.appendRow(['name', 'label', 'master', 'oppath'])
+		for i in range(1, self._slotCount + 1):
 			spec = self._ParseModuleSpec(i)
 			if spec:
-				dat.appendRow([spec['name'], spec['label'], spec['master']])
+				modname = spec['name']
+				dat.appendRow([modname, spec['label'], spec['master'], self._GetSubModPath(i)])
+
+	def _GetSubModPath(self, modname):
+		return '%s/%s%s' % (self.comp.path, self._opNamePrefix, modname)
+
+	def _GetSubModule(self, modname):
+		return self.comp.op(self._GetSubModPath(modname))
+
+	@property
+	def _ModuleTable(self):
+		return self.comp.op('./module_table')
 
 	def _GetSpecPar(self, i):
 		return getattr(self.comp.par, 'Modspec%d' % i)
@@ -268,30 +277,111 @@ class SubModules(base.Extension):
 			spec['label'] = spec['name']
 		return spec
 
-	@property
-	def _HostOP(self):
-		return self.comp.par.Hostop.eval() or self.comp
+	# @property
+	# def _HostOP(self):
+	# 	return self.comp.par.Hostop.eval()
 
-	def OnReplicate(self, allOps, template):
-		self._LogBegin('OnReplicate()')
+	def _CreateModule(self, modname, label, masterpath):
+		self._LogBegin('_CreateModule(name: %r, label: %r, master: %r' % (modname, label, masterpath))
 		try:
-			for i, submod in enumerate(allOps):
-				masterpath = template[i + 1, 'master']
-				master = op(masterpath)
-				self._LogEvent('OnReplicate() - i: %d submod: %s master path: %r master: %r' % (i+1, submod.path, masterpath, master))
-				submod.par.clone = master.path
-				submod.par.enablecloningpulse.pulse()
-				submod.par.extension1 = master.par.extension1
-				submod.par.promoteextension1 = True
-				submod.initializeExtensions()
-				mname = template[i + 1, 'name'].val
-				submod.par.Modname.val = mname
-				submod.par.Uilabel.val = mname # TODO: fix this
+			master = self.comp.op(masterpath)
+			if not master:
+				raise Exception('No master for module %r' % modname)
+			opname = self._opNamePrefix + modname
+			submod = self.comp.create(type(master), opname)
+			submod.par.clone = master.path
+			submod.par.enablecloningpulse.pulse()
+			submod.par.extension1 = master.par.extension1
+			submod.par.promoteextension1 = True
+			submod.initializeExtensions()
+			submod.python = False
+			submod.par.Modname.val = "`pars('../Modnameprefix')`/" + modname
+			submod.par.Uilabel.val = "`pars('../Uilabelprefix')`/" + label
+			return submod
 		finally:
 			self._LogEnd()
 
-	def _GetModule(self, i):
-		pass
+	def _ClearModules(self):
+		self._LogBegin('_ClearModules()')
+		try:
+			for submod in self.comp.findChildren(depth=1, tags=['tmod']):
+				self._LogEvent('_ClearModules() - destroying %r' % submod)
+				submod.destroy()
+		finally:
+			self._LogEnd()
 
-	def _LoadModuleSpec(self, spec, i):
-		pass
+	def _CreateModules(self):
+		self._LogBegin('_CreateModules()')
+		try:
+			modules = self._ModuleTable
+			for i in range(1, modules.numRows):
+				self._CreateModule(
+					modname=modules[i, 'name'].val,
+					label=modules[i, 'label'].val,
+					masterpath=modules[i, 'master'].val
+				)
+		finally:
+			self._LogEnd()
+
+	@property
+	def _ModulesInOrder(self):
+		orderjson = self.comp.par.Modorder.eval()
+		orderedkeys = util.FromJson(orderjson, [])
+		moduletbl = self._ModuleTable
+		othernames = [c.val for c in self._ModuleTable.col('name')[1:]]
+		for key in orderedkeys:
+			namecell = moduletbl[key, 'name']
+			if not namecell:
+				continue
+			mpath = moduletbl[namecell.row, 'oppath']
+			m = self.comp.op(mpath)
+			if m:
+				yield m
+				othernames.remove(namecell.val)
+		for mname in othernames:
+			mpath = moduletbl[mname, 'oppath']
+			m = self.comp.op(mpath)
+			if m:
+				yield m
+
+	@property
+	def _DryVideo(self):
+		return self.comp.op('./dry_video')
+
+	@staticmethod
+	def _GetFirstVideoInConnector(submod):
+		for conn in submod.inputConnectors:
+			if conn.inOP and conn.inOP.isTOP:
+				return conn
+
+	@staticmethod
+	def _GetFirstVideoOutConnector(submod):
+		for conn in submod.outputConnectors:
+			if conn.outOP and conn.outOP.isTOP:
+				return conn
+
+	def _ConnectModules(self):
+		self._LogBegin('_ConnectModules()')
+		try:
+			modules = list(self._ModulesInOrder)
+			previousvideo = self._DryVideo
+			prevout = previousvideo.outputConnectors[0] if previousvideo else None
+			for submod in modules:
+				submodin = self._GetFirstVideoInConnector(submod)
+				submodout = self._GetFirstVideoOutConnector(submod)
+				if submodin:
+					submodin.disconnect()
+					if prevout:
+						submodin.conect(prevout)
+				prevout = submodout # redundant: or None
+		finally:
+			self._LogEnd()
+
+	def RebuildModules(self):
+		self._LogBegin('RebuildModules()')
+		try:
+			self._ClearModules()
+			self._CreateModules()
+			self._ConnectModules()
+		finally:
+			self._LogEnd()
