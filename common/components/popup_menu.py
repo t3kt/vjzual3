@@ -91,7 +91,7 @@ class PopupMenu(base.Extension):
 		self.comp.par.Widthperchar.enable = useauto
 		src = self.comp.par.Menuitemsource.eval()
 		self.comp.par.Menuitemsjson.enable = src == 'json'
-		self.comp.par.Menuitemsdat.enale = src == 'dat'
+		self.comp.par.Menuitemsdat.enable = src == 'dat'
 		self.comp.par.Targetpar.enable = self.comp.par.Maptopar
 
 	def ExecuteAction(self, actioncode):
