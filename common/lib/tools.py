@@ -94,6 +94,7 @@ def _saveTox(comp):
 		return False
 	comp.save(toxfile)
 	ui.status = 'Saved TOX %s to %s' % (comp.path, toxfile)
+	print('Saved TOX %s to %s' % (comp.path, toxfile))
 	return True
 
 def SaveToxSelectedOrContext(ancestors=False):
@@ -292,30 +293,16 @@ class ToolsExt(base.Extension):
 
 	def PerformAction(self, cmd):
 		self._LogEvent('PerformAction(%r)' % cmd)
-		if cmd.startswith('Align'):
-			Align(cmd.replace('Align', ''))
-		elif cmd.startswith('Orderby'):
+		if cmd.startswith('Orderby'):
 			SetAlignOrderBy(cmd.replace('Orderby', ''))
-		elif cmd.startswith('Distribute'):
-			Distribute(cmd.replace('Distribute', ''))
 		elif cmd.startswith('Sort'):
 			SortByName(cmd.replace('Sort', ''))
-		elif cmd == 'Initselected':
-			InitSelectedOrContext()
-		elif cmd == 'Reloadcode':
-			patterns = self.comp.par.Codeops.eval().split(' ')
-			ReloadDATs(ops(*patterns))
-		elif cmd == 'Reloadconfig':
-			patterns = self.comp.par.Configops.eval().split(' ')
-			ReloadDATs(ops(*patterns))
 		elif cmd == 'Deletepars':
 			DestroyPars(self.comp.par.Parstodelete.eval().split(' '))
 		elif cmd == 'Addtags':
 			AddTags(self.comp.par.Tagstomodify.eval().split(' '))
 		elif cmd == 'Removetags':
 			RemoveTags(self.comp.par.Tagstomodify.eval().split(' '))
-		elif cmd == 'Copypaths':
-			CopySelectedPaths()
 		elif cmd == 'Savetox':
 			SaveToxSelectedOrContext()
 		elif cmd == 'Savetoxancestors':
@@ -324,6 +311,14 @@ class ToolsExt(base.Extension):
 			WipeAndReclone()
 		else:
 			raise Exception('unrecognized action: ' + cmd)
+
+	def ReloadCode(self):
+		patterns = self.comp.par.Codeops.eval().split(' ')
+		ReloadDATs(ops(*patterns))
+
+	def ReloadConfig(self):
+		patterns = self.comp.par.Configops.eval().split(' ')
+		ReloadDATs(ops(*patterns))
 
 	def LoadLauncherSpecs(self, table):
 		jsonstr = self.comp.par.Launcherspecjson.eval()
