@@ -17,10 +17,26 @@ class PopupMenu(base.Extension):
 	def BuildMenuItems(self, dat):
 		dat.clear()
 		dat.appendRow(['text', 'action', 'help'])
-		if self.comp.par.Usepar:
+		src = self.comp.par.Menuitemsource.eval()
+		if src == 'dat':
+			self._AddDatMenuItems(dat)
+		elif src == 'par':
 			self._AddParMenuItems(dat)
 		else:
 			self._AddJsonMenuItems(dat)
+
+	def _AddDatMenuItems(self, dat):
+		srcdat = self.comp.par.Menuitemsdat.eval()
+		if not srcdat:
+			return
+		for c in srcdat.row(0):
+			if dat[0, c] is None:
+				dat.appendCol([c])
+		cols = [c.val for c in dat.row(0)]
+		for i in range(1, srcdat.numRows):
+			dat.appendRow([])
+			for c in cols:
+				dat[i, c] = srcdat[i, c]
 
 	def _AddJsonMenuItems(self, dat):
 		itemsjson = self.comp.par.Menuitemsjson.eval()
@@ -73,8 +89,10 @@ class PopupMenu(base.Extension):
 		self.comp.par.Width.enable = not useauto
 		self.comp.par.Maxwidth.enable = useauto
 		self.comp.par.Widthperchar.enable = useauto
-
-		self.comp.par.Targetpar.enable = self.comp.par.Usepar
+		src = self.comp.par.Menuitemsource.eval()
+		self.comp.par.Menuitemsjson.enable = src == 'json'
+		self.comp.par.Menuitemsdat.enale = src == 'dat'
+		self.comp.par.Targetpar.enable = self.comp.par.Maptopar
 
 	def ExecuteAction(self, actioncode):
 		if not actioncode:
