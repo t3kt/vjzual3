@@ -291,27 +291,6 @@ class ToolsExt(base.Extension):
 	def __init__(self, comp):
 		super().__init__(comp)
 
-	def PerformAction(self, cmd):
-		self._LogEvent('PerformAction(%r)' % cmd)
-		if cmd.startswith('Orderby'):
-			SetAlignOrderBy(cmd.replace('Orderby', ''))
-		elif cmd.startswith('Sort'):
-			SortByName(cmd.replace('Sort', ''))
-		elif cmd == 'Deletepars':
-			DestroyPars(self.comp.par.Parstodelete.eval().split(' '))
-		elif cmd == 'Addtags':
-			AddTags(self.comp.par.Tagstomodify.eval().split(' '))
-		elif cmd == 'Removetags':
-			RemoveTags(self.comp.par.Tagstomodify.eval().split(' '))
-		elif cmd == 'Savetox':
-			SaveToxSelectedOrContext()
-		elif cmd == 'Savetoxancestors':
-			SaveToxSelectedOrContext(ancestors=True)
-		elif cmd == 'Wipeandreclone':
-			WipeAndReclone()
-		else:
-			raise Exception('unrecognized action: ' + cmd)
-
 	def ReloadCode(self):
 		patterns = self.comp.par.Codeops.eval().split(' ')
 		ReloadDATs(ops(*patterns))
