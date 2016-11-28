@@ -67,7 +67,7 @@ class WebsocketServer(base.Extension):
 		self._Peers = peers
 
 	def HandleRequest(self, message, msgbytes, peer):
-		self._LogEvent('HandleRequest(message: %r, peer: %r' % (message, peer))
+		self._LogEvent('HandleRequest(peer: %r' % peer)
 		if message.startswith('GET '):
 			self._HandleWebRequest(msgbytes, peer)
 		else:
@@ -163,7 +163,7 @@ class WebsocketServer(base.Extension):
 		elif msgType == 'slider1':
 			self.comp.op('./fromWeb').par.value1 = value
 		else:
-			returnMsg = json.dumps({'type': 'usermsg', 'message': payload['message'], 'name': payload['name'], 'color': payload['color']})
+			returnMsg = json.dumps({'type': 'usermsg', 'message': payload['message'], 'name': payload['name']})
 			packedMsg = _Encode(returnMsg.encode('utf-8'))
 			packedMsg = b''.join(packedMsg)
 			for peer in self._Peers.values():
