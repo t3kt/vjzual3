@@ -121,21 +121,6 @@ class ModuleSpec:
 	def ToJson(self):
 		return _SpecJsonEncoder().encode(self)
 
-def zzzzzzzSpecFromModule(
-	moduleop, key, label=None, moduletype=None, tags=None, children=None,
-	pagefilter=None, tupletfilter=None):
-	return ParamSpec(
-		key,
-		label=label,
-		ptype=ParamType.module,
-		moduletype=moduletype,
-		tags=tags,
-		params=SpecsFromParPages(
-			moduleop.customPages,
-			pagefilter=pagefilter,
-			tupletfilter=tupletfilter),
-		children=children)
-
 class AppSchema:
 	def __init__(self, key, label=None, description=None, children=None):
 		self.key = key
