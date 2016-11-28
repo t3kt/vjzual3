@@ -92,6 +92,12 @@ class WebsocketServer(base.Extension):
 			packedMsg = b''.join(packedMsg)
 			peer.sendBytes(sendHeader)
 			peer.sendBytes(packedMsg)
+		elif path == '/AppSchema.json':
+			sendHeader = self._GetHeader(hType='default', recHeader=headers, contentType='application/json')
+			schema = op.App.GetSchema().ToJson()
+			peer.sendBytes(sendHeader)
+			peer.sendBytes(schema)
+			self._ClosePeerNextFrame(peer)
 		else:
 			# TODO: deal with this better?
 			self._ServeWebFile(path, peer, headers)

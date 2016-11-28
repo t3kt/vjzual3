@@ -160,10 +160,12 @@ class Module(base.Extension):
 			if p.name == 'Module':
 				return False
 			return not pagenames or p.name in pagenames
+		master = self.comp.par.clone.eval()
+		mtype = master.path if master else None
 		return schema.ModuleSpec(
 			key=self.comp.par.Modname.eval(),
 			label=self.comp.par.Uilabel.eval(),
-			moduletype=self.comp.par.clone.eval(),
+			moduletype=mtype,
 			tags=self._SchemaTags or None,
 			params=schema.SpecsFromParPages(
 				self.comp.customPages,

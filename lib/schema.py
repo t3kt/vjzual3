@@ -25,6 +25,9 @@ class ParamOption:
 	def _JsonDict(self):
 		return {'key': self.key, 'label': self.label}
 
+	def ToJson(self):
+		return json.dumps(self._JsonDict)
+
 class ParamSpec:
 	def __init__(self,
 	             key,
@@ -84,7 +87,7 @@ class ParamSpec:
 		return 'ParamSpec(%r)' % self._JsonDict
 
 	def ToJson(self):
-		return _SpecJsonEncoder().encode(self)
+		return json.dumps(self._JsonDict)
 
 class ModuleSpec:
 	def __init__(self,
@@ -119,7 +122,7 @@ class ModuleSpec:
 		return 'ModuleSpec(%r)' % self._JsonDict
 
 	def ToJson(self):
-		return _SpecJsonEncoder().encode(self)
+		return json.dumps(self._JsonDict)
 
 class AppSchema:
 	def __init__(self, key, label=None, description=None, children=None):
@@ -141,7 +144,7 @@ class AppSchema:
 		return 'AppSchema(%r)' % self._JsonDict
 
 	def ToJson(self):
-		return _SpecJsonEncoder().encode(self)
+		return json.dumps(self._JsonDict)
 
 def _CleanDict(d):
 		for k in list(d.keys()):
@@ -239,9 +242,3 @@ def _FilterParTuplets(tuplets, tupletfilter):
 		return filter(lambda t: t[0].name == tupletfilter, tuplets)
 	else:
 		return filter(lambda t: t[0].name in tupletfilter, tuplets)
-
-class _SpecJsonEncoder(json.JSONEncoder):
-	def default(self, o):
-		if hasattr(o, '_JsonDict'):
-			o = o._JsonDict
-		return super().default(o)
