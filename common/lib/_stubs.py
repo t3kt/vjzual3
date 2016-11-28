@@ -43,3 +43,6 @@ del _Expando
 
 class Par:
 	pass
+
+class COMP:
+	pass
