@@ -6,18 +6,22 @@ except ImportError:
 	try:
 		import base
 	except ImportError:
-		import common.lib.base
+		import common.lib.base as base
 try:
 	import common_util as util
 except ImportError:
 	try:
 		import util
 	except ImportError:
-		import common.lib.util
+		import common.lib.util as util
 try:
 	import shell_mapping as mapping
 except ImportError:
 	import mapping
+try:
+	import shell_schema as schema
+except ImportError:
+	import schema
 
 if False:
 	try:
@@ -93,9 +97,17 @@ class Module(base.Extension):
 		if panel:
 			panel.par.h = util.GetVisibleChildCOMPsHeight(panel)
 
+	@property
+	def _ModParamTupleNames(self):
+		return util.ParseStringList(self.Shell.par.Modparamtuples.eval())
+
+	@property
+	def _ModParamPageNames(self):
+		return util.ParseStringList(self.Shell.par.Modparampages.eval())
+
 	def _GetModParamTuplets(self):
-		tupletnames = util.ParseStringList(self.Shell.par.Modparamtuples.eval())
-		pagenames = util.ParseStringList(self.Shell.par.Modparampages.eval())
+		tupletnames = self._ModParamTupleNames
+		pagenames = self._ModParamPageNames
 		tuplets = []
 		for page in self.comp.customPages:
 			if page.name in pagenames:
@@ -136,6 +148,28 @@ class Module(base.Extension):
 			return
 		self.parAccessor.SetParTupletVals(self.parAccessor.GetCustomPage('Module').parTuplets, state)
 		self.parAccessor.SetParTupletVals(self._GetModParamTuplets(), state.get('params', {}))
+
+	@property
+	def _SchemaTags(self):
+		tags = self.comp.tags - {'tmod'}
+		return list(tags)
+
+	def GetSchema(self):
+		pagenames = self._ModParamPageNames
+		def pagefilter(p):
+			if p.name == 'Module':
+				return False
+			return not pagenames or p.name in pagenames
+		return schema.ModuleSpec(
+			key=self.comp.par.Modname.eval(),
+			label=self.comp.par.Uilabel.eval(),
+			moduletype=self.comp.par.clone.eval(),
+			tags=self._SchemaTags or None,
+			params=schema.SpecsFromParPages(
+				self.comp.customPages,
+				pagefilter=pagefilter,
+				tupletfilter=self._ModParamTupleNames or None),
+			children=[m.GetSchema() for m in self._SubModules])
 
 	def UpdateSolo(self):
 		solo = self.comp.par.Solo.eval()

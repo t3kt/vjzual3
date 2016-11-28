@@ -3,30 +3,43 @@ print('shell/app.py initializing')
 try:
 	import common_base as base
 except ImportError:
-	import base
+	try:
+		import base
+	except ImportError:
+		import common.lib.base as base
 try:
 	import common_util as util
 except ImportError:
-	import util
+	try:
+		import util
+	except ImportError:
+		import common.lib.util as util
 try:
 	import shell_mapping as mapping
 except ImportError:
 	import mapping
+try:
+	import shell_schema as schema
+except ImportError:
+	import schema
 
 if False:
 	try:
 		from _stubs import *
 	except ImportError:
 		from common.lib._stubs import *
-	COMP = object()
 
 class ShellApp(base.Extension):
 	def __init__(self, comp):
-		self.comp = comp
+		super().__init__(comp)
 
 	@property
 	def AllModules(self):
 		return self.comp.findChildren(type=COMP, tags=['tmod'])
+
+	@property
+	def _ChildModules(self):
+		return self.comp.findChildren(type=COMP, tags=['tmod'], depth=1)
 
 	@property
 	def _GlobalChain(self):
@@ -38,3 +51,19 @@ class ShellApp(base.Extension):
 	@property
 	def OutputSource(self):
 		return self._GlobalChain.par.Source
+
+	@property
+	def _Key(self):
+		return self.comp.par.Schemakey.eval() or project.name.replace('\.toe', '')
+
+	@property
+	def _Title(self):
+		return self.comp.par.Title.eval() or self._Key
+
+	def GetSchema(self):
+		self._LogEvent('GetSchema()')
+		return schema.AppSchema(
+			self._Key,
+			label=self._Title,
+			children=[m.GetSchema() for m in self._ChildModules])
+
