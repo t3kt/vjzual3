@@ -46,3 +46,6 @@ class Par:
 
 class COMP:
 	pass
+
+app = _Expando()
+app.name = ''

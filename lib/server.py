@@ -28,6 +28,8 @@ import base64
 import json
 import struct
 import array
+import os.path
+import mimetypes
 
 class WebsocketServer(base.Extension):
 	def __init__(self, comp):
@@ -45,11 +47,6 @@ class WebsocketServer(base.Extension):
 	@_Peers.setter
 	def _Peers(self, peerlist):
 		self.comp.store('peerList', peerlist)
-
-	@property
-	def _WebpageText(self):
-		text = self.comp.op('./webpage').text
-		return text.replace('[[PORT]]', str(self.comp.par.Port.eval()))
 
 	@property
 	def _ClosePeerScript(self):
@@ -87,40 +84,77 @@ class WebsocketServer(base.Extension):
 			keyval = line.split(': ')
 			if len(keyval) == 2:
 				headers[keyval[0]] = keyval[1]
-		if path == '/':
-			sendHeader = self._GetHeader(hType='default')
-			peer.sendBytes(sendHeader)
-			peer.sendBytes(self._WebpageText)
-			self._ClosePeerNextFrame(peer)
-		elif path == '/connect':
+		if path == '/connect':
 			self._AddPeer(peer)
 			sendHeader = self._GetHeader(hType='websocket', recHeader=headers)
-			sendHello = json.dumps({'type': 'system', 'message':'Hello from %s!' % app.product})
+			sendHello = json.dumps({'type': 'system', 'message': 'Hello from %s!' % app.product})
 			packedMsg = _Encode(sendHello.encode('utf-8'))
 			packedMsg = b''.join(packedMsg)
 			peer.sendBytes(sendHeader)
 			peer.sendBytes(packedMsg)
 		else:
 			# TODO: deal with this better?
+			self._ServeWebFile(path, peer, headers)
 			# raise Exception('Unsupported path: %r' % path)
-			sendHeader = self._GetHeader(hType='404')
+			# sendHeader = self._GetHeader(hType='404')
+			# peer.sendBytes(sendHeader)
+			# #peer.close()
+
+	@property
+	def _WebRootDir(self):
+		return self.comp.par.Webfolder.eval() or self.comp.par.Webfolder.default
+
+	def _ServeWebFile(self, path, peer, headers):
+		if path == '/':
+			path = '/index.html'
+		if path.startswith('/'):
+			path = path[1:]
+		if '..' in path:
+			raise Exception('Invalid path')
+		rootdir = self._WebRootDir
+		fullpath = os.path.join(rootdir, path)
+		self._LogEvent('_ServeWebFile(path: %r) - fullpath: %r' % (path, fullpath))
+		if not os.path.isfile(fullpath):
+			peer.sendBytes(self._GetHeader(hType='404'))
+			return
+		mtype = mimetypes.guess_type(path)
+		self._LogEvent('_ServeWebFile(path: %r) - mimetype: %r' % (path, mtype))
+		try:
+			if mtype[0].startswith('text/'):
+				with open(fullpath, 'rt') as f:
+					data = f.read()
+				if '[[PORT]]' in data:
+					data = data.replace('[[PORT]]', str(self.comp.par.Port.eval()))
+			else:
+				with open(fullpath, 'rb') as f:
+					data = f.read()
+			sendHeader = self._GetHeader(hType='default', recHeader=headers, contentType=mtype[0])
 			peer.sendBytes(sendHeader)
-			#peer.close()
+			peer.sendBytes(data)
+			self._ClosePeerNextFrame(peer)
+		except Exception as e:
+			# TODO: error handling
+			raise e
+		pass
 
 	def _HandleMessageRequest(self, msgbytes, peer):
 		fullMsg = _UnpackFrame(msgbytes)
+		if fullMsg['payload'] == b'\x03\xe9':
+			self._RemovePeer(peer)
+			peer.close()
+			return
 		try:
-			# TODO: DON'T USE EVAL!!!!!!!
-			payload = eval(fullMsg['payload'])
+			self._LogEvent('_HandleMessageRequest() payload: %r' % fullMsg['payload'])
+			rawpayload = fullMsg['payload']
+			if isinstance(rawpayload, bytes):
+				rawpayload = rawpayload.decode('utf-8')
+			payload = json.loads(rawpayload)
 			msgType = payload.get('type', None)
 			self._HandleMessage(msgType, payload)
-			pass
 		except Exception as e:
-			if fullMsg['payload'] == b'\x03\xe9':
-				self._RemovePeer(peer)
-				peer.close()
-			else:
-				raise Exception('Error handling request: %r' % e)
+			peer.close()
+			self._RemovePeer(peer)
+			raise Exception('Error handling request: %r' % e)
 
 	def _HandleMessage(self, msgType, payload):
 		value = payload.get('value', 0)
@@ -142,15 +176,16 @@ class WebsocketServer(base.Extension):
 		for peer in self._Peers.values():
 			peer.sendBytes(packedMsg)
 
-	def _GetHeader(self, hType=None, recHeader=None):
+	def _GetHeader(self, hType=None, recHeader=None, contentType=None):
 		if hType == 'default':
-			return b'HTTP/1.x 200 OK\n\rContent-Type: text/html; charset=UTF-8\n\r\n\r'
+			# TODO: deal with charsets for binary stuff
+			return ('HTTP/1.x 200 OK\n\rContent-Type: %s; charset=UTF-8\n\r\n\r' % (contentType or 'text/html')).encode('ascii')
 		elif hType == 'websocket':
 			SecKey = recHeader.get('Sec-WebSocket-Key', None)
 			# TODO: figure out what to do if there isn't a sec key
 			if not SecKey:
 				self._LogEvent('_GetHeader() - no sec key. recHeader: %r' % recHeader)
-				SecKey = ''
+				raise Exception('_GetHeader(): no sec key!')
 			h = hashlib.sha1()
 			h.update(str.encode(SecKey+'258EAFA5-E914-47DA-95CA-C5AB0DC85B11'))
 			responseKey = base64.b64encode(h.digest())
@@ -196,9 +231,9 @@ def _UnpackFrame(data):
 def _Encode(bytesRaw):
 	bytesFormatted = []
 	bytesFormatted.append(struct.pack('B', 129))
-	if (len(bytesRaw) <= 125):
+	if len(bytesRaw) <= 125:
 		bytesFormatted.append(struct.pack('B', len(bytesRaw)))
-	elif len(bytesRaw) >= 126 and len(bytesRaw) <= 65535:
+	elif 126 <= len(bytesRaw) <= 65535:
 		bytesFormatted.append(struct.pack('B', 126))
 		bytesFormatted.append(struct.pack('B', (len(bytesRaw) >> 8) & 255))
 		bytesFormatted.append(struct.pack('B', (len(bytesRaw)) & 255))
