@@ -10,9 +10,6 @@ class ParamType(Enum):
 	string = 4
 	int = 5
 	float = 6
-	ivec = 7
-	fvec = 8
-	bvec = 9
 	menu = 10
 	trigger = 11
 
