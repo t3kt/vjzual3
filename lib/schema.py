@@ -13,7 +13,7 @@ class ParamType(Enum):
 	ivec = 7
 	fvec = 8
 	bvec = 9
-	enum = 10
+	menu = 10
 	trigger = 11
 
 class ParamOption:
@@ -33,7 +33,6 @@ class ParamSpec:
 	             key,
 	             label=None,
 	             ptype=ParamType.unknown,
-	             moduletype=None,
 	             minlimit=None,
 	             maxlimit=None,
 	             minnorm=None,
@@ -43,13 +42,10 @@ class ParamSpec:
 	             style=None,
 	             group=None,
 	             options=None,
-	             tags=None,
-	             children=None,
-	             params=None):
+	             tags=None):
 		self.key = key
 		self.label = label
 		self.ptype = ptype
-		self.moduletype = moduletype
 		self.minlimit = minlimit
 		self.maxlimit = maxlimit
 		self.minnorm = minnorm
@@ -60,27 +56,23 @@ class ParamSpec:
 		self.group = group
 		self.options = options
 		self.tags = tags
-		self.params = params
-		self.children = children
 
 	@property
 	def _JsonDict(self):
 		return _CleanDict({
 			'key': self.key,
 			'label': self.label,
-			'ptype': self.ptype.name,
-			'moduletype': self.moduletype,
-			'minlimit': self.minlimit,
-			'maxlimit': self.maxlimit,
-			'minnorm': self.minnorm,
-			'maxnorm': self.maxnorm,
-			'defaultval': self.defaultval,
+			'type': self.ptype.name,
+			'minLimit': self.minlimit,
+			'maxLimit': self.maxlimit,
+			'minNorm': self.minnorm,
+			'maxNorm': self.maxnorm,
+			'default': self.defaultval,
 			'length': self.length,
 			'style': self.style,
 			'group': self.group,
 			'options': [o._JsonDict for o in self.options] if self.options else None,
 			'tags': self.tags,
-			'children': [c._JsonDict for c in self.children] if self.children else None,
 		})
 
 	def __repr__(self):
@@ -111,7 +103,7 @@ class ModuleSpec:
 		return _CleanDict({
 			'key': self.key,
 			'label': self.label,
-			'moduletype': self.moduletype,
+			'moduleType': self.moduletype,
 			'group': self.group,
 			'tags': self.tags,
 			'params': [c._JsonDict for c in self.params] if self.params else None,
@@ -172,7 +164,7 @@ _parStyleProps = {
 	'Int': _ParStyleProps(ParamType.int, hasrange=True, haslength=True),
 	'Toggle': _ParStyleProps(ParamType.bool),
 	'Pulse': _ParStyleProps(ParamType.trigger),
-	'Menu': _ParStyleProps(ParamType.enum, hasoptions=True),
+	'Menu': _ParStyleProps(ParamType.menu, hasoptions=True),
 	'RGB': _ParStyleProps(ParamType.fvec, hasrange=True, fixedlength=3),
 	'RGBA': _ParStyleProps(ParamType.fvec, hasrange=True, fixedlength=4),
 	'UV': _ParStyleProps(ParamType.fvec, hasrange=True, fixedlength=2),
