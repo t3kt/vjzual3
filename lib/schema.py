@@ -28,25 +28,26 @@ class ParamOption:
 		return json.dumps(self._JsonDict)
 
 class ParamSpec:
-	def __init__(self,
-	             key,
-	             label=None,
-	             ptype=ParamType.other,
-							 othertype=None,
-	             minlimit=None,
-	             maxlimit=None,
-	             minnorm=None,
-	             maxnorm=None,
-	             defaultval=None,
-	             length=None,
-	             style=None,
-	             group=None,
-	             options=None,
-	             tags=None):
+	def __init__(
+			self,
+			key,
+			label=None,
+			ptype=ParamType.other,
+			othertype=None,
+			minlimit=None,
+			maxlimit=None,
+			minnorm=None,
+			maxnorm=None,
+			defaultval=None,
+			length=None,
+			style=None,
+			group=None,
+			options=None,
+			tags=None):
 		self.key = key
 		self.label = label
 		self.ptype = ptype
-		self.othertype = othertype;
+		self.othertype = othertype
 		self.minlimit = minlimit
 		self.maxlimit = maxlimit
 		self.minnorm = minnorm
@@ -84,14 +85,15 @@ class ParamSpec:
 		return json.dumps(self._JsonDict)
 
 class ModuleSpec:
-	def __init__(self,
-	             key,
-	             label=None,
-	             moduletype=None,
-	             group=None,
-	             tags=None,
-	             params=None,
-	             children=None):
+	def __init__(
+			self,
+			key,
+			label=None,
+			moduletype=None,
+			group=None,
+			tags=None,
+			params=None,
+			children=None):
 		self.key = key
 		self.label = label
 		self.moduletype = moduletype
@@ -146,34 +148,94 @@ def _CleanDict(d):
 				del d[k]
 		return d
 
-class _ParStyleProps:
-	def __init__(self,
-	             ptype,
-	             hasrange=False,
-	             haslength=False,
-	             fixedlength=None,
-	             hasoptions=False):
-		self.ptype = ptype
-		self.hasrange = hasrange
-		self.haslength = haslength or fixedlength is not None
-		self.fixedlength = fixedlength
-		self.hasoptions = hasoptions
+class _ParStyleHandler:
+	def SpecFromTuplet(self, tuplet): pass
 
-_parStyleProps = {
-	'Str': _ParStyleProps(ParamType.string),
-	'StrMenu': _ParStyleProps(ParamType.string, hasoptions=True),
-	'Float': _ParStyleProps(ParamType.float, hasrange=True, haslength=True),
-	'Int': _ParStyleProps(ParamType.int, hasrange=True, haslength=True),
-	'Toggle': _ParStyleProps(ParamType.bool),
-	'Pulse': _ParStyleProps(ParamType.trigger),
-	'Menu': _ParStyleProps(ParamType.menu, hasoptions=True),
-	'RGB': _ParStyleProps(ParamType.fvec, hasrange=True, fixedlength=3),
-	'RGBA': _ParStyleProps(ParamType.fvec, hasrange=True, fixedlength=4),
-	'UV': _ParStyleProps(ParamType.fvec, hasrange=True, fixedlength=2),
-	'UVW': _ParStyleProps(ParamType.fvec, hasrange=True, fixedlength=3),
-	'XY': _ParStyleProps(ParamType.fvec, hasrange=True, fixedlength=2),
-	'XYZ': _ParStyleProps(ParamType.fvec, hasrange=True, fixedlength=3),
-}
+class _SimpleHandler(_ParStyleHandler):
+	def __init__(self, ptype, hasoptions=False, hasdefault=True):
+		self.ptype = ptype
+		self.hasoptions = hasoptions
+		self.hasdefault = hasdefault
+
+	def SpecFromTuplet(self, tuplet):
+		par = tuplet[0]
+		return ParamSpec(
+			par.name,
+			label=par.label,
+			ptype=self.ptype,
+			style=par.style,
+			group=par.page.name,
+			defaultval=par.default if self.hasdefault else None,
+			options=_OptionsFromPar(par) if self.hasoptions else None)
+
+class _VectorHandler(_ParStyleHandler):
+	def __init__(self, ptype):
+		self.ptype = ptype
+
+	def SpecFromTuplet(self, tuplet):
+		attrs = [_NumberAttributesFromPar(p) for p in tuplet]
+		return ParamSpec(
+			tuplet[0].name,
+			ptype=self.ptype,
+			style=tuplet[0].style,
+			group=tuplet[0].page.name,
+			length=len(tuplet),
+			minlimit=[a['minlimit'] for a in attrs],
+			maxlimit=[a['maxlimit'] for a in attrs],
+			minnorm=[a['minnorm'] for a in attrs],
+			maxnorm=[a['maxnorm'] for a in attrs],
+			defaultval=[a['default'] for a in attrs])
+
+class _VariableLengthHandler(_ParStyleHandler):
+	def __init__(self, singletype, multitype):
+		self.singletype = singletype
+		self.vechandler = _VectorHandler(multitype)
+
+	def SpecFromTuplet(self, tuplet):
+		if len(tuplet) > 1:
+			return self.vechandler.SpecFromTuplet(tuplet)
+		par = tuplet[0]
+		attrs = _NumberAttributesFromPar(par)
+		return ParamSpec(
+			par.name,
+			label=par.label,
+			style=par.style,
+			group=par.page.name,
+			minlimit=attrs['minlimit'],
+			maxlimit=attrs['maxlimit'],
+			minnorm=attrs['minnorm'],
+			maxnorm=attrs['maxnorm'],
+			defaultval=attrs['default'])
+
+_parStyleHandlers = {}
+_parStyleHandlers['Pulse']= _SimpleHandler(ParamType.trigger, hasdefault=False)
+_parStyleHandlers['Toggle'] = _SimpleHandler(ParamType.bool)
+_parStyleHandlers['Str'] = _SimpleHandler(ParamType.string)
+_parStyleHandlers['StrMenu'] = _SimpleHandler(ParamType.string, hasoptions=True)
+_parStyleHandlers['Menu'] = _SimpleHandler(ParamType.menu, hasoptions=True)
+_parStyleHandlers['RGB'] = _VectorHandler(ParamType.fvec)
+_parStyleHandlers['RGBA'] = _VectorHandler(ParamType.fvec)
+_parStyleHandlers['UV'] = _VectorHandler(ParamType.fvec)
+_parStyleHandlers['UVW'] = _VectorHandler(ParamType.fvec)
+_parStyleHandlers['XY'] = _VectorHandler(ParamType.fvec)
+_parStyleHandlers['XYZ'] = _VectorHandler(ParamType.fvec)
+_parStyleHandlers['Int'] = _VariableLengthHandler(singletype=ParamType.int, multitype=ParamType.ivec)
+_parStyleHandlers['Float'] = _VariableLengthHandler(singletype=ParamType.float, multitype=ParamType.fvec)
+
+def _NumberAttributesFromPar(par):
+	return {
+		'default': par.default,
+		'minlimit': par.min if par.clampMin else None,
+		'maxlimit': par.max if par.clampMax else None,
+		'minnorm': par.normMin,
+		'maxnorm': par.normMax,
+	}
+
+def _OptionsFromPar(par):
+	options = []
+	for name, label in zip(par.menuNames, par.menuLabels):
+		options.append(ParamOption(key=name, label=label))
+	return options
 
 def _GetTupletAttrs(tuplet, attrname):
 	if len(tuplet) == 1:
@@ -182,31 +244,15 @@ def _GetTupletAttrs(tuplet, attrname):
 
 def _SpecFromParTuplet(tuplet):
 	style = tuplet[0].style
-	if style not in _parStyleProps:
-		return ParamSpec(tuplet[0].tupletName,
-		                 label=tuplet[0].label,
-		                 ptype=ParamType.other,
-		                 style=style,
-		                 group=tuplet[0].page.name)
-	styleProps = _parStyleProps[style]
-	options = None
-	if styleProps.hasoptions:
-		options = []
-		for name, label in zip(tuplet[0].menuNames, tuplet[0].menuLabels):
-			options.append(ParamOption(key=name, label=label))
-	return ParamSpec(
-		tuplet[0].tupletName,
-		label=tuplet[0].label,
-		ptype=styleProps.ptype,
-		minlimit=_GetTupletAttrs(tuplet, 'min') if styleProps.hasrange and tuplet[0].clampMin else None,
-		maxlimit=_GetTupletAttrs(tuplet, 'max') if styleProps.hasrange and tuplet[0].clampMax else None,
-		minnorm=_GetTupletAttrs(tuplet, 'normMin') if styleProps.hasrange else None,
-		maxnorm=_GetTupletAttrs(tuplet, 'normMax') if styleProps.hasrange else None,
-		defaultval=_GetTupletAttrs(tuplet, 'default'),
-		length=len(tuplet),
-		style=style,
-		group=tuplet[0].page.name,
-		options=options)
+	if style not in _parStyleHandlers:
+		return ParamSpec(
+			tuplet[0].tupletName,
+			label=tuplet[0].label,
+			ptype=ParamType.other,
+			style=style,
+			group=tuplet[0].page.name)
+	handler = _parStyleHandlers[style]
+	return handler.SpecFromTuplet(tuplet)
 
 def _SpecsFromParTuplets(tuplets, tupletfilter=None):
 	return [_SpecFromParTuplet(t) for t in _FilterParTuplets(tuplets, tupletfilter)]
