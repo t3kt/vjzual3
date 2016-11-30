@@ -4,7 +4,6 @@ from enum import Enum
 import json
 
 class ParamType(Enum):
-	unknown = 0
 	other = 1
 	bool = 3
 	string = 4
@@ -29,7 +28,8 @@ class ParamSpec:
 	def __init__(self,
 	             key,
 	             label=None,
-	             ptype=ParamType.unknown,
+	             ptype=ParamType.other,
+							 othertype=None,
 	             minlimit=None,
 	             maxlimit=None,
 	             minnorm=None,
@@ -43,6 +43,7 @@ class ParamSpec:
 		self.key = key
 		self.label = label
 		self.ptype = ptype
+		self.othertype = othertype;
 		self.minlimit = minlimit
 		self.maxlimit = maxlimit
 		self.minnorm = minnorm
@@ -60,6 +61,7 @@ class ParamSpec:
 			'key': self.key,
 			'label': self.label,
 			'type': self.ptype.name,
+			'othertype': self.othertype,
 			'minLimit': self.minlimit,
 			'maxLimit': self.maxlimit,
 			'minNorm': self.minnorm,
