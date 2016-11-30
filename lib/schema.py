@@ -11,7 +11,6 @@ class ParamType(Enum):
 	float = 6
 	ivec = 7
 	fvec = 8
-	bvec = 9
 	menu = 10
 	trigger = 11
 
