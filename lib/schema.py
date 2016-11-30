@@ -162,12 +162,12 @@ _parStyleProps = {
 	'Toggle': _ParStyleProps(ParamType.bool),
 	'Pulse': _ParStyleProps(ParamType.trigger),
 	'Menu': _ParStyleProps(ParamType.menu, hasoptions=True),
-	'RGB': _ParStyleProps(ParamType.fvec, hasrange=True, fixedlength=3),
-	'RGBA': _ParStyleProps(ParamType.fvec, hasrange=True, fixedlength=4),
-	'UV': _ParStyleProps(ParamType.fvec, hasrange=True, fixedlength=2),
-	'UVW': _ParStyleProps(ParamType.fvec, hasrange=True, fixedlength=3),
-	'XY': _ParStyleProps(ParamType.fvec, hasrange=True, fixedlength=2),
-	'XYZ': _ParStyleProps(ParamType.fvec, hasrange=True, fixedlength=3),
+	'RGB': _ParStyleProps(ParamType.float, hasrange=True, fixedlength=3),
+	'RGBA': _ParStyleProps(ParamType.float, hasrange=True, fixedlength=4),
+	'UV': _ParStyleProps(ParamType.float, hasrange=True, fixedlength=2),
+	'UVW': _ParStyleProps(ParamType.float, hasrange=True, fixedlength=3),
+	'XY': _ParStyleProps(ParamType.float, hasrange=True, fixedlength=2),
+	'XYZ': _ParStyleProps(ParamType.float, hasrange=True, fixedlength=3),
 }
 
 def _GetTupletAttrs(tuplet, attrname):
