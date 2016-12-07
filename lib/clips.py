@@ -44,6 +44,14 @@ class ClipBin(base.Extension):
 		return self.comp.op('./clip_previews')
 
 	@property
+	def _LoadButtonImage(self):
+		return self.comp.op('./load_btn_image')
+
+	@property
+	def _EditButtonImage(self):
+		return self.comp.op('./edit_btn_image')
+
+	@property
 	def _BgColor(self):
 		return 0, 0, 0, 1
 
@@ -95,10 +103,12 @@ class ClipBin(base.Extension):
 			attribs.bgColor = self._BgColor
 		elif col == _LOAD_BUTTON_COL:
 			attribs.wordWrap = True
-			attribs.text = 'L\no\na\nd'
+			# attribs.text = 'L\no\na\nd'
+			attribs.top = self._LoadButtonImage
 		elif col == _EDIT_BUTTON_COL:
 			attribs.wordWrap = True
-			attribs.text = 'E\nd\ni\nt'
+			# attribs.text = 'E\nd\ni\nt'
+			attribs.top = self._EditButtonImage
 
 	def List_onRollover(self, listcomp, row, col, prevrow, prevcol):
 		# self._LogEvent('onRollover(row: %r, col: %r, prevrow: %r, prevcol: %r)' % (row, col, prevrow, prevcol))
