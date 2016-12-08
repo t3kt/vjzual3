@@ -96,18 +96,14 @@ class ClipBin(base.Extension):
 		if col == _LABEL_COL:
 			attribs.text = self._Clips[row, 'name']
 			attribs.textJustify = JustifyType.TOPLEFT
-			attribs.wordWrap = True
+			# attribs.wordWrap = True
 		elif col == _PREVIEW_COL:
 			thumb = self._GetPreviewTOP(row)
 			attribs.top = thumb if thumb else ''
 			attribs.bgColor = self._BgColor
 		elif col == _LOAD_BUTTON_COL:
-			attribs.wordWrap = True
-			# attribs.text = 'L\no\na\nd'
 			attribs.top = self._LoadButtonImage
 		elif col == _EDIT_BUTTON_COL:
-			attribs.wordWrap = True
-			# attribs.text = 'E\nd\ni\nt'
 			attribs.top = self._EditButtonImage
 
 	def List_onRollover(self, listcomp, row, col, prevrow, prevcol):
@@ -126,22 +122,16 @@ class ClipBin(base.Extension):
 		else:
 			previews.par.Activeclip = 0
 
-	# def _StartStopPreview(self, num, on):
-	# 	if not num or num == -1:
-	# 		return
-	# 	top = self._GetPreviewTOP(num)
-	# 	if not top:
-	# 		return
-	# 	if on:
-	# 		if not top.par.play:
-	# 			top.par.play = True
-	# 			top.par.cue.pulse()
-	# 	else:
-	# 		if top.par.play:
-	# 			top.par.play = False
-
 	def List_onSelect(self, listcomp, startrow, startcol, startcoords, endrow, endcol, endcoords, start, end):
 		pass
+
+	def List_onHover(self, listcomp, row, col, coords, prevRow, prevCol, prevCoords, dragItems):
+		self._LogEvent('List_onHover(row: %r, col: %r, coords: %r, prevRow: %r, prevCol: %r, prevCoords: %r, dragItems: %r)' % (row, col, coords, prevRow, prevCol, prevCoords, dragItems))
+		return True
+
+	def List_onDrop(self, listcomp, row, col, coords, prevRow, prevCol, prevCoords, dragItems):
+		self._LogEvent('List_onDrop(row: %r, col: %r, coords: %r, prevRow: %r, prevCol: %r, prevCoords: %r, dragItems: %r)' % (row, col, coords, prevRow, prevCol, prevCoords, dragItems))
+		return False
 
 
 # attribs contains the following members:
