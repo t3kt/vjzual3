@@ -105,7 +105,7 @@ class Module(base.Extension):
 	def _ModParamPageNames(self):
 		return util.ParseStringList(self.Shell.par.Modparampages.eval())
 
-	def _GetModParamTuplets(self):
+	def GetModParamTuplets(self, includePulse=False):
 		tupletnames = self._ModParamTupleNames
 		pagenames = self._ModParamPageNames
 		tuplets = []
@@ -115,16 +115,20 @@ class Module(base.Extension):
 		for t in self.comp.customTuplets:
 			if t[0].tupletName in tupletnames:
 				tuplets.append(t)
-		return _ExcludePulsePars(tuplets)
+		if not includePulse:
+			print('before', tuplets)
+			tuplets = list(_ExcludePulsePars(tuplets))
+		print('after', tuplets)
+		return tuplets
 
 	def _GetModParamsDict(self):
-		return self.parAccessor.GetParTupletVals(self._GetModParamTuplets())
+		return self.parAccessor.GetParTupletVals(self.GetModParamTuplets())
 
 	def _LoadModParamsDict(self, params):
 		self._LogEvent('_LoadModParamsDict(%r)' % params)
 		if not params:
 			return
-		self.parAccessor.SetParTupletVals(self._GetModParamTuplets(), params)
+		self.parAccessor.SetParTupletVals(self.GetModParamTuplets(), params)
 
 	def GetStateDict(self):
 		state = util.MergeDicts(
@@ -147,7 +151,7 @@ class Module(base.Extension):
 		if not state:
 			return
 		self.parAccessor.SetParTupletVals(self.parAccessor.GetCustomPage('Module').parTuplets, state)
-		self.parAccessor.SetParTupletVals(self._GetModParamTuplets(), state.get('params', {}))
+		self.parAccessor.SetParTupletVals(self.GetModParamTuplets(), state.get('params', {}))
 
 	@property
 	def _SchemaTags(self):
@@ -276,7 +280,7 @@ class ParAccessor(base.Extension):
 def _IsNotPulse(t):
 	if isinstance(t, tuple):
 		t = t[0]
-	return getattr(t, 'isPulse', False)
+	return not getattr(t, 'isPulse', False)
 
 def _ExcludePulsePars(pars):
 	return filter(_IsNotPulse, pars)
