@@ -85,7 +85,30 @@ class ParamSpec(_BaseSchemaNode):
 			'tags': self.tags,
 		})
 
-class ModuleSpec(_BaseSchemaNode):
+class _BaseParentSchemaNode(_BaseSchemaNode):
+	def __init__(self, children=None):
+		self.children = children or []
+
+	@property
+	def JsonDict(self):
+		raise NotImplementedError()
+
+	def GetChild(self, key):
+		return _GetByKey(self.children, key)
+
+	def EvaluatePath(self, path):
+		if not path:
+			return
+		if '/' in path:
+			firstpart, rest = path.split('/', maxsplit=1)
+			m = self.GetChild(firstpart)
+			if not m:
+				return None
+			return m.EvaluatePath(rest)
+		else:
+			return self.GetChild(path)
+
+class ModuleSpec(_BaseParentSchemaNode):
 	def __init__(
 			self,
 			key,
@@ -95,13 +118,13 @@ class ModuleSpec(_BaseSchemaNode):
 			tags=None,
 			params=None,
 			children=None):
+		super().__init__(children=children)
 		self.key = key
 		self.label = label
 		self.moduletype = moduletype
 		self.group = group
 		self.tags = tags
 		self.params = params
-		self.children = children
 
 	@property
 	def JsonDict(self):
@@ -115,12 +138,20 @@ class ModuleSpec(_BaseSchemaNode):
 			'children': [c.JsonDict for c in self.children] if self.children else None,
 		})
 
-class AppSchema(_BaseSchemaNode):
+	def GetParam(self, key):
+		return _GetByKey(self.params, key)
+
+	def EvaluatePath(self, path):
+		if path and path.startswith('@'):
+			return self.GetParam(path[1:])
+		return super().EvaluatePath(path)
+
+class AppSchema(_BaseParentSchemaNode):
 	def __init__(self, key, label=None, description=None, children=None):
+		super().__init__(children=children)
 		self.key = key
 		self.label = label
 		self.description = description
-		self.children = children or []
 
 	@property
 	def JsonDict(self):
@@ -130,6 +161,13 @@ class AppSchema(_BaseSchemaNode):
 			'description': self.description,
 			'children': [c.JsonDict for c in self.children],
 		})
+
+def _GetByKey(items, key):
+	if not items:
+		return None
+	for item in items:
+		if item.key == key:
+			return item
 
 def _CleanDict(d):
 		for k in list(d.keys()):
@@ -221,6 +259,8 @@ def _NumberAttributesFromPar(par):
 	}
 
 def _OptionsFromPar(par):
+	if not par.menuNames:
+		return []
 	options = []
 	for name, label in zip(par.menuNames, par.menuLabels):
 		options.append(ParamOption(key=name, label=label))
@@ -243,13 +283,13 @@ def _SpecFromParTuplet(tuplet):
 	handler = _parStyleHandlers[style]
 	return handler.SpecFromTuplet(tuplet)
 
-def _SpecsFromParTuplets(tuplets, tupletfilter=None):
+def SpecsFromParTuplets(tuplets, tupletfilter=None):
 	return [_SpecFromParTuplet(t) for t in _FilterParTuplets(tuplets, tupletfilter)]
 
 def SpecsFromParPages(pages, tupletfilter=None, pagefilter=None):
 	specs = []
 	for page in _FilterByName(pages, pagefilter):
-		specs += _SpecsFromParTuplets(page.parTuplets, tupletfilter=tupletfilter)
+		specs += SpecsFromParTuplets(page.parTuplets, tupletfilter=tupletfilter)
 	return specs
 
 def _FilterByName(objs, test):

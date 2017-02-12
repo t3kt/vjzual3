@@ -76,6 +76,12 @@ class Module(base.Extension):
 	def SubModuleOpNames(self):
 		return [m.name for m in self._SubModules]
 
+	def GetChildModule(self, modname):
+		mods = self.comp.findChildren(depth=1, tags=['tmod'], parName='Modname', parValue=modname)
+		if not mods:
+			return None
+		return mods[0]
+
 	@property
 	def SelectorOpNames(self):
 		return [s.name for s in self.comp.findChildren(depth=1, parName='clone', parValue='*_selector')]
@@ -109,9 +115,14 @@ class Module(base.Extension):
 		tupletnames = self._ModParamTupleNames
 		pagenames = self._ModParamPageNames
 		tuplets = []
-		for page in self.comp.customPages:
-			if page.name in pagenames:
-				tuplets += page.parTuplets
+		if not pagenames:
+			for page in self.comp.customPages:
+				if page.name != 'Module':
+					tuplets += page.parTuplets
+		else:
+			for page in self.comp.customPages:
+				if page.name in pagenames:
+					tuplets += page.parTuplets
 		for t in self.comp.customTuplets:
 			if t[0].tupletName in tupletnames:
 				tuplets.append(t)
@@ -157,11 +168,6 @@ class Module(base.Extension):
 		return list(tags)
 
 	def GetSchema(self):
-		pagenames = self._ModParamPageNames
-		def pagefilter(p):
-			if p.name == 'Module':
-				return False
-			return not pagenames or p.name in pagenames
 		master = self.comp.par.clone.eval()
 		mtype = master.path if master else None
 		return schema.ModuleSpec(
@@ -169,10 +175,7 @@ class Module(base.Extension):
 			label=self.comp.par.Uilabel.eval(),
 			moduletype=mtype,
 			tags=self._SchemaTags or None,
-			params=schema.SpecsFromParPages(
-				self.comp.customPages,
-				pagefilter=pagefilter,
-				tupletfilter=self._ModParamTupleNames or None),
+			params=schema.SpecsFromParTuplets(self.GetModParamTuplets(includePulse=True)),
 			children=[m.GetSchema() for m in self._SubModules])
 
 	def UpdateSolo(self):
