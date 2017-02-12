@@ -92,11 +92,16 @@ class WebsocketServer(base.Extension):
 			packedMsg = b''.join(packedMsg)
 			peer.sendBytes(sendHeader)
 			peer.sendBytes(packedMsg)
-		elif path == '/AppSchema.json':
+		elif path.startswith('/AppSchema'):
 			sendHeader = self._GetHeader(hType='default', recHeader=headers, contentType='application/json')
-			schema = op.App.GetSchema().ToJson()
+			appschema = op.App.GetSchema()
+			if path in ('/AppSchema', '/AppSchema/', '/AppSchema.json'):
+				schema = appschema
+			else:
+				subpath = path[len('/AppSchema/'):]
+				schema = appschema.EvaluatePath(subpath)
 			peer.sendBytes(sendHeader)
-			peer.sendBytes(schema)
+			peer.sendBytes(schema.ToJson())
 			self._ClosePeerNextFrame(peer)
 		else:
 			# TODO: deal with this better?
