@@ -14,19 +14,27 @@ class ParamType(Enum):
 	menu = 10
 	trigger = 11
 
-class ParamOption:
+class _BaseSchemaNode:
+	@property
+	def JsonDict(self):
+		raise NotImplementedError()
+
+	def ToJson(self, **kwargs):
+		return json.dumps(self.JsonDict, **kwargs)
+
+	def __repr__(self):
+		return '%s(%r)' % (self.__class__.__name__, self.JsonDict)
+
+class ParamOption(_BaseSchemaNode):
 	def __init__(self, key, label):
 		self.key = key
 		self.label = label
 
 	@property
-	def _JsonDict(self):
+	def JsonDict(self):
 		return {'key': self.key, 'label': self.label}
 
-	def ToJson(self):
-		return json.dumps(self._JsonDict)
-
-class ParamSpec:
+class ParamSpec(_BaseSchemaNode):
 	def __init__(
 			self,
 			key,
@@ -59,7 +67,7 @@ class ParamSpec:
 		self.tags = tags
 
 	@property
-	def _JsonDict(self):
+	def JsonDict(self):
 		return _CleanDict({
 			'key': self.key,
 			'label': self.label,
@@ -73,17 +81,11 @@ class ParamSpec:
 			'length': self.length,
 			'style': self.style,
 			'group': self.group,
-			'options': [o._JsonDict for o in self.options] if self.options else None,
+			'options': [o.JsonDict for o in self.options] if self.options else None,
 			'tags': self.tags,
 		})
 
-	def __repr__(self):
-		return 'ParamSpec(%r)' % self._JsonDict
-
-	def ToJson(self):
-		return json.dumps(self._JsonDict)
-
-class ModuleSpec:
+class ModuleSpec(_BaseSchemaNode):
 	def __init__(
 			self,
 			key,
@@ -102,24 +104,18 @@ class ModuleSpec:
 		self.children = children
 
 	@property
-	def _JsonDict(self):
+	def JsonDict(self):
 		return _CleanDict({
 			'key': self.key,
 			'label': self.label,
 			'moduleType': self.moduletype,
 			'group': self.group,
 			'tags': self.tags,
-			'params': [c._JsonDict for c in self.params] if self.params else None,
-			'children': [c._JsonDict for c in self.children] if self.children else None,
+			'params': [c.JsonDict for c in self.params] if self.params else None,
+			'children': [c.JsonDict for c in self.children] if self.children else None,
 		})
 
-	def __repr__(self):
-		return 'ModuleSpec(%r)' % self._JsonDict
-
-	def ToJson(self):
-		return json.dumps(self._JsonDict)
-
-class AppSchema:
+class AppSchema(_BaseSchemaNode):
 	def __init__(self, key, label=None, description=None, children=None):
 		self.key = key
 		self.label = label
@@ -127,19 +123,13 @@ class AppSchema:
 		self.children = children or []
 
 	@property
-	def _JsonDict(self):
+	def JsonDict(self):
 		return _CleanDict({
 			'key': self.key,
 			'label': self.label,
 			'description': self.description,
-			'children': [c._JsonDict for c in self.children],
+			'children': [c.JsonDict for c in self.children],
 		})
-
-	def __repr__(self):
-		return 'AppSchema(%r)' % self._JsonDict
-
-	def ToJson(self):
-		return json.dumps(self._JsonDict)
 
 def _CleanDict(d):
 		for k in list(d.keys()):

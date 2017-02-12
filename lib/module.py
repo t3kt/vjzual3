@@ -116,9 +116,7 @@ class Module(base.Extension):
 			if t[0].tupletName in tupletnames:
 				tuplets.append(t)
 		if not includePulse:
-			print('before', tuplets)
 			tuplets = list(_ExcludePulsePars(tuplets))
-		print('after', tuplets)
 		return tuplets
 
 	def _GetModParamsDict(self):
