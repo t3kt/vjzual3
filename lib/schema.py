@@ -124,7 +124,7 @@ class ModuleSpec(_BaseParentSchemaNode):
 		self.moduletype = moduletype
 		self.group = group
 		self.tags = tags
-		self.params = params
+		self.params = params or []
 
 	@property
 	def JsonDict(self):
@@ -203,6 +203,7 @@ class _VectorHandler(_ParStyleHandler):
 		attrs = [_NumberAttributesFromPar(p) for p in tuplet]
 		return ParamSpec(
 			tuplet[0].tupletName,
+			label=tuplet[0].label,
 			ptype=self.ptype,
 			style=tuplet[0].style,
 			group=tuplet[0].page.name,
@@ -235,7 +236,7 @@ class _VariableLengthHandler(_ParStyleHandler):
 			defaultval=attrs['default'])
 
 _parStyleHandlers = {}
-_parStyleHandlers['Pulse']= _SimpleHandler(ParamType.trigger, hasdefault=False)
+_parStyleHandlers['Pulse'] = _SimpleHandler(ParamType.trigger, hasdefault=False)
 _parStyleHandlers['Toggle'] = _SimpleHandler(ParamType.bool)
 _parStyleHandlers['Str'] = _SimpleHandler(ParamType.string)
 _parStyleHandlers['StrMenu'] = _SimpleHandler(ParamType.string, hasoptions=True)
