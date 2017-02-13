@@ -10,8 +10,8 @@ void main()
 	// First deform the vertex and normal
 	// TDDeform always returns values in world space
 	vec4 worldSpaceVert =TDDeform(P);
-	vec4 camSpaceVert = uTDMat.cam * worldSpaceVert;
-	gl_Position = TDCamToProj(camSpaceVert);
+	vec4 camSpaceVert = uTDMats[TDCameraIndex()].cam * worldSpaceVert;
+	gl_Position = TDWorldToProj(TDDeform(camSpaceVert));
 
 	// This is here to ensure we only execute lighting etc. code
 	// when we need it. If picking is active we don't need this, so
@@ -28,7 +28,7 @@ void main()
 	{
 		vVert.texCoord1.stp = uv[1];
 	}
-	vec3 camSpaceNorm = uTDMat.camForNormals * TDDeformNorm(N).xyz;
+	vec3 camSpaceNorm = uTDMats[TDCameraIndex()].camForNormals * TDDeformNorm(N).xyz;
 	vVert.camSpaceVert.xyz = camSpaceVert.xyz;
 	vVert.color = TDInstanceColor(Cd);
 
