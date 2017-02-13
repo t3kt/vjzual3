@@ -36,6 +36,7 @@ class AutoUI(base.Extension):
 		super().__init__(comp)
 		self._schemaJsonDat = comp.op('./set_schema_json')
 		self._paramSpecsDat = comp.op('./set_param_specs')
+		self._builders = _CreateBuilderSet(comp.op('./templates'))
 
 	@property
 	def TargetModule(self):
@@ -76,33 +77,27 @@ class AutoUI(base.Extension):
 	def _BuildControls(self, m, modspec):
 		self._LogBegin('_BuildControls()')
 		try:
-			styleHandlers = {}
-			styleHandlers[('Float', 1)] = _SingleSliderBuilder(
-				hostop=m,
-				hostopexpr='ext.tmod',
-				template=self.comp.op('./templates/single_slider'))
-			styleHandlers[('Int', 1)] = styleHandlers[('Float', 1)]
-			styleHandlers[('Toggle', 1)] = _SingleButtonBuilder(
-				hostop=m,
-				hostopexpr='ext.tmod',
-				template=self.comp.op('./templates/single_button'))
-
 			nodeX = -160
 			nodeY = 0
-			for paramspec in modspec.params:
+			count = float(len(modspec.params))
+			layoutparent = m.op('./controls_panel')
+			for i, paramspec in enumerate(modspec.params):
 				stylekey = (paramspec.style, paramspec.length or 1)
-				handler = styleHandlers.get(stylekey)
+				handler = self._builders.get(stylekey)
 				if handler is None:
 					self._LogEvent(
 						'_BuildControls() - unsupported style (name: %r): %r'
 						% (paramspec.key, stylekey))
 					continue
-				ctrl = handler.Build(paramspec)
+				ctrl = handler.Build(paramspec, m)
 				ctrl.tags.add('autoctrl')
 				ctrl.color = (0.5450000166893005, 0.5450000166893005, 0.5450000166893005)
 				ctrl.nodeX = nodeX
 				ctrl.nodeY = nodeY
 				ctrl.par.w.expr = 'ext.tmod.par.w'
+				ctrl.par.order = i / count
+				if layoutparent is not None:
+					ctrl.inputCOMPConnectors[0].connect(layoutparent)
 				nodeY -= 120
 			# ...?
 			pass
@@ -169,25 +164,51 @@ def _AddJsonListField(parsdat, i, outname, vals):
 	if vals is not None:
 		parsdat[i, outname] = json.dumps(vals)
 
+def _CreateBuilderSet(templates):
+	singleslider = templates.op('./single_slider')
+	singlebutton = templates.op('./single_button')
+	twosliders = templates.op('./two_sliders')
+	threesliders = templates.op('./three_sliders')
+	foursliders = templates.op('./four_sliders')
+	builders = {}
+	builders[('Toggle', 1)] = _SingleButtonBuilder(singlebutton, behavior='toggledown')
+	builders[('Pulse', 1)] = _SingleButtonBuilder(singlebutton, behavior='pulse')
+	builders[('Float', 1)] = _SingleSliderBuilder(singleslider)
+	builders[('Int', 1)] = builders[('Float', 1)]
+	multisliders = [
+		None,
+		twosliders,
+		threesliders,
+		foursliders,
+	]
+	for i in (2, 3, 4):
+		suffixes = (1, 2, 3, 4)[:i]
+		builders[('Float', i)] = _MultiSliderBuilder(
+			multisliders[i - 1],
+			suffixes=suffixes,
+			labels=suffixes)
+		builders[('Int', i)] = builders[('Float', i)]
+	for style in ['RGB', 'RGBA', 'UV', 'UVW', 'XY', 'XYZ']:
+		i = len(style)
+		builders[(style, i)] = _MultiSliderBuilder(multisliders[i - 1], style[:i].lower(), style[:i])
+
+	return builders
+
 class _Builder:
-	def __init__(self, hostop, hostopexpr, template):
-		self.hostop = hostop
-		self.hostopexpr = hostopexpr
+	def __init__(self, template):
 		self.template = template
 
-	def Build(self, paramspec):
-		ctrl = self.hostop.copy(self.template, name=paramspec.key + '_ctrl')
+	def Build(self, paramspec, hostop):
+		ctrl = hostop.copy(self.template, name=paramspec.key + '_ctrl')
 		return ctrl
 
 class _SingleSliderBuilder(_Builder):
-	def __init__(self, hostop, hostopexpr, template):
+	def __init__(self, template):
 		super().__init__(
-			hostop=hostop,
-			hostopexpr=hostopexpr,
 			template=template)
 
-	def Build(self, paramspec):
-		ctrl = super().Build(paramspec)
+	def Build(self, paramspec, hostop):
+		ctrl = super().Build(paramspec, hostop)
 		ctrl.par.Label = paramspec.label
 		ctrl.par.Integer = paramspec.ptype == schema.ParamType.int
 		if paramspec.defaultval is not None:
@@ -196,18 +217,16 @@ class _SingleSliderBuilder(_Builder):
 			ctrl.par.Rangelow1 = paramspec.minnorm
 		if paramspec.maxnorm is not None:
 			ctrl.par.Rangehigh1 = paramspec.maxnorm
-		ctrl.par.Value1.expr = self.hostopexpr + '.par.' + paramspec.key
+		ctrl.par.Value1.expr = 'ext.tmod.par.' + paramspec.key
 		return ctrl
 
 class _SingleButtonBuilder(_Builder):
-	def __init__(self, hostop, hostopexpr, template):
-		super().__init__(
-			hostop=hostop,
-			hostopexpr=hostopexpr,
-			template=template)
+	def __init__(self, template, behavior):
+		super().__init__(template=template)
+		self.behavior = behavior
 
-	def Build(self, paramspec):
-		ctrl = super().Build(paramspec)
+	def Build(self, paramspec, hostop):
+		ctrl = super().Build(paramspec, hostop)
 		label = paramspec.label
 		ctrl.par.Label = label
 		ctrl.par.Texton = label
@@ -216,5 +235,30 @@ class _SingleButtonBuilder(_Builder):
 		ctrl.par.Textoffroll = label + ' off'
 		if paramspec.defaultval is not None:
 			ctrl.par.Default1 = paramspec.defaultval
-		ctrl.par.Value1.expr = self.hostopexpr + '.par.' + paramspec.key
+		ctrl.par.Value1.expr = 'ext.tmod.par.' + paramspec.key
+		ctrl.par.Behavior = self.behavior
+		return ctrl
+
+class _MultiSliderBuilder(_Builder):
+	def __init__(self, template, suffixes, labels):
+		super().__init__(template=template)
+		self.count = len(suffixes)
+		self.suffixes = suffixes
+		self.labels = labels
+
+	def Build(self, paramspec, hostop):
+		ctrl = super().Build(paramspec, hostop)
+		isint = paramspec.ptype == schema.ParamType.int
+		for i in range(self.count):
+			subctrl = ctrl.op('./par%d_slider' % (i + 1))
+			subctrl.par.Label = self.labels[i]
+			subctrl.par.Help = paramspec.label + ' ' + self.labels[i]
+			subctrl.par.Integer = isint
+			if paramspec.defaultval and paramspec.defaultval[i] is not None:
+				subctrl.par.Default1 = paramspec.defaultval[i]
+			if paramspec.minnorm and paramspec.minnorm[i] is not None:
+				subctrl.par.Rangelow1 = paramspec.minnorm[i]
+			if paramspec.maxnorm and paramspec.maxnorm[i] is not None:
+				subctrl.par.Rangehigh1 = paramspec.maxnorm[i]
+			subctrl.par.Value1.expr = 'ext.tmod.par.' + paramspec.key + self.suffixes[i]
 		return ctrl
