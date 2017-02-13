@@ -48,16 +48,63 @@ class AutoUI(base.Extension):
 		self._LogBegin('Rebuild()')
 		try:
 			self._schemaJsonDat.clear()
+			self._paramSpecsDat.clear()
+			self._paramSpecsDat.appendRow(_allParSpecFields)
 			m = self.TargetModule
 			if not m:
 				self._LogEvent('Rebuild() - no target module')
 				return
 			modspec = m.GetSchema()
-			self._schemaJsonDat.text = modspec.ToJson(indent='  ')
-			parsdat = self._paramSpecsDat
-			_FillParTable(parsdat, modspec.params)
+			oldctrls = m.findChildren(tags=['autoctrl'], maxDepth=1)
+			for ctrl in oldctrls:
+				ctrl.destroy()
+			self._LoadSchema(modspec)
+			self._BuildControls(m, modspec)
+			# ...?
+			pass
 		finally:
 			self._LogEnd('Rebuild()')
+
+	def _LoadSchema(self, modspec):
+		self._LogBegin('_ReloadSchema()')
+		try:
+			self._schemaJsonDat.text = modspec.ToJson(indent='  ')
+			_FillParTable(self._paramSpecsDat, modspec.params)
+		finally:
+			self._LogEnd('_ReloadSchema()')
+
+	def _BuildControls(self, m, modspec):
+		self._LogBegin('_BuildControls()')
+		try:
+			styleHandlers = {}
+			styleHandlers[('Float', 1)] = _SingleSliderBuilder(
+				hostop=m,
+				hostopexpr='ext.tmod',
+				layoutparentexpr='ext.tmod',
+				template=self.comp.op('./templates/single_slider'))
+			styleHandlers[('Int', 1)] = styleHandlers[('Float', 1)]
+
+			nodeX = -160
+			nodeY = 0
+			for paramspec in modspec.params:
+				stylekey = (paramspec.style, paramspec.length or 1)
+				handler = styleHandlers.get(stylekey)
+				if handler is None:
+					self._LogEvent(
+						'_BuildControls() - unsupported style (name: %r): %r'
+						% (paramspec.key, stylekey))
+					continue
+				ctrl = handler.Build(paramspec)
+				ctrl.nodeX = nodeX
+				ctrl.nodeY = nodeY
+				nodeY -= 120
+			# ...?
+			pass
+		finally:
+			self._LogEnd('_BuildControls()')
+
+	def _RemoveControls(self):
+		pass
 
 _simpleParSpecFields = [
 	'key',
@@ -88,8 +135,6 @@ def _Listify(val):
 	return val + ([''] * (4 - len(val)))
 
 def _FillParTable(parsdat, parspecs):
-	parsdat.clear()
-	parsdat.appendRow(_allParSpecFields)
 	for parspec in parspecs:
 		if False:
 			parspec = schema.ParamSpec(None)
@@ -119,15 +164,42 @@ def _AddJsonListField(parsdat, i, outname, vals):
 		parsdat[i, outname] = json.dumps(vals)
 
 class _Builder:
-	def _Build(self, paramspec, hostop, layoutparentpath):
-		raise NotImplementedError()
+	def __init__(self, hostop, hostopexpr, template, layoutparentexpr):
+		self.hostop = hostop
+		self.hostopexpr = hostopexpr
+		self.template = template
+		self.layoutparentexpr = layoutparentexpr
 
-	def Build(self, paramspec, hostop, layoutparentpath='controls_panel'):
-		return self._Build(paramspec, hostop, layoutparentpath)
+	def _CreateControl(self, paramspec):
+		ctrl = self.hostop.copy(self.template, name=paramspec.key + '_ctrl')
+		ctrl.tags.add('autoctrl')
+		ctrl.color = (0.5450000166893005, 0.5450000166893005, 0.5450000166893005)
+		ctrl.par.w.expr = self.layoutparentexpr + '.par.w'
+		return ctrl
+
+	def _InitializeControl(self, paramspec, ctrl):
+		pass
+
+	def Build(self, paramspec):
+		ctrl = self._CreateControl(paramspec)
+		self._InitializeControl(paramspec, ctrl)
+		return ctrl
 
 class _SingleSliderBuilder(_Builder):
-	def __init__(self, template):
-		self._template = template
+	def __init__(self, hostop, hostopexpr, layoutparentexpr, template):
+		super().__init__(
+			hostop=hostop,
+			hostopexpr=hostopexpr,
+			template=template,
+			layoutparentexpr=layoutparentexpr)
 
-	def _Build(self, paramspec, hostop, layoutparentpath='controls_panel'):
-		pass
+	def _InitializeControl(self, paramspec, ctrl):
+		ctrl.par.Label = paramspec.label
+		ctrl.par.Integer = paramspec.ptype == schema.ParamType.int
+		if paramspec.defaultval is not None:
+			ctrl.par.Default1 = paramspec.defaultval
+		if paramspec.minnorm is not None:
+			ctrl.par.Rangelow1 = paramspec.minnorm
+		if paramspec.maxnorm is not None:
+			ctrl.par.Rangehigh1 = paramspec.maxnorm
+		ctrl.par.Value1.expr = self.hostopexpr + '.par.' + paramspec.key
