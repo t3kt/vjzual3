@@ -187,7 +187,7 @@ class _SimpleHandler(_ParStyleHandler):
 	def SpecFromTuplet(self, tuplet):
 		par = tuplet[0]
 		return ParamSpec(
-			par.name,
+			par.tupletName,
 			label=par.label,
 			ptype=self.ptype,
 			style=par.style,
@@ -202,7 +202,7 @@ class _VectorHandler(_ParStyleHandler):
 	def SpecFromTuplet(self, tuplet):
 		attrs = [_NumberAttributesFromPar(p) for p in tuplet]
 		return ParamSpec(
-			tuplet[0].name,
+			tuplet[0].tupletName,
 			ptype=self.ptype,
 			style=tuplet[0].style,
 			group=tuplet[0].page.name,
@@ -224,7 +224,7 @@ class _VariableLengthHandler(_ParStyleHandler):
 		par = tuplet[0]
 		attrs = _NumberAttributesFromPar(par)
 		return ParamSpec(
-			par.name,
+			par.tupletName,
 			label=par.label,
 			style=par.style,
 			group=par.page.name,
