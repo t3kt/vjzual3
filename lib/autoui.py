@@ -80,9 +80,12 @@ class AutoUI(base.Extension):
 			styleHandlers[('Float', 1)] = _SingleSliderBuilder(
 				hostop=m,
 				hostopexpr='ext.tmod',
-				layoutparentexpr='ext.tmod',
 				template=self.comp.op('./templates/single_slider'))
 			styleHandlers[('Int', 1)] = styleHandlers[('Float', 1)]
+			styleHandlers[('Toggle', 1)] = _SingleButtonBuilder(
+				hostop=m,
+				hostopexpr='ext.tmod',
+				template=self.comp.op('./templates/single_button'))
 
 			nodeX = -160
 			nodeY = 0
@@ -95,8 +98,11 @@ class AutoUI(base.Extension):
 						% (paramspec.key, stylekey))
 					continue
 				ctrl = handler.Build(paramspec)
+				ctrl.tags.add('autoctrl')
+				ctrl.color = (0.5450000166893005, 0.5450000166893005, 0.5450000166893005)
 				ctrl.nodeX = nodeX
 				ctrl.nodeY = nodeY
+				ctrl.par.w.expr = 'ext.tmod.par.w'
 				nodeY -= 120
 			# ...?
 			pass
@@ -164,36 +170,24 @@ def _AddJsonListField(parsdat, i, outname, vals):
 		parsdat[i, outname] = json.dumps(vals)
 
 class _Builder:
-	def __init__(self, hostop, hostopexpr, template, layoutparentexpr):
+	def __init__(self, hostop, hostopexpr, template):
 		self.hostop = hostop
 		self.hostopexpr = hostopexpr
 		self.template = template
-		self.layoutparentexpr = layoutparentexpr
-
-	def _CreateControl(self, paramspec):
-		ctrl = self.hostop.copy(self.template, name=paramspec.key + '_ctrl')
-		ctrl.tags.add('autoctrl')
-		ctrl.color = (0.5450000166893005, 0.5450000166893005, 0.5450000166893005)
-		ctrl.par.w.expr = self.layoutparentexpr + '.par.w'
-		return ctrl
-
-	def _InitializeControl(self, paramspec, ctrl):
-		pass
 
 	def Build(self, paramspec):
-		ctrl = self._CreateControl(paramspec)
-		self._InitializeControl(paramspec, ctrl)
+		ctrl = self.hostop.copy(self.template, name=paramspec.key + '_ctrl')
 		return ctrl
 
 class _SingleSliderBuilder(_Builder):
-	def __init__(self, hostop, hostopexpr, layoutparentexpr, template):
+	def __init__(self, hostop, hostopexpr, template):
 		super().__init__(
 			hostop=hostop,
 			hostopexpr=hostopexpr,
-			template=template,
-			layoutparentexpr=layoutparentexpr)
+			template=template)
 
-	def _InitializeControl(self, paramspec, ctrl):
+	def Build(self, paramspec):
+		ctrl = super().Build(paramspec)
 		ctrl.par.Label = paramspec.label
 		ctrl.par.Integer = paramspec.ptype == schema.ParamType.int
 		if paramspec.defaultval is not None:
@@ -203,3 +197,24 @@ class _SingleSliderBuilder(_Builder):
 		if paramspec.maxnorm is not None:
 			ctrl.par.Rangehigh1 = paramspec.maxnorm
 		ctrl.par.Value1.expr = self.hostopexpr + '.par.' + paramspec.key
+		return ctrl
+
+class _SingleButtonBuilder(_Builder):
+	def __init__(self, hostop, hostopexpr, template):
+		super().__init__(
+			hostop=hostop,
+			hostopexpr=hostopexpr,
+			template=template)
+
+	def Build(self, paramspec):
+		ctrl = super().Build(paramspec)
+		label = paramspec.label
+		ctrl.par.Label = label
+		ctrl.par.Texton = label
+		ctrl.par.Textoff = label
+		ctrl.par.Textonroll = label + ' on'
+		ctrl.par.Textoffroll = label + ' off'
+		if paramspec.defaultval is not None:
+			ctrl.par.Default1 = paramspec.defaultval
+		ctrl.par.Value1.expr = self.hostopexpr + '.par.' + paramspec.key
+		return ctrl
