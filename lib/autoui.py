@@ -82,9 +82,13 @@ class AutoUI(base.Extension):
 			count = float(len(modspec.params))
 			layoutparent = m.op('./controls_panel')
 			for i, paramspec in enumerate(modspec.params):
+				existingctrl = _FindExistingControl(m, paramspec)
+				if existingctrl:
+					self._LogEvent('_BuildControls() - already have control for %r: %r' % (paramspec.key, existingctrl))
+					continue
 				stylekey = (paramspec.style, paramspec.length or 1)
 				handler = self._builders.get(stylekey)
-				if handler is None:
+				if not handler:
 					self._LogEvent(
 						'_BuildControls() - unsupported style (name: %r): %r'
 						% (paramspec.key, stylekey))
@@ -96,16 +100,33 @@ class AutoUI(base.Extension):
 				ctrl.nodeY = nodeY
 				ctrl.par.w.expr = 'ext.tmod.par.w'
 				ctrl.par.order = i / count
-				if layoutparent is not None:
+				if layoutparent:
 					ctrl.inputCOMPConnectors[0].connect(layoutparent)
 				nodeY -= 120
-			# ...?
-			pass
 		finally:
 			self._LogEnd('_BuildControls()')
 
-	def _RemoveControls(self):
-		pass
+def _FindExistingControl(m, paramspec):
+	key = paramspec.key
+	suffixes = [
+		'_ctrl',
+		'_menu',
+		'_slider',
+		'_button',
+		'_par',
+		'_params',
+		'_params_panel',
+	]
+	for suffix in suffixes:
+		ctrl = m.op('./' + key + suffix) or m.op('./' + key.lower() + suffix)
+		if ctrl:
+			return ctrl
+	# ctrls = m.findChildren(parName='Value1', parExpr='ext.tmod.par.' + key, maxDepth=1)
+	# if ctrls:
+	# 	return ctrls[0]
+	# ctrls = m.findChildren(parName='Value1', parExpr='parent().par.' + key, maxDepth=1)
+	# if ctrls:
+	# 	return ctrls[0]
 
 _simpleParSpecFields = [
 	'key',
@@ -167,30 +188,38 @@ def _AddJsonListField(parsdat, i, outname, vals):
 def _CreateBuilderSet(templates):
 	singleslider = templates.op('./single_slider')
 	singlebutton = templates.op('./single_button')
-	twosliders = templates.op('./two_sliders')
-	threesliders = templates.op('./three_sliders')
-	foursliders = templates.op('./four_sliders')
-	builders = {}
-	builders[('Toggle', 1)] = _SingleButtonBuilder(singlebutton, behavior='toggledown')
-	builders[('Pulse', 1)] = _SingleButtonBuilder(singlebutton, behavior='pulse')
-	builders[('Float', 1)] = _SingleSliderBuilder(singleslider)
+	builders = {
+		('Toggle', 1): _SingleButtonBuilder(singlebutton, behavior='toggledown'),
+		('Pulse', 1): _SingleButtonBuilder(singlebutton, behavior='pulse'),
+		('Float', 1): _SingleSliderBuilder(singleslider)
+	}
 	builders[('Int', 1)] = builders[('Float', 1)]
 	multisliders = [
-		None,
-		twosliders,
-		threesliders,
-		foursliders,
+		templates.op('./two_sliders'),
+		templates.op('./three_sliders'),
+		templates.op('./four_sliders'),
 	]
 	for i in (2, 3, 4):
 		suffixes = (1, 2, 3, 4)[:i]
 		builders[('Float', i)] = _MultiSliderBuilder(
-			multisliders[i - 1],
+			multisliders[i - 2],
 			suffixes=suffixes,
 			labels=suffixes)
 		builders[('Int', i)] = builders[('Float', i)]
-	for style in ['RGB', 'RGBA', 'UV', 'UVW', 'XY', 'XYZ']:
+	for style in ['UV', 'UVW', 'XY', 'XYZ']:
 		i = len(style)
-		builders[(style, i)] = _MultiSliderBuilder(multisliders[i - 1], style[:i].lower(), style[:i])
+		builders[(style, i)] = _MultiSliderBuilder(
+			multisliders[i - 2],
+			suffixes=style[:i].lower(),
+			labels=style[:i])
+	builders[('RGB', 3)] = _MultiSliderBuilder(
+		templates.op('./rgb_sliders'),
+		suffixes='rgb',
+		labels='RGB')
+	builders[('RGBA', 4)] = _MultiSliderBuilder(
+		templates.op('./rgba_sliders'),
+		suffixes='rgba',
+		labels='RGBA')
 
 	return builders
 
