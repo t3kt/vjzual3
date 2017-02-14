@@ -130,6 +130,22 @@ class Module(base.Extension):
 			tuplets = list(_ExcludePulsePars(tuplets))
 		return tuplets
 
+	def GetInspectableModParamScope(self):
+		parts = []
+		for t in self.GetModParamTuplets(includePulse=True):
+			parts.append(t[0].tupletName)
+			# if len(t) == 1:
+			# 	parts.append(t[0].name)
+			# else:
+			# 	basename = t[0].tupletName
+			# 	style = t[0].style
+			# 	if style in ['XY', 'XYZ', 'UV', 'UVW', 'RGB', 'RGBA']:
+			# 		parts.append(basename + '[' + style.lower() + ']')
+			# 	else:
+			# 		for p in t:
+			# 			parts.append(p.name)
+		return parts
+
 	def _GetModParamsDict(self):
 		return self.parAccessor.GetParTupletVals(self.GetModParamTuplets())
 
