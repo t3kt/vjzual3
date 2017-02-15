@@ -2,6 +2,7 @@ print('shell/schema.py initializing')
 
 from enum import Enum
 import json
+from tctrl.util import CleanDict, MergeDicts, GetByKey
 
 class ParamType(Enum):
 	other = 1
@@ -50,7 +51,8 @@ class ParamSpec(_BaseSchemaNode):
 			style=None,
 			group=None,
 			options=None,
-			tags=None):
+			tags=None,
+			properties=None):
 		self.key = key
 		self.label = label
 		self.ptype = ptype
@@ -65,25 +67,28 @@ class ParamSpec(_BaseSchemaNode):
 		self.group = group
 		self.options = options
 		self.tags = tags
+		self.properties = properties
 
 	@property
 	def JsonDict(self):
-		return _CleanDict({
-			'key': self.key,
-			'label': self.label,
-			'type': self.ptype.name,
-			'othertype': self.othertype,
-			'minLimit': self.minlimit,
-			'maxLimit': self.maxlimit,
-			'minNorm': self.minnorm,
-			'maxNorm': self.maxnorm,
-			'default': self.defaultval,
-			'length': self.length,
-			'style': self.style,
-			'group': self.group,
-			'options': [o.JsonDict for o in self.options] if self.options else None,
-			'tags': self.tags,
-		})
+		return MergeDicts(
+			CleanDict(self.properties),
+			CleanDict({
+				'key': self.key,
+				'label': self.label,
+				'type': self.ptype.name,
+				'otherType': self.othertype,
+				'minLimit': self.minlimit,
+				'maxLimit': self.maxlimit,
+				'minNorm': self.minnorm,
+				'maxNorm': self.maxnorm,
+				'default': self.defaultval,
+				'length': self.length,
+				'style': self.style,
+				'group': self.group,
+				'options': [o.JsonDict for o in self.options] if self.options else None,
+				'tags': self.tags,
+			}))
 
 class _BaseParentSchemaNode(_BaseSchemaNode):
 	def __init__(self, children=None):
@@ -94,7 +99,7 @@ class _BaseParentSchemaNode(_BaseSchemaNode):
 		raise NotImplementedError()
 
 	def GetChild(self, key):
-		return _GetByKey(self.children, key)
+		return GetByKey(self.children, key)
 
 	def EvaluatePath(self, path):
 		if not path:
@@ -125,21 +130,22 @@ class ModuleSpec(_BaseParentSchemaNode):
 		self.group = group
 		self.tags = tags
 		self.params = params or []
+		self.children = children or []
 
 	@property
 	def JsonDict(self):
-		return _CleanDict({
+		return CleanDict({
 			'key': self.key,
 			'label': self.label,
+			'tags': self.tags,
 			'moduleType': self.moduletype,
 			'group': self.group,
-			'tags': self.tags,
 			'params': [c.JsonDict for c in self.params] if self.params else None,
 			'children': [c.JsonDict for c in self.children] if self.children else None,
 		})
 
 	def GetParam(self, key):
-		return _GetByKey(self.params, key)
+		return GetByKey(self.params, key)
 
 	def EvaluatePath(self, path):
 		if path and path.startswith('@'):
@@ -147,33 +153,28 @@ class ModuleSpec(_BaseParentSchemaNode):
 		return super().EvaluatePath(path)
 
 class AppSchema(_BaseParentSchemaNode):
-	def __init__(self, key, label=None, description=None, children=None):
-		super().__init__(children=children)
+	def __init__(
+			self,
+			key,
+			label=None,
+			tags=None,
+			description=None,
+			children=None):
 		self.key = key
 		self.label = label
+		self.tags = tags
 		self.description = description
+		self.children = children or []
 
 	@property
 	def JsonDict(self):
-		return _CleanDict({
+		return CleanDict({
 			'key': self.key,
 			'label': self.label,
+			'tags': self.tags,
 			'description': self.description,
-			'children': [c.JsonDict for c in self.children],
+			'children': [c.JsonDict for c in self.children] if self.children else None,
 		})
-
-def _GetByKey(items, key):
-	if not items:
-		return None
-	for item in items:
-		if item.key == key:
-			return item
-
-def _CleanDict(d):
-		for k in list(d.keys()):
-			if d[k] is None or d[k] == '':
-				del d[k]
-		return d
 
 class _ParStyleHandler:
 	def SpecFromTuplet(self, tuplet): pass
