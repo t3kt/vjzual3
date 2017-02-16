@@ -17,7 +17,7 @@ if _pytctrlpath not in sys.path:
 	sys.path.append(_pytctrlpath)
 
 # export these so this module acts as a proxy
-from tctrl.schema import ParamType, ParamOption, ParamSpec, ModuleSpec, AppSchema
+from tctrl.schema import ParamType, ParamOption, ParamPartSpec, ParamSpec, ModuleSpec, AppSchema
 
 class _ParStyleHandler:
 	def SpecFromTuplet(self, tuplet): pass
@@ -43,8 +43,17 @@ class _VectorHandler(_ParStyleHandler):
 	def __init__(self, ptype):
 		self.ptype = ptype
 
-	def SpecFromTuplet(self, tuplet):
-		attrs = [_NumberAttributesFromPar(p) for p in tuplet]
+	def SpecFromTuplet(self, tuplet, usenumbers=False):
+		if usenumbers:
+			partkeys = list(range(1, len(tuplet) + 1))
+			partlabels = partkeys
+		else:
+			partkeys = tuplet[0].style.lower()
+			partlabels = tuplet[0].style
+		parts = [
+			_PartFromPar(tuplet[i], partkeys[i], partlabels[i])
+			for i in range(len(tuplet))
+		]
 		return ParamSpec(
 			tuplet[0].tupletName,
 			label=tuplet[0].label,
@@ -52,11 +61,18 @@ class _VectorHandler(_ParStyleHandler):
 			style=tuplet[0].style,
 			group=tuplet[0].page.name,
 			length=len(tuplet),
-			minlimit=[a['minlimit'] for a in attrs],
-			maxlimit=[a['maxlimit'] for a in attrs],
-			minnorm=[a['minnorm'] for a in attrs],
-			maxnorm=[a['maxnorm'] for a in attrs],
-			defaultval=[a['default'] for a in attrs])
+			parts=parts)
+
+def _PartFromPar(par, key, label):
+	return ParamPartSpec(
+		key,
+		label=label,
+		defaultval=par.default,
+		minlimit=par.min if par.clampMin else None,
+		maxlimit=par.max if par.clampMax else None,
+		minnorm=par.normMin,
+		maxnorm=par.normMax,
+	)
 
 class _VariableLengthHandler(_ParStyleHandler):
 	def __init__(self, singletype, multitype):
@@ -65,7 +81,7 @@ class _VariableLengthHandler(_ParStyleHandler):
 
 	def SpecFromTuplet(self, tuplet):
 		if len(tuplet) > 1:
-			return self.vechandler.SpecFromTuplet(tuplet)
+			return self.vechandler.SpecFromTuplet(tuplet, usenumbers=True)
 		par = tuplet[0]
 		attrs = _NumberAttributesFromPar(par)
 		return ParamSpec(

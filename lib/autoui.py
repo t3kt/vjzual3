@@ -199,27 +199,18 @@ def _CreateBuilderSet(templates):
 		templates.op('./three_sliders'),
 		templates.op('./four_sliders'),
 	]
-	for i in (2, 3, 4):
-		suffixes = (1, 2, 3, 4)[:i]
-		builders[('Float', i)] = _MultiSliderBuilder(
-			multisliders[i - 2],
-			suffixes=suffixes,
-			labels=suffixes)
-		builders[('Int', i)] = builders[('Float', i)]
+	for count in (2, 3, 4):
+		builders[('Float', count)] = _MultiSliderBuilder(
+			multisliders[count - 2])
+		builders[('Int', count)] = builders[('Float', count)]
 	for style in ['UV', 'UVW', 'XY', 'XYZ']:
-		i = len(style)
-		builders[(style, i)] = _MultiSliderBuilder(
-			multisliders[i - 2],
-			suffixes=style[:i].lower(),
-			labels=style[:i])
+		count = len(style)
+		builders[(style, count)] = _MultiSliderBuilder(
+			multisliders[count - 2])
 	builders[('RGB', 3)] = _MultiSliderBuilder(
-		templates.op('./rgb_sliders'),
-		suffixes='rgb',
-		labels='RGB')
+		templates.op('./rgb_sliders'))
 	builders[('RGBA', 4)] = _MultiSliderBuilder(
-		templates.op('./rgba_sliders'),
-		suffixes='rgba',
-		labels='RGBA')
+		templates.op('./rgba_sliders'))
 
 	return builders
 
@@ -269,25 +260,22 @@ class _SingleButtonBuilder(_Builder):
 		return ctrl
 
 class _MultiSliderBuilder(_Builder):
-	def __init__(self, template, suffixes, labels):
+	def __init__(self, template):
 		super().__init__(template=template)
-		self.count = len(suffixes)
-		self.suffixes = suffixes
-		self.labels = labels
 
 	def Build(self, paramspec, hostop):
 		ctrl = super().Build(paramspec, hostop)
 		isint = paramspec.ptype == schema.ParamType.int
-		for i in range(self.count):
+		for i, part in enumerate(paramspec.parts):
 			subctrl = ctrl.op('./par%d_slider' % (i + 1))
-			subctrl.par.Label = self.labels[i]
-			subctrl.par.Help = paramspec.label + ' ' + self.labels[i]
+			subctrl.par.Label = part.label
+			subctrl.par.Help = paramspec.label + ' ' + part.label
 			subctrl.par.Integer = isint
-			if paramspec.defaultval and paramspec.defaultval[i] is not None:
-				subctrl.par.Default1 = paramspec.defaultval[i]
-			if paramspec.minnorm and paramspec.minnorm[i] is not None:
-				subctrl.par.Rangelow1 = paramspec.minnorm[i]
-			if paramspec.maxnorm and paramspec.maxnorm[i] is not None:
-				subctrl.par.Rangehigh1 = paramspec.maxnorm[i]
-			subctrl.par.Value1.expr = 'ext.tmod.par.' + paramspec.key + self.suffixes[i]
+			if part.defaultval is not None:
+				subctrl.par.Default1 = part.defaultval
+			if part.minnorm is not None:
+				subctrl.par.Rangelow1 = part.minnorm
+			if part.maxnorm is not None:
+				subctrl.par.Rangehigh1 = part.maxnorm
+			subctrl.par.Value1.expr = 'ext.tmod.par.' + paramspec.key + part.key
 		return ctrl
