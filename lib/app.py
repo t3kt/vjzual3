@@ -68,8 +68,13 @@ class ShellApp(base.Extension):
 
 	def GetSchema(self):
 		self._LogEvent('GetSchema()')
+		key = self._Key
+		childprefix = key + '/'
 		return schema.AppSchema(
-			self._Key,
+			key,
 			label=self._Title,
-			children=[m.GetSchema() for m in self._ChildModules])
+			children=[
+				m.GetSchema(pathprefix=childprefix)
+				for m in self._ChildModules
+				])
 

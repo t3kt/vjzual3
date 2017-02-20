@@ -28,12 +28,13 @@ class _SimpleHandler(_ParStyleHandler):
 		self.hasoptions = hasoptions
 		self.hasdefault = hasdefault
 
-	def SpecFromTuplet(self, tuplet):
+	def SpecFromTuplet(self, tuplet, pathprefix=None):
 		par = tuplet[0]
 		return ParamSpec(
 			par.tupletName,
 			label=par.label,
 			ptype=self.ptype,
+			path=(pathprefix + par.tupletName) if pathprefix else None,
 			style=par.style,
 			group=par.page.name,
 			defaultval=par.default if self.hasdefault else None,
@@ -43,7 +44,7 @@ class _VectorHandler(_ParStyleHandler):
 	def __init__(self, ptype):
 		self.ptype = ptype
 
-	def SpecFromTuplet(self, tuplet, usenumbers=False):
+	def SpecFromTuplet(self, tuplet, pathprefix=None, usenumbers=False):
 		if usenumbers:
 			partkeys = list(range(1, len(tuplet) + 1))
 			partlabels = partkeys
@@ -58,6 +59,7 @@ class _VectorHandler(_ParStyleHandler):
 			tuplet[0].tupletName,
 			label=tuplet[0].label,
 			ptype=self.ptype,
+			path=(pathprefix + tuplet[0].tupletName) if pathprefix else None,
 			style=tuplet[0].style,
 			group=tuplet[0].page.name,
 			length=len(tuplet),
@@ -79,7 +81,7 @@ class _VariableLengthHandler(_ParStyleHandler):
 		self.singletype = singletype
 		self.vechandler = _VectorHandler(multitype)
 
-	def SpecFromTuplet(self, tuplet):
+	def SpecFromTuplet(self, tuplet, pathprefix=None):
 		if len(tuplet) > 1:
 			return self.vechandler.SpecFromTuplet(tuplet, usenumbers=True)
 		par = tuplet[0]
@@ -87,6 +89,7 @@ class _VariableLengthHandler(_ParStyleHandler):
 		return ParamSpec(
 			par.tupletName,
 			label=par.label,
+			path=(pathprefix + par.tupletName) if pathprefix else None,
 			style=par.style,
 			group=par.page.name,
 			minlimit=attrs['minlimit'],
@@ -132,25 +135,33 @@ def _GetTupletAttrs(tuplet, attrname):
 		return getattr(tuplet[0], attrname)
 	return [getattr(p, attrname) for p in tuplet]
 
-def _SpecFromParTuplet(tuplet):
+def _SpecFromParTuplet(tuplet, pathprefix=None):
 	style = tuplet[0].style
 	if style not in _parStyleHandlers:
 		return ParamSpec(
 			tuplet[0].tupletName,
 			label=tuplet[0].label,
 			ptype=ParamType.other,
+			path=(pathprefix + tuplet[0].tupletName) if pathprefix else None,
 			style=style,
 			group=tuplet[0].page.name)
 	handler = _parStyleHandlers[style]
-	return handler.SpecFromTuplet(tuplet)
+	return handler.SpecFromTuplet(tuplet, pathprefix=pathprefix)
 
-def SpecsFromParTuplets(tuplets, tupletfilter=None):
-	return [_SpecFromParTuplet(t) for t in _FilterParTuplets(tuplets, tupletfilter)]
+def SpecsFromParTuplets(tuplets, tupletfilter=None, pathprefix=None):
+	return [
+		_SpecFromParTuplet(t, pathprefix=pathprefix)
+		for t in _FilterParTuplets(tuplets, tupletfilter)
+		]
 
-def SpecsFromParPages(pages, tupletfilter=None, pagefilter=None):
+def SpecsFromParPages(pages, tupletfilter=None, pagefilter=None, pathprefix=None):
 	specs = []
 	for page in _FilterByName(pages, pagefilter):
-		specs += SpecsFromParTuplets(page.parTuplets, tupletfilter=tupletfilter)
+		specs += SpecsFromParTuplets(
+			page.parTuplets,
+			tupletfilter=tupletfilter,
+			pathprefix=pathprefix
+		)
 	return specs
 
 def _FilterByName(objs, test):

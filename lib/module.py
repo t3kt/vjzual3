@@ -173,16 +173,27 @@ class Module(base.Extension):
 		tags = self.comp.tags - {'tmod'}
 		return list(tags)
 
-	def GetSchema(self):
+	def GetSchema(self, pathprefix=None):
 		master = self.comp.par.clone.eval()
 		mtype = master.path if master else None
+		key = self.comp.par.Modname.eval()
+		path = (pathprefix + key) if pathprefix else None
+		parprefix = (path + ':') if path else None
+		childprefix = (path + '/') if path else None
 		return schema.ModuleSpec(
-			key=self.comp.par.Modname.eval(),
+			key=key,
 			label=self.comp.par.Uilabel.eval(),
+			path=path,
 			moduletype=mtype,
 			tags=self._SchemaTags or None,
-			params=schema.SpecsFromParTuplets(self.GetModParamTuplets(includePulse=True)),
-			children=[m.GetSchema() for m in self._SubModules])
+			params=schema.SpecsFromParTuplets(
+				self.GetModParamTuplets(includePulse=True),
+				pathprefix=parprefix
+			),
+			children=[
+				m.GetSchema(pathprefix=childprefix)
+				for m in self._SubModules
+				])
 
 	def UpdateSolo(self):
 		solo = self.comp.par.Solo.eval()
