@@ -9,7 +9,7 @@
           "key": "chain1_warp",
           "params": [
             {
-              "type": "other",
+              "type": "float",
               "label": "Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -115,7 +115,7 @@
               "length": 2
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Uniform Displace Weight",
               "minNorm": 0.0,
               "style": "Float",
@@ -126,7 +126,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Displace Weight Scale",
               "minNorm": 0.0,
               "style": "Float",
@@ -201,7 +201,7 @@
               "path": "vjzual3/chain1/chain1_warp:Feedbackenabled"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Feedback Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -212,7 +212,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Level Exponent",
               "minNorm": 0.0,
               "style": "Float",
@@ -426,7 +426,7 @@
           "key": "chain1_delay",
           "params": [
             {
-              "type": "other",
+              "type": "float",
               "label": "Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -437,7 +437,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Length",
               "minNorm": 0.0,
               "style": "Float",
@@ -448,7 +448,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "int",
               "label": "Cache Size",
               "minNorm": 1.0,
               "style": "Int",
@@ -468,7 +468,7 @@
           "key": "chain1_iterate",
           "params": [
             {
-              "type": "other",
+              "type": "float",
               "label": "Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -487,7 +487,7 @@
               "path": "vjzual3/chain1/chain1_iterate:Renderres"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Alpha",
               "minNorm": 0.0,
               "style": "Float",
@@ -498,7 +498,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "int",
               "label": "Count",
               "minNorm": 1.0,
               "style": "Int",
@@ -510,7 +510,7 @@
               "maxNorm": 100.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Vertigo",
               "minNorm": 0.0,
               "style": "Float",
@@ -521,7 +521,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Vignette",
               "minNorm": 0.0,
               "style": "Float",
@@ -610,7 +610,7 @@
               "length": 4
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Time Length",
               "minNorm": 0.0,
               "style": "Float",
@@ -621,7 +621,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "int",
               "label": "Cache Size",
               "minNorm": 1.0,
               "style": "Int",
@@ -660,7 +660,7 @@
               ]
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Uniform Scale",
               "minNorm": -1.0,
               "style": "Float",
@@ -853,7 +853,7 @@
               ]
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Translate Multiplier",
               "minNorm": 0.0,
               "style": "Float",
@@ -864,7 +864,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Rotate Multiplier",
               "minNorm": 0.0,
               "style": "Float",
@@ -875,7 +875,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Scale Multiplier",
               "minNorm": 0.0,
               "style": "Float",
@@ -894,7 +894,7 @@
           "key": "chain1_coloradj",
           "params": [
             {
-              "type": "other",
+              "type": "float",
               "label": "Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -907,7 +907,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Brightness",
               "minNorm": 0.0,
               "style": "Float",
@@ -919,7 +919,7 @@
               "maxNorm": 2.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Opacity",
               "minNorm": 0.0,
               "style": "Float",
@@ -932,7 +932,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Contrast",
               "minNorm": 0.0,
               "style": "Float",
@@ -943,7 +943,7 @@
               "maxNorm": 3.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Hue Offset",
               "minNorm": -1.0,
               "style": "Float",
@@ -954,7 +954,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Saturation",
               "minNorm": 0.0,
               "style": "Float",
@@ -966,7 +966,7 @@
               "maxNorm": 2.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Invert",
               "minNorm": 0.0,
               "style": "Float",
@@ -985,7 +985,7 @@
           "key": "chain1_edgefbk1",
           "params": [
             {
-              "type": "other",
+              "type": "float",
               "label": "Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -1028,7 +1028,7 @@
               "length": 3
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Source Gain",
               "minNorm": 0.0,
               "style": "Float",
@@ -1071,7 +1071,7 @@
               "length": 3
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Edge Strength",
               "minNorm": 0.0,
               "style": "Float",
@@ -1082,7 +1082,7 @@
               "maxNorm": 3.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Scale",
               "minNorm": 0.95,
               "style": "Float",
@@ -1093,7 +1093,7 @@
               "maxNorm": 1.05
             },
             {
-              "type": "other",
+              "type": "int",
               "label": "Blur Source",
               "minNorm": 1.0,
               "style": "Int",
@@ -1104,7 +1104,7 @@
               "maxNorm": 100.0
             },
             {
-              "type": "other",
+              "type": "int",
               "label": "Blur Feedback",
               "minNorm": 1.0,
               "style": "Int",
@@ -1115,7 +1115,7 @@
               "maxNorm": 15.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Feedback Gain",
               "minNorm": 0.95,
               "style": "Float",
@@ -1126,7 +1126,7 @@
               "maxNorm": 1.2
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Feedback Black Level",
               "minNorm": -0.2,
               "style": "Float",
@@ -1137,7 +1137,7 @@
               "maxNorm": 0.2
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Hue Shift",
               "minNorm": -35.0,
               "style": "Float",
@@ -1148,7 +1148,7 @@
               "maxNorm": 35.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Saturation Multiplier",
               "minNorm": 0.9,
               "style": "Float",
@@ -1168,7 +1168,7 @@
               "path": "vjzual3/chain1/chain1_edgefbk1:Feedbackenabled"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Feedback Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -1179,7 +1179,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Level Exponent",
               "minNorm": 0.0,
               "style": "Float",
@@ -1393,7 +1393,7 @@
           "key": "chain1_transform",
           "params": [
             {
-              "type": "other",
+              "type": "float",
               "label": "Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -1431,7 +1431,7 @@
               ]
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Uniform Scale",
               "minNorm": -1.0,
               "style": "Float",
@@ -1492,7 +1492,7 @@
               "length": 2
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Rotate",
               "minNorm": -360.0,
               "style": "Float",
@@ -1582,7 +1582,7 @@
               ]
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Translate Multiplier",
               "minNorm": 0.0,
               "style": "Float",
@@ -1593,7 +1593,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Rotate Multiplier",
               "minNorm": 0.0,
               "style": "Float",
@@ -1604,7 +1604,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "NOT IMPL - Scale Multiplier",
               "minNorm": 0.0,
               "style": "Float",
@@ -1624,7 +1624,7 @@
               "path": "vjzual3/chain1/chain1_transform:Feedbackenabled"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Feedback Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -1635,7 +1635,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Level Exponent",
               "minNorm": 0.0,
               "style": "Float",
@@ -1866,7 +1866,7 @@
           "key": "chain2_flip",
           "params": [
             {
-              "type": "other",
+              "type": "float",
               "label": "Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -2309,7 +2309,7 @@
           "key": "chain2_delay",
           "params": [
             {
-              "type": "other",
+              "type": "float",
               "label": "Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -2320,7 +2320,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Length",
               "minNorm": 0.0,
               "style": "Float",
@@ -2331,7 +2331,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "int",
               "label": "Cache Size",
               "minNorm": 1.0,
               "style": "Int",
@@ -2351,7 +2351,7 @@
           "key": "chain2_edge_1",
           "params": [
             {
-              "type": "other",
+              "type": "float",
               "label": "Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -2401,7 +2401,7 @@
               ]
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Strength",
               "minNorm": 0.0,
               "style": "Float",
@@ -2688,7 +2688,7 @@
           "key": "chain2_coloradj",
           "params": [
             {
-              "type": "other",
+              "type": "float",
               "label": "Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -2701,7 +2701,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Brightness",
               "minNorm": 0.0,
               "style": "Float",
@@ -2713,7 +2713,7 @@
               "maxNorm": 2.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Opacity",
               "minNorm": 0.0,
               "style": "Float",
@@ -2726,7 +2726,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Contrast",
               "minNorm": 0.0,
               "style": "Float",
@@ -2737,7 +2737,7 @@
               "maxNorm": 3.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Hue Offset",
               "minNorm": -1.0,
               "style": "Float",
@@ -2748,7 +2748,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Saturation",
               "minNorm": 0.0,
               "style": "Float",
@@ -2760,7 +2760,7 @@
               "maxNorm": 2.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Invert",
               "minNorm": 0.0,
               "style": "Float",
@@ -2779,7 +2779,7 @@
           "key": "chain2_transform",
           "params": [
             {
-              "type": "other",
+              "type": "float",
               "label": "Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -2817,7 +2817,7 @@
               ]
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Uniform Scale",
               "minNorm": -1.0,
               "style": "Float",
@@ -2878,7 +2878,7 @@
               "length": 2
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Rotate",
               "minNorm": -360.0,
               "style": "Float",
@@ -2968,7 +2968,7 @@
               ]
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Translate Multiplier",
               "minNorm": 0.0,
               "style": "Float",
@@ -2979,7 +2979,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Rotate Multiplier",
               "minNorm": 0.0,
               "style": "Float",
@@ -2990,7 +2990,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "NOT IMPL - Scale Multiplier",
               "minNorm": 0.0,
               "style": "Float",
@@ -3010,7 +3010,7 @@
               "path": "vjzual3/chain2/chain2_transform:Feedbackenabled"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Feedback Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -3021,7 +3021,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Level Exponent",
               "minNorm": 0.0,
               "style": "Float",
@@ -3364,7 +3364,7 @@
           "key": "master_flip",
           "params": [
             {
-              "type": "other",
+              "type": "float",
               "label": "Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -3807,7 +3807,7 @@
           "key": "master_delay",
           "params": [
             {
-              "type": "other",
+              "type": "float",
               "label": "Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -3818,7 +3818,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Length",
               "minNorm": 0.0,
               "style": "Float",
@@ -3829,7 +3829,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "int",
               "label": "Cache Size",
               "minNorm": 1.0,
               "style": "Int",
@@ -3849,7 +3849,7 @@
           "key": "master_edge_1",
           "params": [
             {
-              "type": "other",
+              "type": "float",
               "label": "Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -3899,7 +3899,7 @@
               ]
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Strength",
               "minNorm": 0.0,
               "style": "Float",
@@ -4186,7 +4186,7 @@
           "key": "master_edge_2",
           "params": [
             {
-              "type": "other",
+              "type": "float",
               "label": "Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -4236,7 +4236,7 @@
               ]
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Strength",
               "minNorm": 0.0,
               "style": "Float",
@@ -4523,7 +4523,7 @@
           "key": "master_warp_2",
           "params": [
             {
-              "type": "other",
+              "type": "float",
               "label": "Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -4629,7 +4629,7 @@
               "length": 2
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Uniform Displace Weight",
               "minNorm": 0.0,
               "style": "Float",
@@ -4640,7 +4640,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Displace Weight Scale",
               "minNorm": 0.0,
               "style": "Float",
@@ -4715,7 +4715,7 @@
               "path": "vjzual3/master/master_warp_2:Feedbackenabled"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Feedback Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -4726,7 +4726,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Level Exponent",
               "minNorm": 0.0,
               "style": "Float",
@@ -4949,7 +4949,7 @@
               "path": "vjzual3/master/master/blend_1:Modinput"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Cross Fade",
               "minNorm": -1.0,
               "style": "Float",
@@ -5198,7 +5198,7 @@
               "path": "vjzual3/master/master/blend_2:Modinput"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Cross Fade",
               "minNorm": -1.0,
               "style": "Float",
@@ -5438,7 +5438,7 @@
           "key": "master_trails_1",
           "params": [
             {
-              "type": "other",
+              "type": "float",
               "label": "Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -5644,7 +5644,7 @@
               ]
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Level Exponent",
               "minNorm": 0.0,
               "style": "Float",
@@ -5663,7 +5663,7 @@
           "key": "master_kaleido_1",
           "params": [
             {
-              "type": "other",
+              "type": "float",
               "label": "Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -5674,7 +5674,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Offset",
               "minNorm": -1.5,
               "style": "Float",
@@ -5685,7 +5685,7 @@
               "maxNorm": 1.5
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Segments",
               "minNorm": -2.0,
               "style": "Float",
@@ -5764,7 +5764,7 @@
           "key": "master_recolor_1",
           "params": [
             {
-              "type": "other",
+              "type": "float",
               "label": "Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -5775,7 +5775,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Phase",
               "minNorm": -1.0,
               "style": "Float",
@@ -5786,7 +5786,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Period",
               "minNorm": 0.0,
               "style": "Float",
@@ -5983,7 +5983,7 @@
               "path": "vjzual3/master/master_recolor_1:Phaselfoon"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Phase LFO Rate",
               "minNorm": -2.0,
               "style": "Float",
@@ -6008,7 +6008,7 @@
           "key": "master_transform",
           "params": [
             {
-              "type": "other",
+              "type": "float",
               "label": "Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -6046,7 +6046,7 @@
               ]
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Uniform Scale",
               "minNorm": -1.0,
               "style": "Float",
@@ -6107,7 +6107,7 @@
               "length": 2
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Rotate",
               "minNorm": -360.0,
               "style": "Float",
@@ -6197,7 +6197,7 @@
               ]
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Translate Multiplier",
               "minNorm": 0.0,
               "style": "Float",
@@ -6208,7 +6208,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Rotate Multiplier",
               "minNorm": 0.0,
               "style": "Float",
@@ -6219,7 +6219,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "NOT IMPL - Scale Multiplier",
               "minNorm": 0.0,
               "style": "Float",
@@ -6239,7 +6239,7 @@
               "path": "vjzual3/master/master_transform:Feedbackenabled"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Feedback Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -6250,7 +6250,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Level Exponent",
               "minNorm": 0.0,
               "style": "Float",
@@ -6464,7 +6464,7 @@
           "key": "master_coloradj_4",
           "params": [
             {
-              "type": "other",
+              "type": "float",
               "label": "Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -6477,7 +6477,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Brightness",
               "minNorm": 0.0,
               "style": "Float",
@@ -6489,7 +6489,7 @@
               "maxNorm": 2.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Opacity",
               "minNorm": 0.0,
               "style": "Float",
@@ -6502,7 +6502,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Contrast",
               "minNorm": 0.0,
               "style": "Float",
@@ -6513,7 +6513,7 @@
               "maxNorm": 3.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Hue Offset",
               "minNorm": -1.0,
               "style": "Float",
@@ -6524,7 +6524,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Saturation",
               "minNorm": 0.0,
               "style": "Float",
@@ -6536,7 +6536,7 @@
               "maxNorm": 2.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Invert",
               "minNorm": 0.0,
               "style": "Float",
@@ -6618,7 +6618,7 @@
               "path": "vjzual3/master/master_background_1:Source"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Background Alpha",
               "minNorm": 0.0,
               "style": "Float",
@@ -6700,7 +6700,7 @@
               "path": "vjzual3/master/master_background_2:Source"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Background Alpha",
               "minNorm": 0.0,
               "style": "Float",
@@ -6719,7 +6719,7 @@
           "key": "master_surface_thing",
           "params": [
             {
-              "type": "other",
+              "type": "float",
               "label": "Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -6947,7 +6947,7 @@
           "key": "master_time_machine_1",
           "params": [
             {
-              "type": "other",
+              "type": "float",
               "label": "Level",
               "minNorm": 0.0,
               "style": "Float",
@@ -6958,7 +6958,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "int",
               "label": "Cache Size",
               "minNorm": 0.0,
               "style": "Int",
@@ -6970,7 +6970,7 @@
               "maxNorm": 128.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Black Offset",
               "minNorm": 0.0,
               "style": "Float",
@@ -6981,7 +6981,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "White Offset",
               "minNorm": 0.0,
               "style": "Float",
@@ -7000,7 +7000,7 @@
               "path": "vjzual3/master/master_time_machine_1:Source"
             },
             {
-              "type": "other",
+              "type": "int",
               "label": "Step",
               "minNorm": 1.0,
               "style": "Int",
@@ -7098,7 +7098,7 @@
               "path": "vjzual3/sources/sources_video_1:Audio"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Volume",
               "minNorm": 0.0,
               "style": "Float",
@@ -7109,7 +7109,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Rate",
               "minNorm": -2.0,
               "style": "Float",
@@ -7129,7 +7129,7 @@
               "path": "vjzual3/sources/sources_video_1:Reverse"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Loop Crossfade",
               "minNorm": 0.0,
               "style": "Float",
@@ -7213,7 +7213,7 @@
               "path": "vjzual3/sources/sources_video_1:Renderres"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Cue 1 Time",
               "minNorm": 0.0,
               "style": "Float",
@@ -7262,7 +7262,7 @@
               "path": "vjzual3/sources/sources_video_1:Cuemode1"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Cue 2 Time",
               "minNorm": 0.0,
               "style": "Float",
@@ -7311,7 +7311,7 @@
               "path": "vjzual3/sources/sources_video_1:Cuemode2"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Cue 3 Time",
               "minNorm": 0.0,
               "style": "Float",
@@ -7360,7 +7360,7 @@
               "path": "vjzual3/sources/sources_video_1:Cuemode3"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Cue 4 Time",
               "minNorm": 0.0,
               "style": "Float",
@@ -7451,7 +7451,7 @@
               "path": "vjzual3/sources/sources_video_2:Audio"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Volume",
               "minNorm": 0.0,
               "style": "Float",
@@ -7462,7 +7462,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Rate",
               "minNorm": -2.0,
               "style": "Float",
@@ -7482,7 +7482,7 @@
               "path": "vjzual3/sources/sources_video_2:Reverse"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Loop Crossfade",
               "minNorm": 0.0,
               "style": "Float",
@@ -7566,7 +7566,7 @@
               "path": "vjzual3/sources/sources_video_2:Renderres"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Cue 1 Time",
               "minNorm": 0.0,
               "style": "Float",
@@ -7615,7 +7615,7 @@
               "path": "vjzual3/sources/sources_video_2:Cuemode1"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Cue 2 Time",
               "minNorm": 0.0,
               "style": "Float",
@@ -7664,7 +7664,7 @@
               "path": "vjzual3/sources/sources_video_2:Cuemode2"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Cue 3 Time",
               "minNorm": 0.0,
               "style": "Float",
@@ -7713,7 +7713,7 @@
               "path": "vjzual3/sources/sources_video_2:Cuemode3"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Cue 4 Time",
               "minNorm": 0.0,
               "style": "Float",
@@ -7804,7 +7804,7 @@
               "path": "vjzual3/sources/sources_video_3:Audio"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Volume",
               "minNorm": 0.0,
               "style": "Float",
@@ -7815,7 +7815,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Rate",
               "minNorm": -2.0,
               "style": "Float",
@@ -7835,7 +7835,7 @@
               "path": "vjzual3/sources/sources_video_3:Reverse"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Loop Crossfade",
               "minNorm": 0.0,
               "style": "Float",
@@ -7919,7 +7919,7 @@
               "path": "vjzual3/sources/sources_video_3:Renderres"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Cue 1 Time",
               "minNorm": 0.0,
               "style": "Float",
@@ -7968,7 +7968,7 @@
               "path": "vjzual3/sources/sources_video_3:Cuemode1"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Cue 2 Time",
               "minNorm": 0.0,
               "style": "Float",
@@ -8017,7 +8017,7 @@
               "path": "vjzual3/sources/sources_video_3:Cuemode2"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Cue 3 Time",
               "minNorm": 0.0,
               "style": "Float",
@@ -8066,7 +8066,7 @@
               "path": "vjzual3/sources/sources_video_3:Cuemode3"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Cue 4 Time",
               "minNorm": 0.0,
               "style": "Float",
@@ -8157,7 +8157,7 @@
               "path": "vjzual3/sources/sources_video_4:Audio"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Volume",
               "minNorm": 0.0,
               "style": "Float",
@@ -8168,7 +8168,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Rate",
               "minNorm": -2.0,
               "style": "Float",
@@ -8188,7 +8188,7 @@
               "path": "vjzual3/sources/sources_video_4:Reverse"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Loop Crossfade",
               "minNorm": 0.0,
               "style": "Float",
@@ -8272,7 +8272,7 @@
               "path": "vjzual3/sources/sources_video_4:Renderres"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Cue 1 Time",
               "minNorm": 0.0,
               "style": "Float",
@@ -8321,7 +8321,7 @@
               "path": "vjzual3/sources/sources_video_4:Cuemode1"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Cue 2 Time",
               "minNorm": 0.0,
               "style": "Float",
@@ -8370,7 +8370,7 @@
               "path": "vjzual3/sources/sources_video_4:Cuemode2"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Cue 3 Time",
               "minNorm": 0.0,
               "style": "Float",
@@ -8419,7 +8419,7 @@
               "path": "vjzual3/sources/sources_video_4:Cuemode3"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Cue 4 Time",
               "minNorm": 0.0,
               "style": "Float",
@@ -8510,7 +8510,7 @@
               "path": "vjzual3/sources/sources_video_5:Audio"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Volume",
               "minNorm": 0.0,
               "style": "Float",
@@ -8521,7 +8521,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Rate",
               "minNorm": -2.0,
               "style": "Float",
@@ -8541,7 +8541,7 @@
               "path": "vjzual3/sources/sources_video_5:Reverse"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Loop Crossfade",
               "minNorm": 0.0,
               "style": "Float",
@@ -8625,7 +8625,7 @@
               "path": "vjzual3/sources/sources_video_5:Renderres"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Cue 1 Time",
               "minNorm": 0.0,
               "style": "Float",
@@ -8674,7 +8674,7 @@
               "path": "vjzual3/sources/sources_video_5:Cuemode1"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Cue 2 Time",
               "minNorm": 0.0,
               "style": "Float",
@@ -8723,7 +8723,7 @@
               "path": "vjzual3/sources/sources_video_5:Cuemode2"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Cue 3 Time",
               "minNorm": 0.0,
               "style": "Float",
@@ -8772,7 +8772,7 @@
               "path": "vjzual3/sources/sources_video_5:Cuemode3"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Cue 4 Time",
               "minNorm": 0.0,
               "style": "Float",
@@ -9107,7 +9107,7 @@
               ]
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Period",
               "minNorm": 0.0,
               "style": "Float",
@@ -9119,7 +9119,7 @@
               "maxNorm": 5.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Amplitude",
               "minNorm": 0.0,
               "style": "Float",
@@ -9130,7 +9130,7 @@
               "maxNorm": 2.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Offset",
               "minNorm": 0.0,
               "style": "Float",
@@ -9141,7 +9141,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "int",
               "label": "Harmonics",
               "minNorm": 0.0,
               "style": "Int",
@@ -9153,7 +9153,7 @@
               "maxNorm": 6.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Harmonic Spread",
               "minNorm": 0.0,
               "style": "Float",
@@ -9164,7 +9164,7 @@
               "maxNorm": 10.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Harmonic Gain",
               "minNorm": 0.0,
               "style": "Float",
@@ -9265,7 +9265,7 @@
               "path": "vjzual3/generators/noise_gen_1:Mono"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Exponent",
               "minNorm": 0.0,
               "style": "Float",
@@ -9351,7 +9351,7 @@
               ]
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Period",
               "minNorm": 0.0,
               "style": "Float",
@@ -9363,7 +9363,7 @@
               "maxNorm": 5.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Amplitude",
               "minNorm": 0.0,
               "style": "Float",
@@ -9374,7 +9374,7 @@
               "maxNorm": 2.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Offset",
               "minNorm": 0.0,
               "style": "Float",
@@ -9385,7 +9385,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "int",
               "label": "Harmonics",
               "minNorm": 0.0,
               "style": "Int",
@@ -9397,7 +9397,7 @@
               "maxNorm": 6.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Harmonic Spread",
               "minNorm": 0.0,
               "style": "Float",
@@ -9408,7 +9408,7 @@
               "maxNorm": 10.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Harmonic Gain",
               "minNorm": 0.0,
               "style": "Float",
@@ -9509,7 +9509,7 @@
               "path": "vjzual3/generators/noise_gen_2:Mono"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Exponent",
               "minNorm": 0.0,
               "style": "Float",
@@ -9591,7 +9591,7 @@
               "length": 2
             },
             {
-              "type": "other",
+              "type": "int",
               "label": "Sides",
               "minNorm": 3.0,
               "style": "Int",
@@ -9628,7 +9628,7 @@
               "length": 2
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Scale",
               "minNorm": 0.0,
               "style": "Float",
@@ -9657,7 +9657,7 @@
               "path": "vjzual3/generators/shape_gen_1:Antialias"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Softness",
               "minNorm": 0.0,
               "style": "Float",
@@ -9717,7 +9717,7 @@
               "length": 4
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Border Width",
               "minNorm": 0.0,
               "style": "Float",
@@ -9861,7 +9861,7 @@
               "path": "vjzual3/generators/shape_gen_1:Bgsource"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Rotate",
               "minNorm": -180.0,
               "style": "Float",
@@ -9923,7 +9923,7 @@
               "length": 2
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Uniform Scale",
               "minNorm": 0.0,
               "style": "Float",
@@ -9934,7 +9934,7 @@
               "maxNorm": 10.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Shift Rate",
               "minNorm": 0.0,
               "style": "Float",
@@ -9997,7 +9997,7 @@
               "path": "vjzual3/generators/voronoi_gen_1:Rotaterateon"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Rotate Rate",
               "minNorm": -1.0,
               "style": "Float",
@@ -10123,7 +10123,7 @@
               "length": 2
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Uniform Scale",
               "minNorm": 0.0,
               "style": "Float",
@@ -10134,7 +10134,7 @@
               "maxNorm": 10.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Shift Rate",
               "minNorm": 0.0,
               "style": "Float",
@@ -10197,7 +10197,7 @@
               "path": "vjzual3/generators/voronoi_gen_2:Rotaterateon"
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Rotate Rate",
               "minNorm": -1.0,
               "style": "Float",
@@ -10357,7 +10357,7 @@
               ]
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Period",
               "minNorm": 0.0,
               "style": "Float",
@@ -10369,7 +10369,7 @@
               "maxNorm": 5.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Amplitude",
               "minNorm": 0.0,
               "style": "Float",
@@ -10380,7 +10380,7 @@
               "maxNorm": 2.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Offset",
               "minNorm": 0.0,
               "style": "Float",
@@ -10391,7 +10391,7 @@
               "maxNorm": 1.0
             },
             {
-              "type": "other",
+              "type": "int",
               "label": "Harmonics",
               "minNorm": 0.0,
               "style": "Int",
@@ -10403,7 +10403,7 @@
               "maxNorm": 6.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Harmonic Spread",
               "minNorm": 0.0,
               "style": "Float",
@@ -10414,7 +10414,7 @@
               "maxNorm": 10.0
             },
             {
-              "type": "other",
+              "type": "float",
               "label": "Harmonic Gain",
               "minNorm": 0.0,
               "style": "Float",
@@ -10739,7 +10739,7 @@
               ]
             },
             {
-              "type": "other",
+              "type": "int",
               "label": "Single Generator",
               "minNorm": 1.0,
               "style": "Int",

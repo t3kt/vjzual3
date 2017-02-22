@@ -88,6 +88,7 @@ class _VariableLengthHandler(_ParStyleHandler):
 		attrs = _NumberAttributesFromPar(par)
 		return ParamSpec(
 			par.tupletName,
+			ptype=self.singletype,
 			label=par.label,
 			path=(pathprefix + par.tupletName) if pathprefix else None,
 			style=par.style,
