@@ -7,12 +7,12 @@ if False:
 		from common.lib._stubs import *
 
 import sys
+import os
+import os.path
 # _pytctrlpath = op('/_').var('shelldir')
 _pytctrlpath = project.folder
-_pytctrlpath = _pytctrlpath.replace('/', '\\')
-if not _pytctrlpath.endswith('\\'):
-	_pytctrlpath += '\\'
-_pytctrlpath += 'pytctrl'
+_pytctrlpath = _pytctrlpath.replace('/', os.sep)
+_pytctrlpath = os.path.join(_pytctrlpath, 'pytctrl')
 if _pytctrlpath not in sys.path:
 	sys.path.append(_pytctrlpath)
 
