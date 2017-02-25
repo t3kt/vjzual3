@@ -46,26 +46,27 @@ class _VectorHandler(_ParStyleHandler):
 
 	def SpecFromTuplet(self, tuplet, pathprefix=None, usenumbers=False):
 		if usenumbers:
-			partkeys = list(range(1, len(tuplet) + 1))
+			partkeys = [str(i) for i in range(1, len(tuplet) + 1)]
 			partlabels = partkeys
 		else:
 			partkeys = tuplet[0].style.lower()
 			partlabels = tuplet[0].style
+		path = (pathprefix + tuplet[0].tupletName) if pathprefix else None
 		parts = [
-			_PartFromPar(tuplet[i], partkeys[i], partlabels[i])
+			_PartFromPar(tuplet[i], partkeys[i], partlabels[i], pathprefix=path)
 			for i in range(len(tuplet))
 		]
 		return ParamSpec(
 			tuplet[0].tupletName,
 			label=tuplet[0].label,
 			ptype=self.ptype,
-			path=(pathprefix + tuplet[0].tupletName) if pathprefix else None,
+			path=path,
 			style=tuplet[0].style,
 			group=tuplet[0].page.name,
 			length=len(tuplet),
 			parts=parts)
 
-def _PartFromPar(par, key, label):
+def _PartFromPar(par, key, label, pathprefix=None):
 	return ParamPartSpec(
 		key,
 		label=label,
@@ -74,6 +75,7 @@ def _PartFromPar(par, key, label):
 		maxlimit=par.max if par.clampMax else None,
 		minnorm=par.normMin,
 		maxnorm=par.normMax,
+		path=(pathprefix + key) if pathprefix else None,
 	)
 
 class _VariableLengthHandler(_ParStyleHandler):

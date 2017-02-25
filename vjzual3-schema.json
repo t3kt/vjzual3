@@ -101,14 +101,16 @@
                   "label": "X",
                   "minNorm": 0.0,
                   "key": "x",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain1/chain1_warp:Displaceweightx"
                 },
                 {
                   "default": 0.0,
                   "label": "Y",
                   "minNorm": 0.0,
                   "key": "y",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain1/chain1_warp:Displaceweighty"
                 }
               ],
               "key": "Displaceweight",
@@ -543,28 +545,32 @@
                   "label": "R",
                   "minNorm": 0.0,
                   "key": "r",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain1/chain1_iterate:Bgcolorr"
                 },
                 {
                   "default": 0.0,
                   "label": "G",
                   "minNorm": 0.0,
                   "key": "g",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain1/chain1_iterate:Bgcolorg"
                 },
                 {
                   "default": 0.0,
                   "label": "B",
                   "minNorm": 0.0,
                   "key": "b",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain1/chain1_iterate:Bgcolorb"
                 },
                 {
                   "default": 0.0,
                   "label": "A",
                   "minNorm": 0.0,
                   "key": "a",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain1/chain1_iterate:Bgcolora"
                 }
               ],
               "key": "Bgcolor",
@@ -582,28 +588,32 @@
                   "label": "R",
                   "minNorm": 0.0,
                   "key": "r",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain1/chain1_iterate:Edgecolorr"
                 },
                 {
                   "default": 1.0,
                   "label": "G",
                   "minNorm": 0.0,
                   "key": "g",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain1/chain1_iterate:Edgecolorg"
                 },
                 {
                   "default": 1.0,
                   "label": "B",
                   "minNorm": 0.0,
                   "key": "b",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain1/chain1_iterate:Edgecolorb"
                 },
                 {
                   "default": 0.5,
                   "label": "A",
                   "minNorm": 0.0,
                   "key": "a",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain1/chain1_iterate:Edgecolora"
                 }
               ],
               "key": "Edgecolor",
@@ -682,21 +692,24 @@
                   "label": "X",
                   "minNorm": -2.0,
                   "key": "x",
-                  "maxNorm": 2.0
+                  "maxNorm": 2.0,
+                  "path": "vjzual3/chain1/chain1_iterate:Translatex"
                 },
                 {
                   "default": 0.0,
                   "label": "Y",
                   "minNorm": -2.0,
                   "key": "y",
-                  "maxNorm": 2.0
+                  "maxNorm": 2.0,
+                  "path": "vjzual3/chain1/chain1_iterate:Translatey"
                 },
                 {
                   "default": 0.0,
                   "label": "Z",
                   "minNorm": -2.0,
                   "key": "z",
-                  "maxNorm": 2.0
+                  "maxNorm": 2.0,
+                  "path": "vjzual3/chain1/chain1_iterate:Translatez"
                 }
               ],
               "key": "Translate",
@@ -714,21 +727,24 @@
                   "label": "X",
                   "minNorm": -180.0,
                   "key": "x",
-                  "maxNorm": 180.0
+                  "maxNorm": 180.0,
+                  "path": "vjzual3/chain1/chain1_iterate:Rotatex"
                 },
                 {
                   "default": 0.0,
                   "label": "Y",
                   "minNorm": -180.0,
                   "key": "y",
-                  "maxNorm": 180.0
+                  "maxNorm": 180.0,
+                  "path": "vjzual3/chain1/chain1_iterate:Rotatey"
                 },
                 {
                   "default": 0.0,
                   "label": "Z",
                   "minNorm": -180.0,
                   "key": "z",
-                  "maxNorm": 180.0
+                  "maxNorm": 180.0,
+                  "path": "vjzual3/chain1/chain1_iterate:Rotatez"
                 }
               ],
               "key": "Rotate",
@@ -746,21 +762,24 @@
                   "label": "X",
                   "minNorm": -1.0,
                   "key": "x",
-                  "maxNorm": 2.0
+                  "maxNorm": 2.0,
+                  "path": "vjzual3/chain1/chain1_iterate:Scalex"
                 },
                 {
                   "default": 1.0,
                   "label": "Y",
                   "minNorm": -1.0,
                   "key": "y",
-                  "maxNorm": 2.0
+                  "maxNorm": 2.0,
+                  "path": "vjzual3/chain1/chain1_iterate:Scaley"
                 },
                 {
                   "default": 1.0,
                   "label": "Z",
                   "minNorm": -1.0,
                   "key": "z",
-                  "maxNorm": 2.0
+                  "maxNorm": 2.0,
+                  "path": "vjzual3/chain1/chain1_iterate:Scalez"
                 }
               ],
               "key": "Scale",
@@ -778,21 +797,24 @@
                   "label": "X",
                   "minNorm": -1.0,
                   "key": "x",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain1/chain1_iterate:Pivotx"
                 },
                 {
                   "default": 0.0,
                   "label": "Y",
                   "minNorm": -1.0,
                   "key": "y",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain1/chain1_iterate:Pivoty"
                 },
                 {
                   "default": 0.0,
                   "label": "Z",
                   "minNorm": -1.0,
                   "key": "z",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain1/chain1_iterate:Pivotz"
                 }
               ],
               "key": "Pivot",
@@ -1007,21 +1029,24 @@
                   "label": "R",
                   "minNorm": 0.0,
                   "key": "r",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain1/chain1_edgefbk1:Sourcetintr"
                 },
                 {
                   "default": 1.0,
                   "label": "G",
                   "minNorm": 0.0,
                   "key": "g",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain1/chain1_edgefbk1:Sourcetintg"
                 },
                 {
                   "default": 1.0,
                   "label": "B",
                   "minNorm": 0.0,
                   "key": "b",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain1/chain1_edgefbk1:Sourcetintb"
                 }
               ],
               "key": "Sourcetint",
@@ -1050,21 +1075,24 @@
                   "label": "R",
                   "minNorm": 0.0,
                   "key": "r",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain1/chain1_edgefbk1:Edgecolorr"
                 },
                 {
                   "default": 0.0,
                   "label": "G",
                   "minNorm": 0.0,
                   "key": "g",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain1/chain1_edgefbk1:Edgecolorg"
                 },
                 {
                   "default": 0.0,
                   "label": "B",
                   "minNorm": 0.0,
                   "key": "b",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain1/chain1_edgefbk1:Edgecolorb"
                 }
               ],
               "key": "Edgecolor",
@@ -1453,14 +1481,16 @@
                   "label": "X",
                   "minNorm": -1.0,
                   "key": "x",
-                  "maxNorm": 3.0
+                  "maxNorm": 3.0,
+                  "path": "vjzual3/chain1/chain1_transform:Scalex"
                 },
                 {
                   "default": 1.0,
                   "label": "Y",
                   "minNorm": -1.0,
                   "key": "y",
-                  "maxNorm": 3.0
+                  "maxNorm": 3.0,
+                  "path": "vjzual3/chain1/chain1_transform:Scaley"
                 }
               ],
               "key": "Scale",
@@ -1478,14 +1508,16 @@
                   "label": "X",
                   "minNorm": -1.0,
                   "key": "x",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain1/chain1_transform:Translatex"
                 },
                 {
                   "default": 0.0,
                   "label": "Y",
                   "minNorm": -1.0,
                   "key": "y",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain1/chain1_transform:Translatey"
                 }
               ],
               "key": "Translate",
@@ -1514,14 +1546,16 @@
                   "label": "X",
                   "minNorm": 0.0,
                   "key": "x",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain1/chain1_transform:Pivotx"
                 },
                 {
                   "default": 0.5,
                   "label": "Y",
                   "minNorm": 0.0,
                   "key": "y",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain1/chain1_transform:Pivoty"
                 }
               ],
               "key": "Pivot",
@@ -2347,6 +2381,425 @@
           "moduleType": "/_/components/delay_module"
         },
         {
+          "label": "chain2/warp1",
+          "key": "chain2_warp1",
+          "params": [
+            {
+              "type": "float",
+              "label": "Level",
+              "minNorm": 0.0,
+              "style": "Float",
+              "default": 1.0,
+              "path": "vjzual3/chain2/chain2_warp1:Level",
+              "group": "Warp",
+              "key": "Level",
+              "maxNorm": 1.0
+            },
+            {
+              "type": "string",
+              "label": "Source",
+              "group": "Warp",
+              "style": "Str",
+              "key": "Source",
+              "path": "vjzual3/chain2/chain2_warp1:Source"
+            },
+            {
+              "type": "menu",
+              "label": "Horizontal Source",
+              "group": "Warp",
+              "style": "Menu",
+              "default": "red",
+              "path": "vjzual3/chain2/chain2_warp1:Horzsource",
+              "key": "Horzsource",
+              "options": [
+                {
+                  "key": "red",
+                  "label": "Red"
+                },
+                {
+                  "key": "green",
+                  "label": "Green"
+                },
+                {
+                  "key": "blue",
+                  "label": "Blue"
+                },
+                {
+                  "key": "alpha",
+                  "label": "Alpha"
+                },
+                {
+                  "key": "none",
+                  "label": "None"
+                }
+              ]
+            },
+            {
+              "type": "menu",
+              "label": "Vertical Source",
+              "group": "Warp",
+              "style": "Menu",
+              "default": "blue",
+              "path": "vjzual3/chain2/chain2_warp1:Vertsource",
+              "key": "Vertsource",
+              "options": [
+                {
+                  "key": "red",
+                  "label": "Red"
+                },
+                {
+                  "key": "green",
+                  "label": "Green"
+                },
+                {
+                  "key": "blue",
+                  "label": "Blue"
+                },
+                {
+                  "key": "alpha",
+                  "label": "Alpha"
+                },
+                {
+                  "key": "none",
+                  "label": "None"
+                }
+              ]
+            },
+            {
+              "type": "fvec",
+              "label": "Displace Weight",
+              "group": "Warp",
+              "style": "XY",
+              "path": "vjzual3/chain2/chain2_warp1:Displaceweight",
+              "parts": [
+                {
+                  "default": 0.0,
+                  "label": "X",
+                  "minNorm": 0.0,
+                  "key": "x",
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain2/chain2_warp1:Displaceweightx"
+                },
+                {
+                  "default": 0.0,
+                  "label": "Y",
+                  "minNorm": 0.0,
+                  "key": "y",
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain2/chain2_warp1:Displaceweighty"
+                }
+              ],
+              "key": "Displaceweight",
+              "length": 2
+            },
+            {
+              "type": "float",
+              "label": "Uniform Displace Weight",
+              "minNorm": 0.0,
+              "style": "Float",
+              "default": 0.0,
+              "path": "vjzual3/chain2/chain2_warp1:Uniformdisplaceweight",
+              "group": "Warp",
+              "key": "Uniformdisplaceweight",
+              "maxNorm": 1.0
+            },
+            {
+              "type": "float",
+              "label": "Displace Weight Scale",
+              "minNorm": 0.0,
+              "style": "Float",
+              "default": 0.3,
+              "path": "vjzual3/chain2/chain2_warp1:Displaceweightscale",
+              "group": "Warp",
+              "key": "Displaceweightscale",
+              "maxNorm": 0.4
+            },
+            {
+              "type": "menu",
+              "label": "Extend",
+              "group": "Warp",
+              "style": "Menu",
+              "default": "mirror",
+              "path": "vjzual3/chain2/chain2_warp1:Extend",
+              "key": "Extend",
+              "options": [
+                {
+                  "key": "hold",
+                  "label": "Hold"
+                },
+                {
+                  "key": "zero",
+                  "label": "Zero"
+                },
+                {
+                  "key": "repeat",
+                  "label": "Repeat"
+                },
+                {
+                  "key": "mirror",
+                  "label": "Mirror"
+                }
+              ]
+            },
+            {
+              "type": "menu",
+              "label": "Displace Mode",
+              "group": "Warp",
+              "style": "Menu",
+              "default": "linked",
+              "path": "vjzual3/chain2/chain2_warp1:Displacemode",
+              "key": "Displacemode",
+              "options": [
+                {
+                  "key": "linked",
+                  "label": "Linked"
+                },
+                {
+                  "key": "separate",
+                  "label": "Separate X/Y"
+                }
+              ]
+            },
+            {
+              "type": "bool",
+              "label": "Reverse",
+              "group": "Warp",
+              "style": "Toggle",
+              "default": false,
+              "key": "Reverse",
+              "path": "vjzual3/chain2/chain2_warp1:Reverse"
+            },
+            {
+              "type": "bool",
+              "label": "Feedback Enabled",
+              "group": "Feedback",
+              "style": "Toggle",
+              "default": false,
+              "key": "Feedbackenabled",
+              "path": "vjzual3/chain2/chain2_warp1:Feedbackenabled"
+            },
+            {
+              "type": "float",
+              "label": "Feedback Level",
+              "minNorm": 0.0,
+              "style": "Float",
+              "default": 0.0,
+              "path": "vjzual3/chain2/chain2_warp1:Feedbacklevel",
+              "group": "Feedback",
+              "key": "Feedbacklevel",
+              "maxNorm": 1.0
+            },
+            {
+              "type": "float",
+              "label": "Level Exponent",
+              "minNorm": 0.0,
+              "style": "Float",
+              "default": 0.08,
+              "path": "vjzual3/chain2/chain2_warp1:Feedbacklevelexp",
+              "group": "Feedback",
+              "key": "Feedbacklevelexp",
+              "maxNorm": 1.0
+            },
+            {
+              "type": "menu",
+              "label": "Composite Operator",
+              "group": "Feedback",
+              "style": "Menu",
+              "default": "maximum",
+              "path": "vjzual3/chain2/chain2_warp1:Feedbackoperand",
+              "key": "Feedbackoperand",
+              "options": [
+                {
+                  "key": "add",
+                  "label": "Add"
+                },
+                {
+                  "key": "atop",
+                  "label": "Atop"
+                },
+                {
+                  "key": "average",
+                  "label": "Average"
+                },
+                {
+                  "key": "brightest",
+                  "label": "Brightest"
+                },
+                {
+                  "key": "burncolor",
+                  "label": "Burn Color"
+                },
+                {
+                  "key": "burnlinear",
+                  "label": "Burn Linear"
+                },
+                {
+                  "key": "chromadifference",
+                  "label": "Chroma Difference"
+                },
+                {
+                  "key": "color",
+                  "label": "Color"
+                },
+                {
+                  "key": "darkercolor",
+                  "label": "Darker Color"
+                },
+                {
+                  "key": "difference",
+                  "label": "Difference"
+                },
+                {
+                  "key": "dimmest",
+                  "label": "Dimmest"
+                },
+                {
+                  "key": "divide",
+                  "label": "Divide"
+                },
+                {
+                  "key": "dodge",
+                  "label": "Dodge"
+                },
+                {
+                  "key": "exclude",
+                  "label": "Exclude"
+                },
+                {
+                  "key": "freeze",
+                  "label": "Freeze"
+                },
+                {
+                  "key": "glow",
+                  "label": "Glow"
+                },
+                {
+                  "key": "hardlight",
+                  "label": "Hard Light"
+                },
+                {
+                  "key": "hardmix",
+                  "label": "Hard Mix"
+                },
+                {
+                  "key": "heat",
+                  "label": "Heat"
+                },
+                {
+                  "key": "hue",
+                  "label": "Hue"
+                },
+                {
+                  "key": "inside",
+                  "label": "Inside"
+                },
+                {
+                  "key": "insideluminance",
+                  "label": "Inside Luminance"
+                },
+                {
+                  "key": "inverse",
+                  "label": "Inverse"
+                },
+                {
+                  "key": "lightercolor",
+                  "label": "Lighter Color"
+                },
+                {
+                  "key": "luminancedifference",
+                  "label": "Luminance Difference"
+                },
+                {
+                  "key": "maximum",
+                  "label": "Maximum"
+                },
+                {
+                  "key": "minimum",
+                  "label": "Minimum"
+                },
+                {
+                  "key": "multiply",
+                  "label": "Multiply"
+                },
+                {
+                  "key": "negate",
+                  "label": "Negate"
+                },
+                {
+                  "key": "outside",
+                  "label": "Outside"
+                },
+                {
+                  "key": "outsideluminance",
+                  "label": "Outside Luminance"
+                },
+                {
+                  "key": "over",
+                  "label": "Over"
+                },
+                {
+                  "key": "overlay",
+                  "label": "Overlay"
+                },
+                {
+                  "key": "pinlight",
+                  "label": "Pinlight"
+                },
+                {
+                  "key": "reflect",
+                  "label": "Reflect"
+                },
+                {
+                  "key": "screen",
+                  "label": "Screen"
+                },
+                {
+                  "key": "softlight",
+                  "label": "Soft Light"
+                },
+                {
+                  "key": "linearlight",
+                  "label": "Linear Light"
+                },
+                {
+                  "key": "stencilluminance",
+                  "label": "Stencil Luminance"
+                },
+                {
+                  "key": "subtract",
+                  "label": "Subtract"
+                },
+                {
+                  "key": "subtractive",
+                  "label": "Subtractive"
+                },
+                {
+                  "key": "under",
+                  "label": "Under"
+                },
+                {
+                  "key": "vividlight",
+                  "label": "Vivid Light"
+                },
+                {
+                  "key": "xor",
+                  "label": "Xor"
+                },
+                {
+                  "key": "yfilm",
+                  "label": "Y Film"
+                },
+                {
+                  "key": "zfilm",
+                  "label": "Z Film"
+                }
+              ]
+            }
+          ],
+          "path": "vjzual3/chain2/chain2_warp1",
+          "moduleType": "/_/components/warp_module"
+        },
+        {
           "label": "chain2/edge_1",
           "key": "chain2_edge_1",
           "params": [
@@ -2423,14 +2876,16 @@
                   "label": "X",
                   "minNorm": 0.0,
                   "key": "x",
-                  "maxNorm": 8.0
+                  "maxNorm": 8.0,
+                  "path": "vjzual3/chain2/chain2_edge_1:Offsetx"
                 },
                 {
                   "default": 1.0,
                   "label": "Y",
                   "minNorm": 0.0,
                   "key": "y",
-                  "maxNorm": 8.0
+                  "maxNorm": 8.0,
+                  "path": "vjzual3/chain2/chain2_edge_1:Offsety"
                 }
               ],
               "key": "Offset",
@@ -2457,28 +2912,32 @@
                   "label": "R",
                   "minNorm": 0.0,
                   "key": "r",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain2/chain2_edge_1:Edgecolorr"
                 },
                 {
                   "default": 1.0,
                   "label": "G",
                   "minNorm": 0.0,
                   "key": "g",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain2/chain2_edge_1:Edgecolorg"
                 },
                 {
                   "default": 1.0,
                   "label": "B",
                   "minNorm": 0.0,
                   "key": "b",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain2/chain2_edge_1:Edgecolorb"
                 },
                 {
                   "default": 1.0,
                   "label": "A",
                   "minNorm": 0.0,
                   "key": "a",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain2/chain2_edge_1:Edgecolora"
                 }
               ],
               "key": "Edgecolor",
@@ -2684,6 +3143,79 @@
           "moduleType": "/_/components/edge_module"
         },
         {
+          "label": "chain2/redux1",
+          "key": "chain2_redux1",
+          "params": [
+            {
+              "type": "menu",
+              "label": "Extend",
+              "group": "Transform",
+              "style": "Menu",
+              "default": "mirror",
+              "path": "vjzual3/chain2/chain2_redux1:Extend",
+              "key": "Extend",
+              "options": [
+                {
+                  "key": "hold",
+                  "label": "Hold"
+                },
+                {
+                  "key": "zero",
+                  "label": "Zero"
+                },
+                {
+                  "key": "repeat",
+                  "label": "Repeat"
+                },
+                {
+                  "key": "mirror",
+                  "label": "Mirror"
+                }
+              ]
+            },
+            {
+              "type": "float",
+              "label": "Rotate",
+              "minNorm": -360.0,
+              "style": "Float",
+              "default": 0.0,
+              "path": "vjzual3/chain2/chain2_redux1:Rotate",
+              "group": "Transform",
+              "key": "Rotate",
+              "maxNorm": 360.0
+            },
+            {
+              "type": "fvec",
+              "label": "Pivot",
+              "group": "Transform",
+              "style": "XY",
+              "path": "vjzual3/chain2/chain2_redux1:Pivot",
+              "parts": [
+                {
+                  "default": 0.5,
+                  "label": "X",
+                  "minNorm": 0.0,
+                  "key": "x",
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain2/chain2_redux1:Pivotx"
+                },
+                {
+                  "default": 0.5,
+                  "label": "Y",
+                  "minNorm": 0.0,
+                  "key": "y",
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain2/chain2_redux1:Pivoty"
+                }
+              ],
+              "key": "Pivot",
+              "length": 2
+            }
+          ],
+          "path": "vjzual3/chain2/chain2_redux1",
+          "moduleType": "/_/components/redux_module"
+        },
+        {
           "label": "chain2/color adjust",
           "key": "chain2_coloradj",
           "params": [
@@ -2839,14 +3371,16 @@
                   "label": "X",
                   "minNorm": -1.0,
                   "key": "x",
-                  "maxNorm": 3.0
+                  "maxNorm": 3.0,
+                  "path": "vjzual3/chain2/chain2_transform:Scalex"
                 },
                 {
                   "default": 1.0,
                   "label": "Y",
                   "minNorm": -1.0,
                   "key": "y",
-                  "maxNorm": 3.0
+                  "maxNorm": 3.0,
+                  "path": "vjzual3/chain2/chain2_transform:Scaley"
                 }
               ],
               "key": "Scale",
@@ -2864,14 +3398,16 @@
                   "label": "X",
                   "minNorm": -1.0,
                   "key": "x",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain2/chain2_transform:Translatex"
                 },
                 {
                   "default": 0.0,
                   "label": "Y",
                   "minNorm": -1.0,
                   "key": "y",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain2/chain2_transform:Translatey"
                 }
               ],
               "key": "Translate",
@@ -2900,14 +3436,16 @@
                   "label": "X",
                   "minNorm": 0.0,
                   "key": "x",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain2/chain2_transform:Pivotx"
                 },
                 {
                   "default": 0.5,
                   "label": "Y",
                   "minNorm": 0.0,
                   "key": "y",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/chain2/chain2_transform:Pivoty"
                 }
               ],
               "key": "Pivot",
@@ -3921,14 +4459,16 @@
                   "label": "X",
                   "minNorm": 0.0,
                   "key": "x",
-                  "maxNorm": 8.0
+                  "maxNorm": 8.0,
+                  "path": "vjzual3/master/master_edge_1:Offsetx"
                 },
                 {
                   "default": 1.0,
                   "label": "Y",
                   "minNorm": 0.0,
                   "key": "y",
-                  "maxNorm": 8.0
+                  "maxNorm": 8.0,
+                  "path": "vjzual3/master/master_edge_1:Offsety"
                 }
               ],
               "key": "Offset",
@@ -3955,28 +4495,32 @@
                   "label": "R",
                   "minNorm": 0.0,
                   "key": "r",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/master/master_edge_1:Edgecolorr"
                 },
                 {
                   "default": 1.0,
                   "label": "G",
                   "minNorm": 0.0,
                   "key": "g",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/master/master_edge_1:Edgecolorg"
                 },
                 {
                   "default": 1.0,
                   "label": "B",
                   "minNorm": 0.0,
                   "key": "b",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/master/master_edge_1:Edgecolorb"
                 },
                 {
                   "default": 1.0,
                   "label": "A",
                   "minNorm": 0.0,
                   "key": "a",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/master/master_edge_1:Edgecolora"
                 }
               ],
               "key": "Edgecolor",
@@ -4258,14 +4802,16 @@
                   "label": "X",
                   "minNorm": 0.0,
                   "key": "x",
-                  "maxNorm": 8.0
+                  "maxNorm": 8.0,
+                  "path": "vjzual3/master/master_edge_2:Offsetx"
                 },
                 {
                   "default": 1.0,
                   "label": "Y",
                   "minNorm": 0.0,
                   "key": "y",
-                  "maxNorm": 8.0
+                  "maxNorm": 8.0,
+                  "path": "vjzual3/master/master_edge_2:Offsety"
                 }
               ],
               "key": "Offset",
@@ -4292,28 +4838,32 @@
                   "label": "R",
                   "minNorm": 0.0,
                   "key": "r",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/master/master_edge_2:Edgecolorr"
                 },
                 {
                   "default": 1.0,
                   "label": "G",
                   "minNorm": 0.0,
                   "key": "g",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/master/master_edge_2:Edgecolorg"
                 },
                 {
                   "default": 1.0,
                   "label": "B",
                   "minNorm": 0.0,
                   "key": "b",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/master/master_edge_2:Edgecolorb"
                 },
                 {
                   "default": 1.0,
                   "label": "A",
                   "minNorm": 0.0,
                   "key": "a",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/master/master_edge_2:Edgecolora"
                 }
               ],
               "key": "Edgecolor",
@@ -4615,14 +5165,16 @@
                   "label": "X",
                   "minNorm": 0.0,
                   "key": "x",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/master/master_warp_2:Displaceweightx"
                 },
                 {
                   "default": 0.0,
                   "label": "Y",
                   "minNorm": 0.0,
                   "key": "y",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/master/master_warp_2:Displaceweighty"
                 }
               ],
               "key": "Displaceweight",
@@ -5734,14 +6286,16 @@
                   "label": "X",
                   "minNorm": -0.6,
                   "key": "x",
-                  "maxNorm": 0.6
+                  "maxNorm": 0.6,
+                  "path": "vjzual3/master/master_kaleido_1:Translatex"
                 },
                 {
                   "default": 0.0,
                   "label": "Y",
                   "minNorm": -0.6,
                   "key": "y",
-                  "maxNorm": 0.6
+                  "maxNorm": 0.6,
+                  "path": "vjzual3/master/master_kaleido_1:Translatey"
                 }
               ],
               "key": "Translate",
@@ -5806,30 +6360,30 @@
               "parts": [
                 {
                   "default": 0.0,
-                  "label": 1,
+                  "label": "1",
                   "minNorm": 0.0,
-                  "key": 1,
+                  "key": "1",
                   "maxNorm": 360.0
                 },
                 {
                   "default": 90.0,
-                  "label": 2,
+                  "label": "2",
                   "minNorm": 0.0,
-                  "key": 2,
+                  "key": "2",
                   "maxNorm": 360.0
                 },
                 {
                   "default": 180.0,
-                  "label": 3,
+                  "label": "3",
                   "minNorm": 0.0,
-                  "key": 3,
+                  "key": "3",
                   "maxNorm": 360.0
                 },
                 {
                   "default": 270.0,
-                  "label": 4,
+                  "label": "4",
                   "minNorm": 0.0,
-                  "key": 4,
+                  "key": "4",
                   "maxNorm": 360.0
                 }
               ]
@@ -5844,37 +6398,37 @@
               "parts": [
                 {
                   "default": 1.0,
-                  "label": 1,
+                  "label": "1",
                   "minLimit": 0.0,
                   "minNorm": 0.0,
-                  "key": 1,
+                  "key": "1",
                   "maxNorm": 1.0,
                   "maxLimit": 1.0
                 },
                 {
                   "default": 1.0,
-                  "label": 2,
+                  "label": "2",
                   "minLimit": 0.0,
                   "minNorm": 0.0,
-                  "key": 2,
+                  "key": "2",
                   "maxNorm": 1.0,
                   "maxLimit": 1.0
                 },
                 {
                   "default": 1.0,
-                  "label": 3,
+                  "label": "3",
                   "minLimit": 0.0,
                   "minNorm": 0.0,
-                  "key": 3,
+                  "key": "3",
                   "maxNorm": 1.0,
                   "maxLimit": 1.0
                 },
                 {
                   "default": 1.0,
-                  "label": 4,
+                  "label": "4",
                   "minLimit": 0.0,
                   "minNorm": 0.0,
-                  "key": 4,
+                  "key": "4",
                   "maxNorm": 1.0,
                   "maxLimit": 1.0
                 }
@@ -5890,37 +6444,37 @@
               "parts": [
                 {
                   "default": 1.0,
-                  "label": 1,
+                  "label": "1",
                   "minLimit": 0.0,
                   "minNorm": 0.0,
-                  "key": 1,
+                  "key": "1",
                   "maxNorm": 1.0,
                   "maxLimit": 1.0
                 },
                 {
                   "default": 1.0,
-                  "label": 2,
+                  "label": "2",
                   "minLimit": 0.0,
                   "minNorm": 0.0,
-                  "key": 2,
+                  "key": "2",
                   "maxNorm": 1.0,
                   "maxLimit": 1.0
                 },
                 {
                   "default": 1.0,
-                  "label": 3,
+                  "label": "3",
                   "minLimit": 0.0,
                   "minNorm": 0.0,
-                  "key": 3,
+                  "key": "3",
                   "maxNorm": 1.0,
                   "maxLimit": 1.0
                 },
                 {
                   "default": 1.0,
-                  "label": 4,
+                  "label": "4",
                   "minLimit": 0.0,
                   "minNorm": 0.0,
-                  "key": 4,
+                  "key": "4",
                   "maxNorm": 1.0,
                   "maxLimit": 1.0
                 }
@@ -5936,30 +6490,30 @@
               "parts": [
                 {
                   "default": 1.0,
-                  "label": 1,
+                  "label": "1",
                   "minNorm": 0.0,
-                  "key": 1,
+                  "key": "1",
                   "maxNorm": 1.0
                 },
                 {
                   "default": 1.0,
-                  "label": 2,
+                  "label": "2",
                   "minNorm": 0.0,
-                  "key": 2,
+                  "key": "2",
                   "maxNorm": 1.0
                 },
                 {
                   "default": 1.0,
-                  "label": 3,
+                  "label": "3",
                   "minNorm": 0.0,
-                  "key": 3,
+                  "key": "3",
                   "maxNorm": 1.0
                 },
                 {
                   "default": 1.0,
-                  "label": 4,
+                  "label": "4",
                   "minNorm": 0.0,
-                  "key": 4,
+                  "key": "4",
                   "maxNorm": 1.0
                 }
               ]
@@ -6068,14 +6622,16 @@
                   "label": "X",
                   "minNorm": -1.0,
                   "key": "x",
-                  "maxNorm": 3.0
+                  "maxNorm": 3.0,
+                  "path": "vjzual3/master/master_transform:Scalex"
                 },
                 {
                   "default": 1.0,
                   "label": "Y",
                   "minNorm": -1.0,
                   "key": "y",
-                  "maxNorm": 3.0
+                  "maxNorm": 3.0,
+                  "path": "vjzual3/master/master_transform:Scaley"
                 }
               ],
               "key": "Scale",
@@ -6093,14 +6649,16 @@
                   "label": "X",
                   "minNorm": -1.0,
                   "key": "x",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/master/master_transform:Translatex"
                 },
                 {
                   "default": 0.0,
                   "label": "Y",
                   "minNorm": -1.0,
                   "key": "y",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/master/master_transform:Translatey"
                 }
               ],
               "key": "Translate",
@@ -6129,14 +6687,16 @@
                   "label": "X",
                   "minNorm": 0.0,
                   "key": "x",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/master/master_transform:Pivotx"
                 },
                 {
                   "default": 0.5,
                   "label": "Y",
                   "minNorm": 0.0,
                   "key": "y",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/master/master_transform:Pivoty"
                 }
               ],
               "key": "Pivot",
@@ -6589,21 +7149,24 @@
                   "label": "R",
                   "minNorm": 0.0,
                   "key": "r",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/master/master_background_1:Solidcolorr"
                 },
                 {
                   "default": 0.0,
                   "label": "G",
                   "minNorm": 0.0,
                   "key": "g",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/master/master_background_1:Solidcolorg"
                 },
                 {
                   "default": 0.0,
                   "label": "B",
                   "minNorm": 0.0,
                   "key": "b",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/master/master_background_1:Solidcolorb"
                 }
               ],
               "key": "Solidcolor",
@@ -6671,21 +7234,24 @@
                   "label": "R",
                   "minNorm": 0.0,
                   "key": "r",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/master/master_background_2:Solidcolorr"
                 },
                 {
                   "default": 0.0,
                   "label": "G",
                   "minNorm": 0.0,
                   "key": "g",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/master/master_background_2:Solidcolorg"
                 },
                 {
                   "default": 0.0,
                   "label": "B",
                   "minNorm": 0.0,
                   "key": "b",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/master/master_background_2:Solidcolorb"
                 }
               ],
               "key": "Solidcolor",
@@ -7151,19 +7717,19 @@
               "parts": [
                 {
                   "default": 0.0,
-                  "label": 1,
+                  "label": "1",
                   "minLimit": 0.0,
                   "minNorm": 0.0,
-                  "key": 1,
+                  "key": "1",
                   "maxNorm": 1.0,
                   "maxLimit": 1.0
                 },
                 {
                   "default": 1.0,
-                  "label": 2,
+                  "label": "2",
                   "minLimit": 0.0,
                   "minNorm": 0.0,
-                  "key": 2,
+                  "key": "2",
                   "maxNorm": 1.0,
                   "maxLimit": 1.0
                 }
@@ -7504,19 +8070,19 @@
               "parts": [
                 {
                   "default": 0.0,
-                  "label": 1,
+                  "label": "1",
                   "minLimit": 0.0,
                   "minNorm": 0.0,
-                  "key": 1,
+                  "key": "1",
                   "maxNorm": 1.0,
                   "maxLimit": 1.0
                 },
                 {
                   "default": 1.0,
-                  "label": 2,
+                  "label": "2",
                   "minLimit": 0.0,
                   "minNorm": 0.0,
-                  "key": 2,
+                  "key": "2",
                   "maxNorm": 1.0,
                   "maxLimit": 1.0
                 }
@@ -7857,19 +8423,19 @@
               "parts": [
                 {
                   "default": 0.0,
-                  "label": 1,
+                  "label": "1",
                   "minLimit": 0.0,
                   "minNorm": 0.0,
-                  "key": 1,
+                  "key": "1",
                   "maxNorm": 1.0,
                   "maxLimit": 1.0
                 },
                 {
                   "default": 1.0,
-                  "label": 2,
+                  "label": "2",
                   "minLimit": 0.0,
                   "minNorm": 0.0,
-                  "key": 2,
+                  "key": "2",
                   "maxNorm": 1.0,
                   "maxLimit": 1.0
                 }
@@ -8210,19 +8776,19 @@
               "parts": [
                 {
                   "default": 0.0,
-                  "label": 1,
+                  "label": "1",
                   "minLimit": 0.0,
                   "minNorm": 0.0,
-                  "key": 1,
+                  "key": "1",
                   "maxNorm": 1.0,
                   "maxLimit": 1.0
                 },
                 {
                   "default": 1.0,
-                  "label": 2,
+                  "label": "2",
                   "minLimit": 0.0,
                   "minNorm": 0.0,
-                  "key": 2,
+                  "key": "2",
                   "maxNorm": 1.0,
                   "maxLimit": 1.0
                 }
@@ -8563,19 +9129,19 @@
               "parts": [
                 {
                   "default": 0.0,
-                  "label": 1,
+                  "label": "1",
                   "minLimit": 0.0,
                   "minNorm": 0.0,
-                  "key": 1,
+                  "key": "1",
                   "maxNorm": 1.0,
                   "maxLimit": 1.0
                 },
                 {
                   "default": 1.0,
-                  "label": 2,
+                  "label": "2",
                   "minLimit": 0.0,
                   "minNorm": 0.0,
-                  "key": 2,
+                  "key": "2",
                   "maxNorm": 1.0,
                   "maxLimit": 1.0
                 }
@@ -9187,21 +9753,24 @@
                   "label": "X",
                   "minNorm": -1.5,
                   "key": "x",
-                  "maxNorm": 1.5
+                  "maxNorm": 1.5,
+                  "path": "vjzual3/generators/noise_gen_1:Ratex"
                 },
                 {
                   "default": 0.0,
                   "label": "Y",
                   "minNorm": -1.5,
                   "key": "y",
-                  "maxNorm": 1.5
+                  "maxNorm": 1.5,
+                  "path": "vjzual3/generators/noise_gen_1:Ratey"
                 },
                 {
                   "default": 0.0,
                   "label": "Z",
                   "minNorm": 0.0,
                   "key": "z",
-                  "maxNorm": 1.5
+                  "maxNorm": 1.5,
+                  "path": "vjzual3/generators/noise_gen_1:Ratez"
                 }
               ],
               "key": "Rate",
@@ -9431,21 +10000,24 @@
                   "label": "X",
                   "minNorm": -1.5,
                   "key": "x",
-                  "maxNorm": 1.5
+                  "maxNorm": 1.5,
+                  "path": "vjzual3/generators/noise_gen_2:Ratex"
                 },
                 {
                   "default": 0.0,
                   "label": "Y",
                   "minNorm": -1.5,
                   "key": "y",
-                  "maxNorm": 1.5
+                  "maxNorm": 1.5,
+                  "path": "vjzual3/generators/noise_gen_2:Ratey"
                 },
                 {
                   "default": 0.0,
                   "label": "Z",
                   "minNorm": 0.0,
                   "key": "z",
-                  "maxNorm": 1.5
+                  "maxNorm": 1.5,
+                  "path": "vjzual3/generators/noise_gen_2:Ratez"
                 }
               ],
               "key": "Rate",
@@ -9577,14 +10149,16 @@
                   "label": "X",
                   "minNorm": -1.0,
                   "key": "x",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/generators/shape_gen_1:Posx"
                 },
                 {
                   "default": 0.0,
                   "label": "Y",
                   "minNorm": -1.0,
                   "key": "y",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/generators/shape_gen_1:Posy"
                 }
               ],
               "key": "Pos",
@@ -9614,14 +10188,16 @@
                   "label": "X",
                   "minNorm": 0.0,
                   "key": "x",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/generators/shape_gen_1:Sizex"
                 },
                 {
                   "default": 0.4,
                   "label": "Y",
                   "minNorm": 0.0,
                   "key": "y",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/generators/shape_gen_1:Sizey"
                 }
               ],
               "key": "Size",
@@ -9689,28 +10265,32 @@
                   "label": "R",
                   "minNorm": 0.0,
                   "key": "r",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/generators/shape_gen_1:Bordercolorr"
                 },
                 {
                   "default": 0.0,
                   "label": "G",
                   "minNorm": 0.0,
                   "key": "g",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/generators/shape_gen_1:Bordercolorg"
                 },
                 {
                   "default": 0.0,
                   "label": "B",
                   "minNorm": 0.0,
                   "key": "b",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/generators/shape_gen_1:Bordercolorb"
                 },
                 {
                   "default": 1.0,
                   "label": "A",
                   "minNorm": 0.0,
                   "key": "a",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/generators/shape_gen_1:Bordercolora"
                 }
               ],
               "key": "Bordercolor",
@@ -9759,28 +10339,32 @@
                   "label": "R",
                   "minNorm": 0.0,
                   "key": "r",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/generators/shape_gen_1:Fillcolorr"
                 },
                 {
                   "default": 1.0,
                   "label": "G",
                   "minNorm": 0.0,
                   "key": "g",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/generators/shape_gen_1:Fillcolorg"
                 },
                 {
                   "default": 1.0,
                   "label": "B",
                   "minNorm": 0.0,
                   "key": "b",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/generators/shape_gen_1:Fillcolorb"
                 },
                 {
                   "default": 1.0,
                   "label": "A",
                   "minNorm": 0.0,
                   "key": "a",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/generators/shape_gen_1:Fillcolora"
                 }
               ],
               "key": "Fillcolor",
@@ -9825,28 +10409,32 @@
                   "label": "R",
                   "minNorm": 0.0,
                   "key": "r",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/generators/shape_gen_1:Bgcolorr"
                 },
                 {
                   "default": 0.0,
                   "label": "G",
                   "minNorm": 0.0,
                   "key": "g",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/generators/shape_gen_1:Bgcolorg"
                 },
                 {
                   "default": 0.0,
                   "label": "B",
                   "minNorm": 0.0,
                   "key": "b",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/generators/shape_gen_1:Bgcolorb"
                 },
                 {
                   "default": 0.0,
                   "label": "A",
                   "minNorm": 0.0,
                   "key": "a",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/generators/shape_gen_1:Bgcolora"
                 }
               ],
               "key": "Bgcolor",
@@ -9909,14 +10497,16 @@
                   "label": "X",
                   "minNorm": 0.0,
                   "key": "x",
-                  "maxNorm": 3.0
+                  "maxNorm": 3.0,
+                  "path": "vjzual3/generators/voronoi_gen_1:Scalex"
                 },
                 {
                   "default": 1.0,
                   "label": "Y",
                   "minNorm": 0.0,
                   "key": "y",
-                  "maxNorm": 3.0
+                  "maxNorm": 3.0,
+                  "path": "vjzual3/generators/voronoi_gen_1:Scaley"
                 }
               ],
               "key": "Scale",
@@ -9965,14 +10555,16 @@
                   "label": "X",
                   "minNorm": 0.0,
                   "key": "x",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/generators/voronoi_gen_1:Translateratex"
                 },
                 {
                   "default": 0.0,
                   "label": "Y",
                   "minNorm": 0.0,
                   "key": "y",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/generators/voronoi_gen_1:Translateratey"
                 }
               ],
               "key": "Translaterate",
@@ -10025,16 +10617,16 @@
               "parts": [
                 {
                   "default": 0.01,
-                  "label": 1,
+                  "label": "1",
                   "minNorm": 0.0,
-                  "key": 1,
+                  "key": "1",
                   "maxNorm": 1.0
                 },
                 {
                   "default": 0.03,
-                  "label": 2,
+                  "label": "2",
                   "minNorm": 0.0,
-                  "key": 2,
+                  "key": "2",
                   "maxNorm": 1.0
                 }
               ]
@@ -10060,21 +10652,24 @@
                   "label": "R",
                   "minNorm": 0.0,
                   "key": "r",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/generators/voronoi_gen_1:Bordercolorr"
                 },
                 {
                   "default": 0.0,
                   "label": "G",
                   "minNorm": 0.0,
                   "key": "g",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/generators/voronoi_gen_1:Bordercolorg"
                 },
                 {
                   "default": 0.0,
                   "label": "B",
                   "minNorm": 0.0,
                   "key": "b",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/generators/voronoi_gen_1:Bordercolorb"
                 }
               ],
               "key": "Bordercolor",
@@ -10109,14 +10704,16 @@
                   "label": "X",
                   "minNorm": 0.0,
                   "key": "x",
-                  "maxNorm": 3.0
+                  "maxNorm": 3.0,
+                  "path": "vjzual3/generators/voronoi_gen_2:Scalex"
                 },
                 {
                   "default": 1.0,
                   "label": "Y",
                   "minNorm": 0.0,
                   "key": "y",
-                  "maxNorm": 3.0
+                  "maxNorm": 3.0,
+                  "path": "vjzual3/generators/voronoi_gen_2:Scaley"
                 }
               ],
               "key": "Scale",
@@ -10165,14 +10762,16 @@
                   "label": "X",
                   "minNorm": 0.0,
                   "key": "x",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/generators/voronoi_gen_2:Translateratex"
                 },
                 {
                   "default": 0.0,
                   "label": "Y",
                   "minNorm": 0.0,
                   "key": "y",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/generators/voronoi_gen_2:Translateratey"
                 }
               ],
               "key": "Translaterate",
@@ -10225,16 +10824,16 @@
               "parts": [
                 {
                   "default": 0.01,
-                  "label": 1,
+                  "label": "1",
                   "minNorm": 0.0,
-                  "key": 1,
+                  "key": "1",
                   "maxNorm": 1.0
                 },
                 {
                   "default": 0.03,
-                  "label": 2,
+                  "label": "2",
                   "minNorm": 0.0,
-                  "key": 2,
+                  "key": "2",
                   "maxNorm": 1.0
                 }
               ]
@@ -10260,21 +10859,24 @@
                   "label": "R",
                   "minNorm": 0.0,
                   "key": "r",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/generators/voronoi_gen_2:Bordercolorr"
                 },
                 {
                   "default": 0.0,
                   "label": "G",
                   "minNorm": 0.0,
                   "key": "g",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/generators/voronoi_gen_2:Bordercolorg"
                 },
                 {
                   "default": 0.0,
                   "label": "B",
                   "minNorm": 0.0,
                   "key": "b",
-                  "maxNorm": 1.0
+                  "maxNorm": 1.0,
+                  "path": "vjzual3/generators/voronoi_gen_2:Bordercolorb"
                 }
               ],
               "key": "Bordercolor",
@@ -10437,21 +11039,24 @@
                   "label": "X",
                   "minNorm": -1.5,
                   "key": "x",
-                  "maxNorm": 1.5
+                  "maxNorm": 1.5,
+                  "path": "vjzual3/generators/multi_noise_gen_1:Ratex"
                 },
                 {
                   "default": 0.0,
                   "label": "Y",
                   "minNorm": -1.5,
                   "key": "y",
-                  "maxNorm": 1.5
+                  "maxNorm": 1.5,
+                  "path": "vjzual3/generators/multi_noise_gen_1:Ratey"
                 },
                 {
                   "default": 0.0,
                   "label": "Z",
                   "minNorm": 0.0,
                   "key": "z",
-                  "maxNorm": 1.5
+                  "maxNorm": 1.5,
+                  "path": "vjzual3/generators/multi_noise_gen_1:Ratez"
                 }
               ],
               "key": "Rate",
@@ -10544,7 +11149,8 @@
                   "minLimit": 1.0,
                   "minNorm": 1.0,
                   "key": "x",
-                  "maxNorm": 256.0
+                  "maxNorm": 256.0,
+                  "path": "vjzual3/generators/multi_noise_gen_1:Noiseres1x"
                 },
                 {
                   "default": 6.0,
@@ -10552,7 +11158,8 @@
                   "minLimit": 1.0,
                   "minNorm": 1.0,
                   "key": "y",
-                  "maxNorm": 256.0
+                  "maxNorm": 256.0,
+                  "path": "vjzual3/generators/multi_noise_gen_1:Noiseres1y"
                 }
               ],
               "key": "Noiseres1",
@@ -10571,7 +11178,8 @@
                   "minLimit": 1.0,
                   "minNorm": 1.0,
                   "key": "x",
-                  "maxNorm": 256.0
+                  "maxNorm": 256.0,
+                  "path": "vjzual3/generators/multi_noise_gen_1:Noiseres2x"
                 },
                 {
                   "default": 8.0,
@@ -10579,7 +11187,8 @@
                   "minLimit": 1.0,
                   "minNorm": 1.0,
                   "key": "y",
-                  "maxNorm": 256.0
+                  "maxNorm": 256.0,
+                  "path": "vjzual3/generators/multi_noise_gen_1:Noiseres2y"
                 }
               ],
               "key": "Noiseres2",
@@ -10598,7 +11207,8 @@
                   "minLimit": 1.0,
                   "minNorm": 1.0,
                   "key": "x",
-                  "maxNorm": 256.0
+                  "maxNorm": 256.0,
+                  "path": "vjzual3/generators/multi_noise_gen_1:Noiseres3x"
                 },
                 {
                   "default": 24.0,
@@ -10606,7 +11216,8 @@
                   "minLimit": 1.0,
                   "minNorm": 1.0,
                   "key": "y",
-                  "maxNorm": 256.0
+                  "maxNorm": 256.0,
+                  "path": "vjzual3/generators/multi_noise_gen_1:Noiseres3y"
                 }
               ],
               "key": "Noiseres3",
@@ -10625,7 +11236,8 @@
                   "minLimit": 1.0,
                   "minNorm": 1.0,
                   "key": "x",
-                  "maxNorm": 256.0
+                  "maxNorm": 256.0,
+                  "path": "vjzual3/generators/multi_noise_gen_1:Noiseres4x"
                 },
                 {
                   "default": 96.0,
@@ -10633,7 +11245,8 @@
                   "minLimit": 1.0,
                   "minNorm": 1.0,
                   "key": "y",
-                  "maxNorm": 256.0
+                  "maxNorm": 256.0,
+                  "path": "vjzual3/generators/multi_noise_gen_1:Noiseres4y"
                 }
               ],
               "key": "Noiseres4",
@@ -10649,30 +11262,30 @@
               "parts": [
                 {
                   "default": 0.7,
-                  "label": 1,
+                  "label": "1",
                   "minNorm": 0.0,
-                  "key": 1,
+                  "key": "1",
                   "maxNorm": 1.0
                 },
                 {
                   "default": 0.8,
-                  "label": 2,
+                  "label": "2",
                   "minNorm": 0.0,
-                  "key": 2,
+                  "key": "2",
                   "maxNorm": 1.0
                 },
                 {
                   "default": 0.9,
-                  "label": 3,
+                  "label": "3",
                   "minNorm": 0.0,
-                  "key": 3,
+                  "key": "3",
                   "maxNorm": 1.0
                 },
                 {
                   "default": 1.0,
-                  "label": 4,
+                  "label": "4",
                   "minNorm": 0.0,
-                  "key": 4,
+                  "key": "4",
                   "maxNorm": 1.0
                 }
               ]
@@ -10687,30 +11300,30 @@
               "parts": [
                 {
                   "default": 1.0,
-                  "label": 1,
+                  "label": "1",
                   "minNorm": 0.0,
-                  "key": 1,
+                  "key": "1",
                   "maxNorm": 1.5
                 },
                 {
                   "default": 1.0,
-                  "label": 2,
+                  "label": "2",
                   "minNorm": 0.0,
-                  "key": 2,
+                  "key": "2",
                   "maxNorm": 1.5
                 },
                 {
                   "default": 1.0,
-                  "label": 3,
+                  "label": "3",
                   "minNorm": 0.0,
-                  "key": 3,
+                  "key": "3",
                   "maxNorm": 1.5
                 },
                 {
                   "default": 1.0,
-                  "label": 4,
+                  "label": "4",
                   "minNorm": 0.0,
-                  "key": 4,
+                  "key": "4",
                   "maxNorm": 1.5
                 }
               ]
