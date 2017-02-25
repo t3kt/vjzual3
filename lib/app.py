@@ -69,7 +69,7 @@ class ShellApp(base.Extension):
 	def GetSchema(self):
 		self._LogEvent('GetSchema()')
 		key = self._Key
-		childprefix = key + '/'
+		childprefix = '/' + key
 		return schema.AppSchema(
 			key,
 			label=self._Title,

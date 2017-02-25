@@ -177,9 +177,10 @@ class Module(base.Extension):
 		master = self.comp.par.clone.eval()
 		mtype = master.path if master else None
 		key = self.comp.par.Modname.eval()
-		path = (pathprefix + key) if pathprefix else None
+		# path = (pathprefix + key) if pathprefix else None
+		path = (pathprefix + self.comp.path) if pathprefix else None
 		parprefix = (path + ':') if path else None
-		childprefix = (path + '/') if path else None
+		# childprefix = (path + '/') if path else None
 		return schema.ModuleSpec(
 			key=key,
 			label=self.comp.par.Uilabel.eval(),
@@ -191,7 +192,7 @@ class Module(base.Extension):
 				pathprefix=parprefix
 			),
 			children=[
-				m.GetSchema(pathprefix=childprefix)
+				m.GetSchema(pathprefix=pathprefix)
 				for m in self._SubModules
 				])
 
