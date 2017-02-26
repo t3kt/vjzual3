@@ -44,18 +44,10 @@ class Module(base.Extension):
 		super().__init__(comp)
 		comp.tags.add('tmod')
 		self.parAccessor = ParAccessor(comp)
-
-	@property
-	def Shell(self):
-		return self.comp.op('./shell')
-
-	@property
-	def BodyPanel(self):
-		return self.comp.op('./body_panel')
-
-	@property
-	def ControlPanel(self):
-		return self.comp.op('./controls_panel')
+		self.Shell = comp.op('./shell')
+		self.BodyPanel = comp.op('./body_panel')
+		self.ControlPanel = comp.op('./controls_panel')
+		self.ParameterMetadata = comp.op('./shell/parameter_metadata')
 
 	@property
 	def _HeaderHeight(self):
@@ -215,6 +207,41 @@ class Module(base.Extension):
 		self._LogEvent('UpdateSolo() - setting solo to %r' % nodeId)
 		mainoutsrc.val = nodeId
 
+	def BuildDefaultParameterMetadata(self, dat):
+		dat.clear()
+		dat.appendRow(['name', 'store', 'source', 'advanced', 'expose'])
+		def _addPar(par):
+			dat.appendRow([par.tupletName, 1, 0, 0, 1])
+		_addPar(self.comp.par.Bypass)
+		_addPar(self.comp.par.Solo)
+		for tuplet in self.GetModParamTuplets(includePulse=True):
+			_addPar(tuplet[0])
+
+	def _GetParameterFlag(self, name, key, defaultval=False):
+		cell = self.ParameterMetadata[name, key]
+		if cell is None:
+			return defaultval
+		return _CoerceBool(cell.val)
+
+	def GetParamTupletsWithFlag(self, flag, defaultval=False):
+		def _predicate(tuplet):
+			return self._GetParameterFlag(tuplet[0].tupletName, flag, defaultval)
+		return filter(_predicate, self.comp.customTuplets)
+
+	def GetParamsWithFlag(self, flag, defaultval=False):
+		return _ExpandTuplets(self.GetParamTupletsWithFlag(flag, defaultval))
+
+def _ExpandTuplets(tuplets):
+	if not tuplets:
+		return []
+	pars = []
+	for t in tuplets:
+		if isinstance(t, tuple):
+			pars += t
+		else:
+			pars += t
+	return pars
+
 class ParAccessor(base.Extension):
 	def __init__(self, comp, getkey=None, floatdecimals=4):
 		super().__init__(comp)
@@ -240,12 +267,9 @@ class ParAccessor(base.Extension):
 	def _CleanFloat(self, value):
 		return round(value, self.floatdecimals) if self.floatdecimals else value
 
-	def _CoerceBool(self, value):
-		if isinstance(value, bool):
-			return value
-		if isinstance(value, (int, float)):
-			return bool(value)
-		return value in ('1', 'true', 'TRUE', 't', 'T')
+	@staticmethod
+	def _CoerceBool(value):
+		return _CoerceBool(value)
 
 	def _GetKey(self, parname):
 		return self.getkey(parname) if self.getkey else parname.lower()
@@ -299,6 +323,13 @@ class ParAccessor(base.Extension):
 		for page in self.comp.customPages:
 			if page.name == pagename:
 				return page
+
+def _CoerceBool(value):
+	if isinstance(value, bool):
+		return value
+	if isinstance(value, (int, float)):
+		return bool(value)
+	return value in ('1', 'true', 'TRUE', 't', 'T')
 
 def _IsNotPulse(t):
 	if isinstance(t, tuple):
