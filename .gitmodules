@@ -1,3 +1,6 @@
 [submodule "pytctrl"]
 	path = pytctrl
 	url = https://github.com/t3kt/pytctrl.git
+[submodule "common"]
+	path = common
+	url = https://github.com/t3kt/tektcommon.git
