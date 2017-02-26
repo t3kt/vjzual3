@@ -22,6 +22,10 @@ try:
 	import shell_schema as schema
 except ImportError:
 	import schema
+try:
+	import shell_nodes as nodes
+except ImportError:
+	import nodes
 
 if False:
 	try:
@@ -173,20 +177,32 @@ class Module(base.Extension):
 		path = (pathprefix + self.comp.path) if pathprefix else None
 		parprefix = (path + ':') if path else None
 		# childprefix = (path + '/') if path else None
+		partuplets = self.GetModParamTuplets(includePulse=True) + [
+			self.comp.par.Bypass.tuplet,
+			self.comp.par.Solo.tuplet,
+		]
+		sourcecache = {}
+		def _getSourceOptions(*ignored):
+			self._LogEvent('_getSourceOptions() CALLED!!!')
+			if 'sources' not in sourcecache:
+				sourcecache['sources'] = [
+					schema.ParamOption(n['id'], n['label'])
+					for n in nodes.GetAppNodes()
+				]
+			return sourcecache['sources']
 		return schema.ModuleSpec(
 			key=key,
 			label=self.comp.par.Uilabel.eval(),
 			path=path,
 			moduletype=mtype,
 			tags=self._SchemaTags or None,
-			params=schema.SpecsFromParTuplets(
-				self.GetModParamTuplets(includePulse=True),
-				pathprefix=parprefix) +
-			       schema.SpecsFromParTuplets(
-				       [
-					       self.comp.par.Bypass.tuplet,
-					       self.comp.par.Solo.tuplet,
-				       ], pathprefix=parprefix),
+			params=[
+				schema.SpecFromParTuplet(
+					t,
+					pathprefix=parprefix,
+					getoptions=_getSourceOptions if self._GetParameterFlag(t[0].tupletName, 'source', defaultval=False) else None)
+				for t in partuplets
+			],
 			children=[
 				m.GetSchema(pathprefix=pathprefix)
 				for m in self._SubModules
@@ -220,8 +236,11 @@ class Module(base.Extension):
 	def _GetParameterFlag(self, name, key, defaultval=False):
 		cell = self.ParameterMetadata[name, key]
 		if cell is None:
-			return defaultval
-		return _CoerceBool(cell.val)
+			result = defaultval
+		else:
+			result = _CoerceBool(cell.val)
+		self._LogEvent('_GetParameterFlag(name: %r, key: %r, defaultval: %r) result: %r' % (name, key, defaultval, result))
+		return result
 
 	def GetParamTupletsWithFlag(self, flag, defaultval=False):
 		def _predicate(tuplet):

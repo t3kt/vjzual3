@@ -32,6 +32,7 @@ if False:
 class ShellApp(base.Extension):
 	def __init__(self, comp):
 		super().__init__(comp)
+		self.DataNodeBank = comp.par.Datanodebank.eval()
 
 	@property
 	def AllModules(self):

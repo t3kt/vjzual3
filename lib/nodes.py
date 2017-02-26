@@ -186,6 +186,7 @@ class NodeSelectorPopup(base.Extension):
 class NodeBank(base.Extension):
 	def __init__(self, comp):
 		super().__init__(comp)
+		self._NodeTable = comp.op('./data_nodes')
 
 	@property
 	def _Popup(self):
@@ -201,3 +202,20 @@ class NodeBank(base.Extension):
 	def ShowPopup(self, targetop, targetpar, nodetype='video'):
 		self._Popup.Initialize(targetop, targetpar, nodetype=nodetype)
 		self._PopupWindow.par.winopen.pulse()
+
+	def GetNodes(self, datatype=None):
+		return [
+			{'id': self._NodeTable[i, 'id'].val, 'label': self._NodeTable[i, 'label'].val}
+			for i in range(1, self._NodeTable.numRows)
+			if not datatype or self._NodeTable[i, datatype] != ''
+		]
+
+def GetAppNodeBank():
+	app = getattr(op, 'App', None)
+	return app and getattr(app, 'DataNodeBank', None)
+
+def GetAppNodes(datatype=None):
+	bank = GetAppNodeBank()
+	if not bank:
+		return []
+	return bank.GetNodes(datatype=datatype)

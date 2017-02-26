@@ -29,8 +29,12 @@ class _SimpleHandler(_ParStyleHandler):
 		self.hasdefault = hasdefault
 		self.hasvalueindex = hasvalueindex
 
-	def SpecFromTuplet(self, tuplet, pathprefix=None):
+	def SpecFromTuplet(self, tuplet, pathprefix=None, getoptions=None, **kwargs):
 		par = tuplet[0]
+		if getoptions:
+			options = getoptions()
+		else:
+			options = _OptionsFromPar(par) if self.hasoptions else None
 		return ParamSpec(
 			par.tupletName,
 			label=par.label,
@@ -41,13 +45,13 @@ class _SimpleHandler(_ParStyleHandler):
 			defaultval=par.default if self.hasdefault else None,
 			value=par.eval(),
 			valueindex=par.menuIndex if self.hasvalueindex else None,
-			options=_OptionsFromPar(par) if self.hasoptions else None)
+			options=options)
 
 class _VectorHandler(_ParStyleHandler):
 	def __init__(self, ptype):
 		self.ptype = ptype
 
-	def SpecFromTuplet(self, tuplet, pathprefix=None, usenumbers=False):
+	def SpecFromTuplet(self, tuplet, pathprefix=None, usenumbers=False, **kwargs):
 		if usenumbers:
 			partkeys = [str(i) for i in range(1, len(tuplet) + 1)]
 			partlabels = partkeys
@@ -87,7 +91,7 @@ class _VariableLengthHandler(_ParStyleHandler):
 		self.singletype = singletype
 		self.vechandler = _VectorHandler(multitype)
 
-	def SpecFromTuplet(self, tuplet, pathprefix=None):
+	def SpecFromTuplet(self, tuplet, pathprefix=None, **kwargs):
 		if len(tuplet) > 1:
 			return self.vechandler.SpecFromTuplet(tuplet, usenumbers=True)
 		par = tuplet[0]
@@ -145,7 +149,7 @@ def _GetTupletAttrs(tuplet, attrname):
 		return getattr(tuplet[0], attrname)
 	return [getattr(p, attrname) for p in tuplet]
 
-def _SpecFromParTuplet(tuplet, pathprefix=None):
+def SpecFromParTuplet(tuplet, pathprefix=None, getoptions=None):
 	style = tuplet[0].style
 	if style not in _parStyleHandlers:
 		return ParamSpec(
@@ -156,11 +160,11 @@ def _SpecFromParTuplet(tuplet, pathprefix=None):
 			style=style,
 			group=tuplet[0].page.name)
 	handler = _parStyleHandlers[style]
-	return handler.SpecFromTuplet(tuplet, pathprefix=pathprefix)
+	return handler.SpecFromTuplet(tuplet, pathprefix=pathprefix, getoptions=getoptions)
 
 def SpecsFromParTuplets(tuplets, tupletfilter=None, pathprefix=None):
 	return [
-		_SpecFromParTuplet(t, pathprefix=pathprefix)
+		SpecFromParTuplet(t, pathprefix=pathprefix)
 		for t in _FilterParTuplets(tuplets, tupletfilter)
 		]
 
