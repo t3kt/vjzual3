@@ -189,8 +189,12 @@ class Module(base.Extension):
 			tags=self._SchemaTags or None,
 			params=schema.SpecsFromParTuplets(
 				self.GetModParamTuplets(includePulse=True),
-				pathprefix=parprefix
-			),
+				pathprefix=parprefix) +
+			       schema.SpecsFromParTuplets(
+				       [
+					       self.comp.par.Bypass.tuplet,
+					       self.comp.par.Solo.tuplet,
+				       ], pathprefix=parprefix),
 			children=[
 				m.GetSchema(pathprefix=pathprefix)
 				for m in self._SubModules
