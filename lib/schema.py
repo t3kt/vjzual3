@@ -23,10 +23,11 @@ class _ParStyleHandler:
 	def SpecFromTuplet(self, tuplet): pass
 
 class _SimpleHandler(_ParStyleHandler):
-	def __init__(self, ptype, hasoptions=False, hasdefault=True):
+	def __init__(self, ptype, hasoptions=False, hasdefault=True, hasvalueindex=False):
 		self.ptype = ptype
 		self.hasoptions = hasoptions
 		self.hasdefault = hasdefault
+		self.hasvalueindex = hasvalueindex
 
 	def SpecFromTuplet(self, tuplet, pathprefix=None):
 		par = tuplet[0]
@@ -38,6 +39,8 @@ class _SimpleHandler(_ParStyleHandler):
 			style=par.style,
 			group=par.page.name,
 			defaultval=par.default if self.hasdefault else None,
+			value=par.eval(),
+			valueindex=par.menuIndex if self.hasvalueindex else None,
 			options=_OptionsFromPar(par) if self.hasoptions else None)
 
 class _VectorHandler(_ParStyleHandler):
@@ -71,6 +74,7 @@ def _PartFromPar(par, key, label, pathprefix=None):
 		key,
 		label=label,
 		defaultval=par.default,
+		value=par.eval(),
 		minlimit=par.min if par.clampMin else None,
 		maxlimit=par.max if par.clampMax else None,
 		minnorm=par.normMin,
@@ -99,14 +103,16 @@ class _VariableLengthHandler(_ParStyleHandler):
 			maxlimit=attrs['maxlimit'],
 			minnorm=attrs['minnorm'],
 			maxnorm=attrs['maxnorm'],
-			defaultval=attrs['default'])
+			defaultval=attrs['default'],
+			value=attrs['value'],
+		)
 
 _parStyleHandlers = {}
 _parStyleHandlers['Pulse'] = _SimpleHandler(ParamType.trigger, hasdefault=False)
 _parStyleHandlers['Toggle'] = _SimpleHandler(ParamType.bool)
 _parStyleHandlers['Str'] = _SimpleHandler(ParamType.string)
-_parStyleHandlers['StrMenu'] = _SimpleHandler(ParamType.string, hasoptions=True)
-_parStyleHandlers['Menu'] = _SimpleHandler(ParamType.menu, hasoptions=True)
+_parStyleHandlers['StrMenu'] = _SimpleHandler(ParamType.string, hasoptions=True, hasvalueindex=True)
+_parStyleHandlers['Menu'] = _SimpleHandler(ParamType.menu, hasoptions=True, hasvalueindex=True)
 _parStyleHandlers['RGB'] = _VectorHandler(ParamType.fvec)
 _parStyleHandlers['RGBA'] = _VectorHandler(ParamType.fvec)
 _parStyleHandlers['UV'] = _VectorHandler(ParamType.fvec)
@@ -118,6 +124,7 @@ _parStyleHandlers['Float'] = _VariableLengthHandler(singletype=ParamType.float, 
 
 def _NumberAttributesFromPar(par):
 	return {
+		'value': par.eval(),
 		'default': par.default,
 		'minlimit': par.min if par.clampMin else None,
 		'maxlimit': par.max if par.clampMax else None,
