@@ -200,7 +200,8 @@ class Module(base.Extension):
 				schema.SpecFromParTuplet(
 					t,
 					pathprefix=parprefix,
-					getoptions=_getSourceOptions if self._GetParameterFlag(t[0].tupletName, 'source', defaultval=False) else None)
+					getoptions=_getSourceOptions if self._GetParameterFlag(t[0].tupletName, 'source', defaultval=False) else None,
+					metadata=self._GetParameterMetadata(t[0].tupletName))
 				for t in partuplets
 			],
 			children=[
@@ -225,13 +226,29 @@ class Module(base.Extension):
 
 	def BuildDefaultParameterMetadata(self, dat):
 		dat.clear()
-		dat.appendRow(['name', 'store', 'source', 'advanced', 'expose'])
+		dat.appendRow(Module._ParamMetaKeys)
 		def _addPar(par):
-			dat.appendRow([par.tupletName, 1, 0, 0, 1])
+			dat.appendRow([par.tupletName])
+			dat[par.tupletName, 'store'] = 1
+			dat[par.tupletName, 'source'] = 0
+			dat[par.tupletName, 'advanced'] = 0
+			dat[par.tupletName, 'expose'] = 1
 		_addPar(self.comp.par.Bypass)
 		_addPar(self.comp.par.Solo)
 		for tuplet in self.GetModParamTuplets(includePulse=True):
 			_addPar(tuplet[0])
+
+	_ParamMetaKeys = [
+		'name',
+		'store',
+		'source',
+		'advanced',
+		'expose',
+		'help',
+		'offhelp',
+		'btntext',
+		'btnofftext'
+	]
 
 	def _GetParameterFlag(self, name, key, defaultval=False):
 		cell = self.ParameterMetadata[name, key]
@@ -241,6 +258,17 @@ class Module(base.Extension):
 			result = _CoerceBool(cell.val)
 		self._LogEvent('_GetParameterFlag(name: %r, key: %r, defaultval: %r) result: %r' % (name, key, defaultval, result))
 		return result
+
+	def _GetParameterMetadata(self, name):
+		if self.ParameterMetadata[name, 'name'] is None:
+			return {
+				key: ''
+				for key in Module._ParamMetaKeys
+			}
+		return {
+			key: self.ParameterMetadata[name, key].val
+			for key in Module._ParamMetaKeys
+		}
 
 	def GetParamTupletsWithFlag(self, flag, defaultval=False):
 		def _predicate(tuplet):

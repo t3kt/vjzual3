@@ -22,19 +22,26 @@ from tctrl.schema import ParamType, ParamOption, ParamPartSpec, ParamSpec, Modul
 class _ParStyleHandler:
 	def SpecFromTuplet(self, tuplet): pass
 
+	def _GetTags(self, metadata):
+		tags = []
+		if metadata and metadata['advanced'] == '1':
+			tags += ['advanced']
+		return tags
+
 class _SimpleHandler(_ParStyleHandler):
-	def __init__(self, ptype, hasoptions=False, hasdefault=True, hasvalueindex=False):
+	def __init__(self, ptype, hasoptions=False, hasvalueindex=False):
 		self.ptype = ptype
 		self.hasoptions = hasoptions
-		self.hasdefault = hasdefault
 		self.hasvalueindex = hasvalueindex
 
-	def SpecFromTuplet(self, tuplet, pathprefix=None, getoptions=None, **kwargs):
+	def SpecFromTuplet(self, tuplet, pathprefix=None, getoptions=None, metadata=None, **kwargs):
 		par = tuplet[0]
 		if getoptions:
 			options = getoptions()
 		else:
 			options = _OptionsFromPar(par) if self.hasoptions else None
+		if not metadata:
+			metadata = {}
 		return ParamSpec(
 			par.tupletName,
 			label=par.label,
@@ -42,16 +49,44 @@ class _SimpleHandler(_ParStyleHandler):
 			path=(pathprefix + par.tupletName) if pathprefix else None,
 			style=par.style,
 			group=par.page.name,
-			defaultval=par.default if self.hasdefault else None,
+			defaultval=par.default,
 			value=par.eval(),
 			valueindex=par.menuIndex if self.hasvalueindex else None,
-			options=options)
+			options=options,
+			help=metadata.get('help', None),
+			tags=self._GetTags(metadata),
+		)
+
+class _ButtonHandler(_ParStyleHandler):
+	def __init__(self, ptype, hasvalue=True):
+		self.ptype = ptype
+		self.hasvalue = hasvalue
+
+	def SpecFromTuplet(self, tuplet, pathprefix=None, metadata=None, **kwargs):
+		par = tuplet[0]
+		if not metadata:
+			metadata = {}
+		return ParamSpec(
+			par.tupletName,
+			ptype=self.ptype,
+			label=par.label,
+			path=(pathprefix + par.tupletName) if pathprefix else None,
+			style=par.style,
+			group=par.page.name,
+			defaultval=par.default if self.hasvalue else None,
+			value=par.eval() if self.hasvalue else None,
+			help=metadata.get('help', None),
+			offhelp=metadata.get('offhelp', None),
+			buttontext=metadata.get('btntext', None),
+			buttonofftext=metadata.get('btnofftext', None),
+			tags=self._GetTags(metadata),
+		)
 
 class _VectorHandler(_ParStyleHandler):
 	def __init__(self, ptype):
 		self.ptype = ptype
 
-	def SpecFromTuplet(self, tuplet, pathprefix=None, usenumbers=False, **kwargs):
+	def SpecFromTuplet(self, tuplet, pathprefix=None, usenumbers=False, metadata=None, **kwargs):
 		if usenumbers:
 			partkeys = [str(i) for i in range(1, len(tuplet) + 1)]
 			partlabels = partkeys
@@ -63,6 +98,8 @@ class _VectorHandler(_ParStyleHandler):
 			_PartFromPar(tuplet[i], partkeys[i], partlabels[i], pathprefix=path)
 			for i in range(len(tuplet))
 		]
+		if not metadata:
+			metadata = {}
 		return ParamSpec(
 			tuplet[0].tupletName,
 			label=tuplet[0].label,
@@ -71,7 +108,10 @@ class _VectorHandler(_ParStyleHandler):
 			style=tuplet[0].style,
 			group=tuplet[0].page.name,
 			length=len(tuplet),
-			parts=parts)
+			parts=parts,
+			help=metadata.get('help', None),
+			tags=self._GetTags(metadata),
+		)
 
 def _PartFromPar(par, key, label, pathprefix=None):
 	return ParamPartSpec(
@@ -91,11 +131,13 @@ class _VariableLengthHandler(_ParStyleHandler):
 		self.singletype = singletype
 		self.vechandler = _VectorHandler(multitype)
 
-	def SpecFromTuplet(self, tuplet, pathprefix=None, **kwargs):
+	def SpecFromTuplet(self, tuplet, pathprefix=None, metadata=None, **kwargs):
 		if len(tuplet) > 1:
-			return self.vechandler.SpecFromTuplet(tuplet, usenumbers=True)
+			return self.vechandler.SpecFromTuplet(tuplet, usenumbers=True, metadata=metadata)
 		par = tuplet[0]
 		attrs = _NumberAttributesFromPar(par)
+		if not metadata:
+			metadata = {}
 		return ParamSpec(
 			par.tupletName,
 			ptype=self.singletype,
@@ -109,11 +151,29 @@ class _VariableLengthHandler(_ParStyleHandler):
 			maxnorm=attrs['maxnorm'],
 			defaultval=attrs['default'],
 			value=attrs['value'],
+			help=metadata.get('help', None),
+			tags=self._GetTags(metadata),
+		)
+
+class _OtherHandler(_ParStyleHandler):
+	def SpecFromTuplet(self, tuplet, pathprefix=None, metadata=None, **kwargs):
+		if not metadata:
+			metadata = {}
+		par = tuplet[0]
+		return ParamSpec(
+			par.tupletName,
+			ptype=ParamType.other,
+			label=par.label,
+			path=(pathprefix + par.tupletName) if pathprefix else None,
+			style=par.style,
+			group=par.page.name,
+			help=metadata.get('help', None),
+			tags=self._GetTags(metadata),
 		)
 
 _parStyleHandlers = {}
-_parStyleHandlers['Pulse'] = _SimpleHandler(ParamType.trigger, hasdefault=False)
-_parStyleHandlers['Toggle'] = _SimpleHandler(ParamType.bool)
+_parStyleHandlers['Pulse'] = _ButtonHandler(ParamType.trigger, hasvalue=False)
+_parStyleHandlers['Toggle'] = _ButtonHandler(ParamType.bool)
 _parStyleHandlers['Str'] = _SimpleHandler(ParamType.string)
 _parStyleHandlers['StrMenu'] = _SimpleHandler(ParamType.string, hasoptions=True, hasvalueindex=True)
 _parStyleHandlers['Menu'] = _SimpleHandler(ParamType.menu, hasoptions=True, hasvalueindex=True)
@@ -125,6 +185,7 @@ _parStyleHandlers['XY'] = _VectorHandler(ParamType.fvec)
 _parStyleHandlers['XYZ'] = _VectorHandler(ParamType.fvec)
 _parStyleHandlers['Int'] = _VariableLengthHandler(singletype=ParamType.int, multitype=ParamType.ivec)
 _parStyleHandlers['Float'] = _VariableLengthHandler(singletype=ParamType.float, multitype=ParamType.fvec)
+_otherHandler = _OtherHandler()
 
 def _NumberAttributesFromPar(par):
 	return {
@@ -149,18 +210,12 @@ def _GetTupletAttrs(tuplet, attrname):
 		return getattr(tuplet[0], attrname)
 	return [getattr(p, attrname) for p in tuplet]
 
-def SpecFromParTuplet(tuplet, pathprefix=None, getoptions=None):
+def SpecFromParTuplet(tuplet, pathprefix=None, getoptions=None, metadata=None):
 	style = tuplet[0].style
-	if style not in _parStyleHandlers:
-		return ParamSpec(
-			tuplet[0].tupletName,
-			label=tuplet[0].label,
-			ptype=ParamType.other,
-			path=(pathprefix + tuplet[0].tupletName) if pathprefix else None,
-			style=style,
-			group=tuplet[0].page.name)
-	handler = _parStyleHandlers[style]
-	return handler.SpecFromTuplet(tuplet, pathprefix=pathprefix, getoptions=getoptions)
+	if not metadata:
+		metadata = {}
+	handler = _parStyleHandlers.get(style, _otherHandler)
+	return handler.SpecFromTuplet(tuplet, pathprefix=pathprefix, getoptions=getoptions, metadata=metadata)
 
 def SpecsFromParTuplets(tuplets, tupletfilter=None, pathprefix=None):
 	return [
