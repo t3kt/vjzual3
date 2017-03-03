@@ -74,6 +74,13 @@ class ShellApp(base.Extension):
 		return schema.AppSchema(
 			key,
 			label=self._Title,
+			connections=[
+				schema.ConnectionInfo(
+					conntype='oscin',
+					host=self.comp.par.Oscinhost.eval() or self.comp.par.Oscinhost.default,
+					port=self.comp.par.Oscinport.eval(),
+				)
+			],
 			children=[
 				m.GetSchema(pathprefix=childprefix)
 				for m in self._ChildModules
