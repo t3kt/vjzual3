@@ -107,7 +107,6 @@ class _VectorHandler(_ParStyleHandler):
 			path=path,
 			style=tuplet[0].style,
 			group=tuplet[0].page.name,
-			length=len(tuplet),
 			parts=parts,
 			help=metadata.get('help', None),
 			tags=self._GetTags(metadata),
