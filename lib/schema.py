@@ -26,6 +26,8 @@ class _ParStyleHandler:
 		tags = []
 		if metadata and metadata['advanced'] == '1':
 			tags += ['advanced']
+		if metadata and metadata['source'] == '1':
+			tags += ['source']
 		return tags
 
 class _SimpleHandler(_ParStyleHandler):

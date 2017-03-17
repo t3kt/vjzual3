@@ -358,10 +358,13 @@
                 }
               ],
               "value": "noise_gen_2_out",
+              "label": "Source",
               "style": "Str",
               "key": "Source",
               "type": "string",
-              "label": "Source"
+              "tags": [
+                "source"
+              ]
             },
             {
               "path": "/vjzual3/_/app/chain1/warp:Horzsource",
@@ -912,7 +915,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1400.0,
                   "minLimit": 1.0,
-                  "value": 1920.0,
+                  "value": 3840.0,
                   "label": "W",
                   "key": "w",
                   "default": 1920.0
@@ -922,7 +925,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1200.0,
                   "minLimit": 1.0,
-                  "value": 1080.0,
+                  "value": 2160.0,
                   "label": "H",
                   "key": "h",
                   "default": 1080.0
@@ -2023,7 +2026,7 @@
             {
               "path": "/vjzual3/_/app/chain1/edgefbk1:Sourcegain",
               "group": "Edge",
-              "value": 0.859375,
+              "value": 0.3336043059825897,
               "maxNorm": 2.0,
               "style": "Float",
               "key": "Sourcegain",
@@ -2075,7 +2078,7 @@
             {
               "path": "/vjzual3/_/app/chain1/edgefbk1:Edgestrength",
               "group": "Edge",
-              "value": 1.012994647026062,
+              "value": 0.30170702934265137,
               "maxNorm": 3.0,
               "style": "Float",
               "key": "Edgestrength",
@@ -2117,7 +2120,7 @@
             {
               "path": "/vjzual3/_/app/chain1/edgefbk1:Blurfeedback",
               "group": "Edge",
-              "value": 2,
+              "value": 4,
               "maxNorm": 15.0,
               "style": "Int",
               "key": "Blurfeedback",
@@ -2129,7 +2132,7 @@
             {
               "path": "/vjzual3/_/app/chain1/edgefbk1:Feedbackgain",
               "group": "Edge",
-              "value": 0.9781453013420105,
+              "value": 1.075997233390808,
               "maxNorm": 1.2,
               "style": "Float",
               "key": "Feedbackgain",
@@ -2141,7 +2144,7 @@
             {
               "path": "/vjzual3/_/app/chain1/edgefbk1:Feedbackblack",
               "group": "Edge",
-              "value": -0.017810404300689697,
+              "value": 0.023678351193666458,
               "maxNorm": 0.2,
               "style": "Float",
               "key": "Feedbackblack",
@@ -2196,7 +2199,7 @@
             {
               "path": "/vjzual3/_/app/chain1/edgefbk1:Feedbacklevel",
               "group": "Feedback",
-              "value": 0.22846324741840363,
+              "value": 0.37634891271591187,
               "maxNorm": 1.0,
               "style": "Float",
               "key": "Feedbacklevel",
@@ -3243,7 +3246,7 @@
             {
               "path": "/vjzual3/_/app/chain2/flip:Flip2x",
               "group": "Flip",
-              "value": true,
+              "value": false,
               "style": "Toggle",
               "key": "Flip2x",
               "default": false,
@@ -3499,7 +3502,7 @@
             {
               "path": "/vjzual3/_/app/chain2/delay:Length",
               "group": "Delay",
-              "value": 0.358602911233902,
+              "value": 0.3414168059825897,
               "maxNorm": 1.0,
               "style": "Float",
               "key": "Length",
@@ -3899,10 +3902,13 @@
                 }
               ],
               "value": "voronoi_gen_2_out",
+              "label": "Source",
               "style": "Str",
               "key": "Source",
               "type": "string",
-              "label": "Source"
+              "tags": [
+                "source"
+              ]
             },
             {
               "path": "/vjzual3/_/app/chain2/warp1:Horzsource",
@@ -4825,7 +4831,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1400.0,
                   "minLimit": 1.0,
-                  "value": 1920.0,
+                  "value": 3840.0,
                   "label": "W",
                   "key": "w",
                   "default": 1920.0
@@ -4835,7 +4841,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1200.0,
                   "minLimit": 1.0,
-                  "value": 1080.0,
+                  "value": 2160.0,
                   "label": "H",
                   "key": "h",
                   "default": 1080.0
@@ -6465,7 +6471,7 @@
             {
               "path": "/vjzual3/_/app/master/flip:Bypass",
               "group": "Module",
-              "value": true,
+              "value": false,
               "style": "Toggle",
               "key": "Bypass",
               "default": false,
@@ -7683,10 +7689,13 @@
                   "key": "sources_video_5_out"
                 }
               ],
-              "type": "string",
               "label": "Source 1",
               "style": "Str",
-              "key": "Src1"
+              "key": "Src1",
+              "type": "string",
+              "tags": [
+                "source"
+              ]
             },
             {
               "path": "/vjzual3/_/app/master/matte1:Src2",
@@ -8026,10 +8035,13 @@
                 }
               ],
               "value": "chain2_out",
+              "label": "Source 2",
               "style": "Str",
               "key": "Src2",
               "type": "string",
-              "label": "Source 2"
+              "tags": [
+                "source"
+              ]
             },
             {
               "path": "/vjzual3/_/app/master/matte1:Masksrc",
@@ -8369,10 +8381,13 @@
                 }
               ],
               "value": "ramp_gen_1_out",
+              "label": "Mask Source",
               "style": "Str",
               "key": "Masksrc",
               "type": "string",
-              "label": "Mask Source"
+              "tags": [
+                "source"
+              ]
             },
             {
               "path": "/vjzual3/_/app/master/matte1:Maskbrightness",
@@ -8820,10 +8835,13 @@
                 }
               ],
               "value": "noise_gen_2_out",
+              "label": "Source",
               "style": "Str",
               "key": "Source",
               "type": "string",
-              "label": "Source"
+              "tags": [
+                "source"
+              ]
             },
             {
               "path": "/vjzual3/_/app/master/warp_2:Horzsource",
@@ -8928,7 +8946,7 @@
             {
               "path": "/vjzual3/_/app/master/warp_2:Uniformdisplaceweight",
               "group": "Warp",
-              "value": 0.70408034324646,
+              "value": 0.49194666743278503,
               "maxNorm": 1.0,
               "style": "Float",
               "key": "Uniformdisplaceweight",
@@ -9037,7 +9055,7 @@
             {
               "path": "/vjzual3/_/app/master/warp_2:Feedbacklevel",
               "group": "Feedback",
-              "value": 0.718367,
+              "value": 0.8368135094642639,
               "maxNorm": 1.0,
               "style": "Float",
               "key": "Feedbacklevel",
@@ -9302,7 +9320,7 @@
             {
               "path": "/vjzual3/_/app/master/blend_1:Cross",
               "group": "Blend",
-              "value": 0.20603014528751373,
+              "value": 0.028901733458042145,
               "maxNorm": 1.0,
               "style": "Float",
               "key": "Cross",
@@ -9856,10 +9874,13 @@
                   "key": "sources_video_5_out"
                 }
               ],
-              "type": "string",
               "label": "Source 1",
               "style": "Str",
-              "key": "Src1"
+              "key": "Src1",
+              "type": "string",
+              "tags": [
+                "source"
+              ]
             },
             {
               "path": "/vjzual3/_/app/master/blend_1:Src2",
@@ -10199,10 +10220,13 @@
                 }
               ],
               "value": "chain2_out",
+              "label": "Source 2",
               "style": "Str",
               "key": "Src2",
               "type": "string",
-              "label": "Source 2"
+              "tags": [
+                "source"
+              ]
             },
             {
               "path": "/vjzual3/_/app/master/blend_1:Bypass",
@@ -10799,10 +10823,13 @@
                   "key": "sources_video_5_out"
                 }
               ],
-              "type": "string",
               "label": "Source 1",
               "style": "Str",
-              "key": "Src1"
+              "key": "Src1",
+              "type": "string",
+              "tags": [
+                "source"
+              ]
             },
             {
               "path": "/vjzual3/_/app/master/blend_2:Src2",
@@ -11142,10 +11169,13 @@
                 }
               ],
               "value": "chain2_out",
+              "label": "Source 2",
               "style": "Str",
               "key": "Src2",
               "type": "string",
-              "label": "Source 2"
+              "tags": [
+                "source"
+              ]
             },
             {
               "path": "/vjzual3/_/app/master/blend_2:Bypass",
@@ -11535,7 +11565,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1400.0,
                   "minLimit": 1.0,
-                  "value": 1920.0,
+                  "value": 3840.0,
                   "label": "W",
                   "key": "w",
                   "default": 1920.0
@@ -11545,7 +11575,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1200.0,
                   "minLimit": 1.0,
-                  "value": 1080.0,
+                  "value": 2160.0,
                   "label": "H",
                   "key": "h",
                   "default": 1080.0
@@ -11883,7 +11913,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1400.0,
                   "minLimit": 1.0,
-                  "value": 1920.0,
+                  "value": 3840.0,
                   "label": "W",
                   "key": "w",
                   "default": 1920.0
@@ -11893,7 +11923,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1200.0,
                   "minLimit": 1.0,
-                  "value": 1080.0,
+                  "value": 2160.0,
                   "label": "H",
                   "key": "h",
                   "default": 1080.0
@@ -12328,10 +12358,13 @@
                   "key": "sources_video_5_out"
                 }
               ],
-              "type": "string",
               "label": "Base Texture Source",
               "style": "Str",
-              "key": "Basetexturesrc"
+              "key": "Basetexturesrc",
+              "type": "string",
+              "tags": [
+                "source"
+              ]
             },
             {
               "path": "/vjzual3/_/app/master/surface_1:Basetexturesaturation",
@@ -12708,15 +12741,18 @@
                   "key": "sources_video_5_out"
                 }
               ],
-              "type": "string",
               "label": "Normal Texture Source",
               "style": "Str",
-              "key": "Normaltexturesrc"
+              "key": "Normaltexturesrc",
+              "type": "string",
+              "tags": [
+                "source"
+              ]
             },
             {
               "path": "/vjzual3/_/app/master/surface_1:Bumpscale",
               "group": "Bump",
-              "value": 0.8220000267028809,
+              "value": 1.0,
               "maxNorm": 1.0,
               "style": "Float",
               "key": "Bumpscale",
@@ -12732,7 +12768,7 @@
                   "path": "/vjzual3/_/app/master/surface_1:Normaloffsetx",
                   "minNorm": 0.0,
                   "maxNorm": 5.0,
-                  "value": 1.0,
+                  "value": 2.0,
                   "label": "X",
                   "key": "x",
                   "default": 1.0
@@ -12741,7 +12777,7 @@
                   "path": "/vjzual3/_/app/master/surface_1:Normaloffsety",
                   "minNorm": 0.0,
                   "maxNorm": 5.0,
-                  "value": 1.0,
+                  "value": 2.0,
                   "label": "Y",
                   "key": "y",
                   "default": 1.0
@@ -12756,7 +12792,7 @@
             {
               "path": "/vjzual3/_/app/master/surface_1:Normaledgeenabled",
               "group": "Bump",
-              "value": true,
+              "value": false,
               "style": "Toggle",
               "key": "Normaledgeenabled",
               "default": false,
@@ -12789,7 +12825,7 @@
             {
               "path": "/vjzual3/_/app/master/surface_1:Normalblurenabled",
               "group": "Bump",
-              "value": true,
+              "value": false,
               "style": "Toggle",
               "key": "Normalblurenabled",
               "default": false,
@@ -12799,7 +12835,7 @@
             {
               "path": "/vjzual3/_/app/master/surface_1:Normalblursize",
               "group": "Bump",
-              "value": 4,
+              "value": 1,
               "maxNorm": 10.0,
               "style": "Int",
               "key": "Normalblursize",
@@ -12812,7 +12848,7 @@
             {
               "path": "/vjzual3/_/app/master/surface_1:Rim1enable",
               "group": "Rim",
-              "value": true,
+              "value": false,
               "style": "Toggle",
               "key": "Rim1enable",
               "default": false,
@@ -12896,7 +12932,7 @@
             {
               "path": "/vjzual3/_/app/master/surface_1:Rim2enable",
               "group": "Rim",
-              "value": true,
+              "value": false,
               "style": "Toggle",
               "key": "Rim2enable",
               "default": false,
@@ -13548,7 +13584,7 @@
             {
               "path": "/vjzual3/_/app/master/coloradj_4:Brightness",
               "group": "Levels",
-              "value": 1.1883113384246826,
+              "value": 0.9684621095657349,
               "maxNorm": 2.0,
               "style": "Float",
               "key": "Brightness",
@@ -13578,7 +13614,7 @@
             {
               "path": "/vjzual3/_/app/master/coloradj_4:Contrast",
               "group": "Levels",
-              "value": 1.7353565692901611,
+              "value": 3.0,
               "maxNorm": 3.0,
               "style": "Float",
               "key": "Contrast",
@@ -13590,7 +13626,7 @@
             {
               "path": "/vjzual3/_/app/master/coloradj_4:Hueoffset",
               "group": "Levels",
-              "value": -0.3037321865558624,
+              "value": -0.09435193985700607,
               "maxNorm": 1.0,
               "style": "Float",
               "key": "Hueoffset",
@@ -13602,7 +13638,7 @@
             {
               "path": "/vjzual3/_/app/master/coloradj_4:Saturation",
               "group": "Levels",
-              "value": 1.0836212635040283,
+              "value": 1.931611180305481,
               "maxNorm": 2.0,
               "style": "Float",
               "key": "Saturation",
@@ -14052,10 +14088,13 @@
                 }
               ],
               "value": "noise_gen_1_out",
+              "label": "Background Source",
               "style": "Str",
               "key": "Source",
               "type": "string",
-              "label": "Background Source"
+              "tags": [
+                "source"
+              ]
             },
             {
               "path": "/vjzual3/_/app/master/background_1:Alpha",
@@ -14496,10 +14535,13 @@
                   "key": "sources_video_5_out"
                 }
               ],
-              "type": "string",
               "label": "Background Source",
               "style": "Str",
-              "key": "Source"
+              "key": "Source",
+              "type": "string",
+              "tags": [
+                "source"
+              ]
             },
             {
               "path": "/vjzual3/_/app/master/background_2:Alpha",
@@ -14756,7 +14798,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1400.0,
                   "minLimit": 1.0,
-                  "value": 1920.0,
+                  "value": 3840.0,
                   "label": "W",
                   "key": "w",
                   "default": 1920.0
@@ -14766,7 +14808,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1200.0,
                   "minLimit": 1.0,
-                  "value": 1080.0,
+                  "value": 2160.0,
                   "label": "H",
                   "key": "h",
                   "default": 1080.0
@@ -14858,7 +14900,7 @@
             {
               "path": "/vjzual3/_/app/master/time_machine_1:Whiteoffset",
               "group": "Time Machine",
-              "value": 0.236181,
+              "value": 0.10211212933063507,
               "maxNorm": 1.0,
               "style": "Float",
               "key": "Whiteoffset",
@@ -15204,11 +15246,14 @@
                   "key": "sources_video_5_out"
                 }
               ],
-              "value": "voronoi_gen_1_out",
+              "value": "voronoi_gen_2_out",
+              "label": "Source",
               "style": "Str",
               "key": "Source",
               "type": "string",
-              "label": "Source"
+              "tags": [
+                "source"
+              ]
             },
             {
               "path": "/vjzual3/_/app/master/time_machine_1:Step",
@@ -15502,7 +15547,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1400.0,
                   "minLimit": 1.0,
-                  "value": 1920.0,
+                  "value": 3840.0,
                   "label": "W",
                   "key": "w",
                   "default": 1920.0
@@ -15512,7 +15557,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1200.0,
                   "minLimit": 1.0,
-                  "value": 1080.0,
+                  "value": 2160.0,
                   "label": "H",
                   "key": "h",
                   "default": 1080.0
@@ -15949,7 +15994,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1400.0,
                   "minLimit": 1.0,
-                  "value": 1920.0,
+                  "value": 3840.0,
                   "label": "W",
                   "key": "w",
                   "default": 1920.0
@@ -15959,7 +16004,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1200.0,
                   "minLimit": 1.0,
-                  "value": 1080.0,
+                  "value": 2160.0,
                   "label": "H",
                   "key": "h",
                   "default": 1080.0
@@ -16396,7 +16441,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1400.0,
                   "minLimit": 1.0,
-                  "value": 1920.0,
+                  "value": 3840.0,
                   "label": "W",
                   "key": "w",
                   "default": 1920.0
@@ -16406,7 +16451,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1200.0,
                   "minLimit": 1.0,
-                  "value": 1080.0,
+                  "value": 2160.0,
                   "label": "H",
                   "key": "h",
                   "default": 1080.0
@@ -16843,7 +16888,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1400.0,
                   "minLimit": 1.0,
-                  "value": 1920.0,
+                  "value": 3840.0,
                   "label": "W",
                   "key": "w",
                   "default": 1920.0
@@ -16853,7 +16898,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1200.0,
                   "minLimit": 1.0,
-                  "value": 1080.0,
+                  "value": 2160.0,
                   "label": "H",
                   "key": "h",
                   "default": 1080.0
@@ -17290,7 +17335,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1400.0,
                   "minLimit": 1.0,
-                  "value": 1920.0,
+                  "value": 3840.0,
                   "label": "W",
                   "key": "w",
                   "default": 1920.0
@@ -17300,7 +17345,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1200.0,
                   "minLimit": 1.0,
-                  "value": 1080.0,
+                  "value": 2160.0,
                   "label": "H",
                   "key": "h",
                   "default": 1080.0
@@ -17637,7 +17682,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1400.0,
                   "minLimit": 1.0,
-                  "value": 1920.0,
+                  "value": 3840.0,
                   "label": "W",
                   "key": "w",
                   "default": 1920.0
@@ -17647,7 +17692,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1200.0,
                   "minLimit": 1.0,
-                  "value": 1080.0,
+                  "value": 2160.0,
                   "label": "H",
                   "key": "h",
                   "default": 1080.0
@@ -17799,7 +17844,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1400.0,
                   "minLimit": 1.0,
-                  "value": 1920.0,
+                  "value": 3840.0,
                   "label": "W",
                   "key": "w",
                   "default": 1920.0
@@ -17809,7 +17854,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1200.0,
                   "minLimit": 1.0,
-                  "value": 1080.0,
+                  "value": 2160.0,
                   "label": "H",
                   "key": "h",
                   "default": 1080.0
@@ -17920,7 +17965,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1400.0,
                   "minLimit": 1.0,
-                  "value": 1920.0,
+                  "value": 3840.0,
                   "label": "W",
                   "key": "w",
                   "default": 1920.0
@@ -17930,7 +17975,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1200.0,
                   "minLimit": 1.0,
-                  "value": 1080.0,
+                  "value": 2160.0,
                   "label": "H",
                   "key": "h",
                   "default": 1080.0
@@ -18750,7 +18795,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1400.0,
                   "minLimit": 1.0,
-                  "value": 1920.0,
+                  "value": 3840.0,
                   "label": "W",
                   "key": "w",
                   "default": 1920.0
@@ -18760,7 +18805,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1200.0,
                   "minLimit": 1.0,
-                  "value": 1080.0,
+                  "value": 2160.0,
                   "label": "H",
                   "key": "h",
                   "default": 1080.0
@@ -19066,7 +19111,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1400.0,
                   "minLimit": 1.0,
-                  "value": 1920.0,
+                  "value": 3840.0,
                   "label": "W",
                   "key": "w",
                   "default": 1920.0
@@ -19076,7 +19121,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1200.0,
                   "minLimit": 1.0,
-                  "value": 1080.0,
+                  "value": 2160.0,
                   "label": "H",
                   "key": "h",
                   "default": 1080.0
@@ -19117,13 +19162,17 @@
           "params": [
             {
               "path": "/vjzual3/_/app/generators/shape_gen_1:Renderres",
+              "group": "Shape",
+              "label": "Render Res",
+              "style": "WH",
+              "key": "Renderres",
               "parts": [
                 {
                   "path": "/vjzual3/_/app/generators/shape_gen_1:Renderresw",
                   "minNorm": 0.0,
                   "maxNorm": 1400.0,
                   "minLimit": 1.0,
-                  "value": 1920.0,
+                  "value": 3840.0,
                   "label": "W",
                   "key": "w",
                   "default": 1920.0
@@ -19133,17 +19182,16 @@
                   "minNorm": 0.0,
                   "maxNorm": 1200.0,
                   "minLimit": 1.0,
-                  "value": 1080.0,
+                  "value": 2160.0,
                   "label": "H",
                   "key": "h",
                   "default": 1080.0
                 }
               ],
-              "group": "Shape",
               "type": "fvec",
-              "label": "Render Res",
-              "style": "WH",
-              "key": "Renderres"
+              "tags": [
+                "advanced"
+              ]
             },
             {
               "path": "/vjzual3/_/app/generators/shape_gen_1:Shape",
@@ -19254,21 +19302,27 @@
               "path": "/vjzual3/_/app/generators/shape_gen_1:Useaspect",
               "group": "Shape",
               "value": true,
+              "label": "Use Aspect Ratio",
               "style": "Toggle",
               "key": "Useaspect",
               "default": true,
               "type": "bool",
-              "label": "Use Aspect Ratio"
+              "tags": [
+                "advanced"
+              ]
             },
             {
               "path": "/vjzual3/_/app/generators/shape_gen_1:Antialias",
               "group": "Shape",
               "value": true,
+              "label": "Anti-Alias",
               "style": "Toggle",
               "key": "Antialias",
               "default": true,
               "type": "bool",
-              "label": "Anti-Alias"
+              "tags": [
+                "advanced"
+              ]
             },
             {
               "path": "/vjzual3/_/app/generators/shape_gen_1:Softness",
@@ -19757,10 +19811,13 @@
                 }
               ],
               "value": "sources_video_3_out",
+              "label": "Fill Source",
               "style": "Str",
               "key": "Fillsource",
               "type": "string",
-              "label": "Fill Source"
+              "tags": [
+                "source"
+              ]
             },
             {
               "path": "/vjzual3/_/app/generators/shape_gen_1:Bgmode",
@@ -20167,10 +20224,13 @@
                 }
               ],
               "value": "sources_video_4_out",
+              "label": "Background Source",
               "style": "Str",
               "key": "Bgsource",
               "type": "string",
-              "label": "Background Source"
+              "tags": [
+                "source"
+              ]
             },
             {
               "path": "/vjzual3/_/app/generators/shape_gen_1:Rotate",
@@ -20188,21 +20248,27 @@
               "path": "/vjzual3/_/app/generators/shape_gen_1:Linkfillsrcpos",
               "group": "Shape",
               "value": false,
+              "label": "Link Fill Source Position",
               "style": "Toggle",
               "key": "Linkfillsrcpos",
               "default": false,
               "type": "bool",
-              "label": "Link Fill Source Position"
+              "tags": [
+                "advanced"
+              ]
             },
             {
               "path": "/vjzual3/_/app/generators/shape_gen_1:Linkfillsrcrotate",
               "group": "Shape",
               "value": false,
+              "label": "Link Fill Source Rotation",
               "style": "Toggle",
               "key": "Linkfillsrcrotate",
               "default": false,
               "type": "bool",
-              "label": "Link Fill Source Rotation"
+              "tags": [
+                "advanced"
+              ]
             },
             {
               "path": "/vjzual3/_/app/generators/shape_gen_1:Bypass",
@@ -20366,7 +20432,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1400.0,
                   "minLimit": 1.0,
-                  "value": 1920.0,
+                  "value": 3840.0,
                   "label": "W",
                   "key": "w",
                   "default": 1920.0
@@ -20376,7 +20442,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1200.0,
                   "minLimit": 1.0,
-                  "value": 1080.0,
+                  "value": 2160.0,
                   "label": "H",
                   "key": "h",
                   "default": 1080.0
@@ -20631,7 +20697,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1400.0,
                   "minLimit": 1.0,
-                  "value": 1920.0,
+                  "value": 3840.0,
                   "label": "W",
                   "key": "w",
                   "default": 1920.0
@@ -20641,7 +20707,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1200.0,
                   "minLimit": 1.0,
-                  "value": 1080.0,
+                  "value": 2160.0,
                   "label": "H",
                   "key": "h",
                   "default": 1080.0
@@ -21011,7 +21077,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1400.0,
                   "minLimit": 1.0,
-                  "value": 1920.0,
+                  "value": 3840.0,
                   "label": "W",
                   "key": "w",
                   "default": 1920.0
@@ -21021,7 +21087,7 @@
                   "minNorm": 0.0,
                   "maxNorm": 1200.0,
                   "minLimit": 1.0,
-                  "value": 1080.0,
+                  "value": 2160.0,
                   "label": "H",
                   "key": "h",
                   "default": 1080.0
