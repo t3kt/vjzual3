@@ -226,29 +226,16 @@ class Module(base.Extension):
 
 	def BuildDefaultParameterMetadata(self, dat):
 		dat.clear()
-		dat.appendRow(Module._ParamMetaKeys)
+		dat.appendRow(['name'] + schema.ParamMetaKeys)
 		def _addPar(par):
 			dat.appendRow([par.tupletName])
-			dat[par.tupletName, 'store'] = 1
-			dat[par.tupletName, 'source'] = 0
-			dat[par.tupletName, 'advanced'] = 0
-			dat[par.tupletName, 'expose'] = 1
+			metadata = schema.GetDefaultMetadataForStyle(par.style)
+			for key in schema.ParamMetaKeys:
+				dat[par.tupletName, key] = metadata.get(key, 0)
 		_addPar(self.comp.par.Bypass)
 		_addPar(self.comp.par.Solo)
 		for tuplet in self.GetModParamTuplets(includePulse=True):
 			_addPar(tuplet[0])
-
-	_ParamMetaKeys = [
-		'name',
-		'store',
-		'source',
-		'advanced',
-		'expose',
-		'help',
-		'offhelp',
-		'btntext',
-		'btnofftext'
-	]
 
 	def _GetParameterFlag(self, name, key, defaultval=False):
 		cell = self.ParameterMetadata[name, key]
@@ -263,11 +250,11 @@ class Module(base.Extension):
 		if self.ParameterMetadata[name, 'name'] is None:
 			return {
 				key: ''
-				for key in Module._ParamMetaKeys
+				for key in schema.ParamMetaKeys
 			}
 		return {
 			key: self.ParameterMetadata[name, key].val
-			for key in Module._ParamMetaKeys
+			for key in schema.ParamMetaKeys
 		}
 
 	def GetParamTupletsWithFlag(self, flag, defaultval=False):

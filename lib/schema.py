@@ -22,14 +22,6 @@ from tctrl.schema import ParamType, ParamOption, ParamPartSpec, ParamSpec, Modul
 class _ParStyleHandler:
 	def SpecFromTuplet(self, tuplet): pass
 
-	def _GetTags(self, metadata):
-		tags = []
-		if metadata and metadata['advanced'] == '1':
-			tags += ['advanced']
-		if metadata and metadata['source'] == '1':
-			tags += ['source']
-		return tags
-
 class _SimpleHandler(_ParStyleHandler):
 	def __init__(self, ptype, hasoptions=False, hasvalueindex=False):
 		self.ptype = ptype
@@ -56,7 +48,7 @@ class _SimpleHandler(_ParStyleHandler):
 			valueindex=par.menuIndex if self.hasvalueindex else None,
 			options=options,
 			help=metadata.get('help', None),
-			tags=self._GetTags(metadata),
+			tags=_GetTagsFromParMetadata(metadata),
 		)
 
 class _ButtonHandler(_ParStyleHandler):
@@ -81,7 +73,7 @@ class _ButtonHandler(_ParStyleHandler):
 			offhelp=metadata.get('offhelp', None),
 			buttontext=metadata.get('btntext', None),
 			buttonofftext=metadata.get('btnofftext', None),
-			tags=self._GetTags(metadata),
+			tags=_GetTagsFromParMetadata(metadata),
 		)
 
 class _VectorHandler(_ParStyleHandler):
@@ -111,7 +103,7 @@ class _VectorHandler(_ParStyleHandler):
 			group=tuplet[0].page.name,
 			parts=parts,
 			help=metadata.get('help', None),
-			tags=self._GetTags(metadata),
+			tags=_GetTagsFromParMetadata(metadata),
 		)
 
 def _PartFromPar(par, key, label, pathprefix=None):
@@ -153,7 +145,7 @@ class _VariableLengthHandler(_ParStyleHandler):
 			defaultval=attrs['default'],
 			value=attrs['value'],
 			help=metadata.get('help', None),
-			tags=self._GetTags(metadata),
+			tags=_GetTagsFromParMetadata(metadata),
 		)
 
 class _OtherHandler(_ParStyleHandler):
@@ -169,7 +161,7 @@ class _OtherHandler(_ParStyleHandler):
 			style=par.style,
 			group=par.page.name,
 			help=metadata.get('help', None),
-			tags=self._GetTags(metadata),
+			tags=_GetTagsFromParMetadata(metadata),
 		)
 
 _parStyleHandlers = {}
@@ -188,6 +180,60 @@ _parStyleHandlers['WH'] = _VectorHandler(ParamType.fvec)
 _parStyleHandlers['Int'] = _VariableLengthHandler(singletype=ParamType.int, multitype=ParamType.ivec)
 _parStyleHandlers['Float'] = _VariableLengthHandler(singletype=ParamType.float, multitype=ParamType.fvec)
 _otherHandler = _OtherHandler()
+
+ParamMetaKeys = [
+	'store',
+	'source',
+	'advanced',
+	'expose',
+	'help',
+	'offhelp',
+	'btntext',
+	'btnofftext',
+	'mappable',
+	'filterable',
+	'sequenceable',
+]
+
+def _CreateStyleMetadata(mappable=1, filterable=1, sequenceable=1, store=1, source=0, advanced=0, expose=1):
+	return {
+		'mappable': mappable,
+		'filterable': filterable,
+		'sequenceable': sequenceable,
+		'store': store,
+		'source': source,
+		'advanced': advanced,
+		'expose': expose,
+	}
+
+_defaultStyleMetadata = {
+	'Pulse': _CreateStyleMetadata(mappable=1, filterable=0, sequenceable=1),
+	'Toggle': _CreateStyleMetadata(mappable=1, filterable=0, sequenceable=1),
+	'Str': _CreateStyleMetadata(mappable=0, filterable=0, sequenceable=0),
+	'StrMenu': _CreateStyleMetadata(mappable=0, filterable=0, sequenceable=0),
+	'Menu': _CreateStyleMetadata(mappable=1, filterable=0, sequenceable=1),
+	'Int': _CreateStyleMetadata(mappable=1, filterable=0, sequenceable=1),
+	'RGB': _CreateStyleMetadata(mappable=1, filterable=1, sequenceable=1),
+	'RGBA': _CreateStyleMetadata(mappable=1, filterable=1, sequenceable=1),
+	'Float': _CreateStyleMetadata(mappable=1, filterable=1, sequenceable=1),
+	'UV': _CreateStyleMetadata(mappable=1, filterable=1, sequenceable=1),
+	'UVW': _CreateStyleMetadata(mappable=1, filterable=1, sequenceable=1),
+	'XY': _CreateStyleMetadata(mappable=1, filterable=1, sequenceable=1),
+	'XYZ': _CreateStyleMetadata(mappable=1, filterable=1, sequenceable=1),
+	'WH': _CreateStyleMetadata(mappable=1, filterable=1, sequenceable=1),
+}
+_unsupportedStyleMetadata = _CreateStyleMetadata(mappable=0, filterable=0, sequenceable=0, store=1, source=0, advanced=0, expose=0)
+del _CreateStyleMetadata
+
+def GetDefaultMetadataForStyle(style):
+	return _defaultStyleMetadata.get(style, _unsupportedStyleMetadata)
+
+def _GetTagsFromParMetadata(metadata):
+	if not metadata:
+		return []
+	return [
+		key for key, val in metadata.items() if val in ['1', 1]
+	]
 
 def _NumberAttributesFromPar(par):
 	return {
