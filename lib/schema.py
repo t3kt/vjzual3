@@ -204,6 +204,10 @@ def _CreateStyleMetadata(mappable=1, filterable=1, sequenceable=1, store=1, sour
 		'source': source,
 		'advanced': advanced,
 		'expose': expose,
+		'help': '',
+		'offhelp': '',
+		'btntext': '',
+		'btnofftext': '',
 	}
 
 _defaultStyleMetadata = {

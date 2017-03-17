@@ -253,7 +253,7 @@ class Module(base.Extension):
 				for key in schema.ParamMetaKeys
 			}
 		return {
-			key: self.ParameterMetadata[name, key].val
+			key: _ExtractVal(self.ParameterMetadata[name, key])
 			for key in schema.ParamMetaKeys
 		}
 
@@ -264,6 +264,13 @@ class Module(base.Extension):
 
 	def GetParamsWithFlag(self, flag, defaultval=False):
 		return _ExpandTuplets(self.GetParamTupletsWithFlag(flag, defaultval))
+
+def _ExtractVal(x):
+	if x is None:
+		return None
+	if hasattr(x, 'val'):
+		return x.val
+	return x
 
 def _ExpandTuplets(tuplets):
 	if not tuplets:
