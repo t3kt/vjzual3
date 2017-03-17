@@ -7140,7 +7140,7 @@
               "group": "External Output"
             },
             {
-              "value": false,
+              "value": true,
               "style": "Toggle",
               "group": "Module",
               "type": "bool",
@@ -8749,9 +8749,7 @@
               "tags": [
                 "advanced",
                 "expose",
-                "store",
-                "mappable",
-                "sequenceable"
+                "store"
               ]
             },
             {
@@ -9897,9 +9895,7 @@
               "tags": [
                 "advanced",
                 "expose",
-                "store",
-                "mappable",
-                "sequenceable"
+                "store"
               ]
             },
             {
@@ -13198,8 +13194,7 @@
                 "advanced",
                 "expose",
                 "store",
-                "mappable",
-                "sequenceable"
+                "mappable"
               ]
             },
             {
@@ -13270,10 +13265,7 @@
               "tags": [
                 "advanced",
                 "expose",
-                "store",
-                "filterable",
-                "mappable",
-                "sequenceable"
+                "store"
               ]
             },
             {
@@ -20690,8 +20682,7 @@
               "tags": [
                 "expose",
                 "store",
-                "mappable",
-                "sequenceable"
+                "mappable"
               ]
             },
             {
@@ -20757,9 +20748,7 @@
               "tags": [
                 "advanced",
                 "expose",
-                "store",
-                "mappable",
-                "sequenceable"
+                "store"
               ]
             },
             {
@@ -20794,9 +20783,7 @@
               "tags": [
                 "expose",
                 "store",
-                "filterable",
-                "mappable",
-                "sequenceable"
+                "filterable"
               ]
             },
             {
@@ -20811,9 +20798,7 @@
               "tags": [
                 "advanced",
                 "expose",
-                "store",
-                "mappable",
-                "sequenceable"
+                "store"
               ]
             },
             {
@@ -20838,9 +20823,7 @@
               "path": "/vjzual3/_/app/sources/external_in_1:Sourcetype",
               "tags": [
                 "expose",
-                "store",
-                "mappable",
-                "sequenceable"
+                "store"
               ]
             },
             {
@@ -20895,8 +20878,7 @@
               "tags": [
                 "expose",
                 "store",
-                "mappable",
-                "sequenceable"
+                "mappable"
               ]
             },
             {
@@ -20962,9 +20944,7 @@
               "tags": [
                 "advanced",
                 "expose",
-                "store",
-                "mappable",
-                "sequenceable"
+                "store"
               ]
             },
             {
@@ -20999,9 +20979,7 @@
               "tags": [
                 "expose",
                 "store",
-                "filterable",
-                "mappable",
-                "sequenceable"
+                "filterable"
               ]
             },
             {
@@ -21016,9 +20994,7 @@
               "tags": [
                 "advanced",
                 "expose",
-                "store",
-                "mappable",
-                "sequenceable"
+                "store"
               ]
             },
             {
@@ -21043,9 +21019,7 @@
               "path": "/vjzual3/_/app/sources/external_in_2:Sourcetype",
               "tags": [
                 "expose",
-                "store",
-                "mappable",
-                "sequenceable"
+                "store"
               ]
             },
             {
@@ -21161,10 +21135,7 @@
               "tags": [
                 "advanced",
                 "expose",
-                "store",
-                "filterable",
-                "mappable",
-                "sequenceable"
+                "store"
               ]
             },
             {
@@ -21198,9 +21169,7 @@
               "tags": [
                 "advanced",
                 "expose",
-                "store",
-                "mappable",
-                "sequenceable"
+                "store"
               ]
             },
             {
@@ -21934,9 +21903,7 @@
               "tags": [
                 "advanced",
                 "expose",
-                "store",
-                "mappable",
-                "sequenceable"
+                "store"
               ]
             },
             {
@@ -22158,9 +22125,7 @@
               "tags": [
                 "advanced",
                 "expose",
-                "store",
-                "mappable",
-                "sequenceable"
+                "store"
               ]
             },
             {
@@ -22231,10 +22196,7 @@
               "tags": [
                 "advanced",
                 "expose",
-                "store",
-                "filterable",
-                "mappable",
-                "sequenceable"
+                "store"
               ]
             },
             {
@@ -22340,9 +22302,7 @@
               "tags": [
                 "advanced",
                 "expose",
-                "store",
-                "mappable",
-                "sequenceable"
+                "store"
               ]
             },
             {
@@ -22564,9 +22524,7 @@
               "tags": [
                 "advanced",
                 "expose",
-                "store",
-                "mappable",
-                "sequenceable"
+                "store"
               ]
             },
             {
@@ -22637,10 +22595,7 @@
               "tags": [
                 "advanced",
                 "expose",
-                "store",
-                "filterable",
-                "mappable",
-                "sequenceable"
+                "store"
               ]
             },
             {
@@ -24736,9 +24691,7 @@
               "tags": [
                 "advanced",
                 "expose",
-                "store",
-                "mappable",
-                "sequenceable"
+                "store"
               ]
             },
             {
@@ -24959,9 +24912,7 @@
               "path": "/vjzual3/_/app/generators/multi_noise_gen_1:Alphamode",
               "tags": [
                 "expose",
-                "store",
-                "mappable",
-                "sequenceable"
+                "store"
               ]
             },
             {
@@ -24975,9 +24926,7 @@
               "path": "/vjzual3/_/app/generators/multi_noise_gen_1:Mono",
               "tags": [
                 "expose",
-                "store",
-                "mappable",
-                "sequenceable"
+                "store"
               ]
             },
             {
@@ -25012,10 +24961,7 @@
               "tags": [
                 "advanced",
                 "expose",
-                "store",
-                "filterable",
-                "mappable",
-                "sequenceable"
+                "store"
               ]
             },
             {
@@ -25030,9 +24976,7 @@
               "tags": [
                 "advanced",
                 "expose",
-                "store",
-                "mappable",
-                "sequenceable"
+                "store"
               ]
             },
             {
@@ -25563,11 +25507,7 @@
               "label": "Selected Generator",
               "default": "gen1",
               "key": "Selectedgen",
-              "path": "/vjzual3/_/app/generators/multi_noise_gen_1:Selectedgen",
-              "tags": [
-                "mappable",
-                "sequenceable"
-              ]
+              "path": "/vjzual3/_/app/generators/multi_noise_gen_1:Selectedgen"
             },
             {
               "value": false,
