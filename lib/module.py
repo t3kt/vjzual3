@@ -190,6 +190,15 @@ class Module(base.Extension):
 					for n in nodes.GetAppNodes()
 				]
 			return sourcecache['sources']
+		includedparamgroups = {t[0].page.name for t in partuplets}
+		paramgroups = [
+			schema.GroupInfo(
+				page.name,
+				label=page.name,
+				tags=['special'] if page.name == 'Module' else []
+			) for page in self.comp.customPages
+			if page.name in includedparamgroups
+			]
 		return schema.ModuleSpec(
 			key=key,
 			label=self.comp.par.Uilabel.eval(),
@@ -204,6 +213,7 @@ class Module(base.Extension):
 					metadata=self._GetParameterMetadata(t[0].tupletName))
 				for t in partuplets
 			],
+			paramgroups=paramgroups,
 			children=[
 				m.GetSchema(pathprefix=pathprefix)
 				for m in self._SubModules

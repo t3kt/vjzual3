@@ -17,7 +17,7 @@ if _pytctrlpath not in sys.path:
 	sys.path.append(_pytctrlpath)
 
 # export these so this module acts as a proxy
-from tctrl.schema import ParamType, ParamOption, ParamPartSpec, ParamSpec, ModuleSpec, ConnectionInfo, AppSchema
+from tctrl.schema import ParamType, ParamOption, ParamPartSpec, ParamSpec, ModuleSpec, ConnectionInfo, AppSchema, GroupInfo
 
 class _ParStyleHandler:
 	def SpecFromTuplet(self, tuplet): pass
