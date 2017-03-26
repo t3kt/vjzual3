@@ -77,8 +77,12 @@ class ShellApp(base.Extension):
 			connections=[
 				schema.ConnectionInfo(
 					conntype='oscin',
-					host=self.comp.par.Oscinhost.eval() or self.comp.par.Oscinhost.default,
 					port=self.comp.par.Oscinport.eval(),
+				),
+				schema.ConnectionInfo(
+					conntype='oscout',
+					host=self.comp.par.Oscouthost.eval() or self.comp.par.Oscouthost.default,
+					port=self.comp.par.Oscoutport.eval(),
 				)
 			],
 			children=[

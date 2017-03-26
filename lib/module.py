@@ -107,6 +107,16 @@ class Module(base.Extension):
 	def _ModParamPageNames(self):
 		return util.ParseStringList(self.Shell.par.Modparampages.eval())
 
+	@property
+	def ExposedModParamNames(self):
+		names = []
+		for t in self.GetModParamTuplets(includePulse=True):
+			if self.ParameterMetadata[t[0].tupletName, 'expose'] == '0':
+				continue
+			for p in t:
+				names.append(p.name)
+		return names
+
 	def GetModParamTuplets(self, includePulse=False):
 		tupletnames = self._ModParamTupleNames
 		pagenames = self._ModParamPageNames
