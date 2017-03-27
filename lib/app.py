@@ -85,8 +85,7 @@ class ShellApp(base.Extension):
 					port=self.comp.par.Oscoutport.eval(),
 				)
 			],
-			children=[
-				m.GetSchema(pathprefix=childprefix)
-				for m in self._ChildModules
-				])
+			children=schema.BuildModuleSchemas(
+				self._ChildModules,
+				pathprefix=childprefix))
 

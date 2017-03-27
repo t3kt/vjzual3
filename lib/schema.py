@@ -285,6 +285,13 @@ def SpecsFromParPages(pages, tupletfilter=None, pagefilter=None, pathprefix=None
 		)
 	return specs
 
+def BuildModuleSchemas(modules, pathprefix):
+	modules = sorted(modules, key=lambda m: m.par.order)
+	return [
+		m.GetSchema(pathprefix=pathprefix)
+		for m in modules
+	]
+
 def _FilterByName(objs, test):
 	if test is None:
 		return objs

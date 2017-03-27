@@ -224,10 +224,9 @@ class Module(base.Extension):
 				for t in partuplets
 			],
 			paramgroups=paramgroups,
-			children=[
-				m.GetSchema(pathprefix=pathprefix)
-				for m in self._SubModules
-				])
+			children=schema.BuildModuleSchemas(
+				self._SubModules,
+				pathprefix=pathprefix))
 
 	def UpdateSolo(self):
 		solo = self.comp.par.Solo.eval()
