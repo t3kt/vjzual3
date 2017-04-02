@@ -29,7 +29,6 @@ uniform sampler2D sLife;
 uniform sampler2D rotation;
 uniform sampler2D sOriginPos;
 uniform sampler3D sColorMap;
-uniform float instance_offset;
 
 
 float reMap(in float value, in float low1, in float high1, in float low2, in float high2){
