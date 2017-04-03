@@ -16,6 +16,8 @@ uniform vec4 uRotationM;
 uniform vec4 uRotationInit;
 uniform int uHit;
 uniform vec4 uOriginBounds;
+uniform vec4 uModifierLow;
+uniform vec4 uModifierHigh;
 
 layout(location = 0) out vec4 oPosAndLife;
 layout(location = 1) out vec4 oVelocity;
@@ -35,9 +37,14 @@ layout(location = 5) out vec4 oOriginPos;
 #define LIFE 7
 #define ALIFE 8
 #define ORIGIN_POS 9
+#define MODIFIERS 10
 
 // 3D Input textures are:
-#define TURBULENCE 10
+#define TURBULENCE 11
+
+#define MODIFIER_TURBULENCE 0
+#define MODIFIER_EXTERNAL 1
+#define MODIFIER_WIND 2
 
 float reMap(in float value, in float low1, in float high1, in float low2, in float high2){
 	return float(low2 + (value - low1) * (high2 - low2) / (high1 - low1));
@@ -49,6 +56,10 @@ vec2 reMap(in vec2 value, in vec2 low1, in vec2 high1, in vec2 low2, in vec2 hig
 
 vec3 reMap(in vec3 value, in vec3 low1, in vec3 high1, in vec3 low2, in vec3 high2){
 	return vec3(low2 + (value - low1) * (high2 - low2) / (high1 - low1));
+}
+
+vec4 reMap(in vec4 value, in vec4 low1, in vec4 high1, in vec4 low2, in vec4 high2){
+	return vec4(low2 + (value - low1) * (high2 - low2) / (high1 - low1));
 }
 
 // new particle is born
@@ -104,6 +115,10 @@ void main()
 	vec4 noiseVals = texture(sTD2DInputs[POS_NOISE], vUV.st);
 	vec4 noiseValsNorm = noiseVals - 0.5;
 	vec4 originPos = texture(sTD2DInputs[ORIGIN_POS], vUV.st);
+	vec4 modifiers = reMap(
+		texture(sTD2DInputs[MODIFIERS], originPos.st),
+		vec4(0.0), vec4(1.0),
+	  uModifierLow, uModifierHigh);
 
 	noiseValsNorm *= 2.0;
 	vec3 pos = vec3(0.0);
@@ -131,13 +146,13 @@ void main()
 		posLife.xyz += velocity.xyz;
 
 		// apply external force
-		velocity.xyz += externalForce(variance);
+		velocity.xyz += externalForce(variance) * modifiers[MODIFIER_EXTERNAL];
 
 		// apply wind
-		velocity.xyz += windForce(variance, velocity);
+		velocity.xyz += windForce(variance, velocity) * modifiers[MODIFIER_WIND];
 		
 		// apply turbulence
-		velocity.xyz += turbulence(posMoveUV, noiseValsNorm);
+		velocity.xyz += turbulence(posMoveUV, noiseValsNorm) * modifiers[MODIFIER_TURBULENCE];
 
 		// apply drag
 		velocity *= uDragM;
