@@ -94,9 +94,32 @@ class WebsocketServer(base.Extension):
 			peer.sendBytes(packedMsg)
 		elif path.startswith('/AppSchema'):
 			sendHeader = self._GetHeader(hType='default', recHeader=headers, contentType='application/json')
+			queryparams = {}
+			if '?' in path:
+				path, querystr = path.split('?')
+				if '&' in querystr:
+					for part in querystr.split('&'):
+						key, val = part.split('=')
+						queryparams[key] = val
+				else:
+					key, val = querystr.split('=')
+					queryparams[key] = val
 			appschema = op.App.GetSchema()
 			if path in ('/AppSchema', '/AppSchema/', '/AppSchema.json'):
-				schema = appschema
+				procargs = {}
+				for key in ('embedlists',
+				            'striplists',
+				            'embedmoduletypes',
+				            'stripmoduletypes',
+				            'generateparamgroups',
+				            'generatechildgroups'):
+					if key in queryparams:
+						procargs[key] = queryparams[key] == '1'
+				if procargs:
+					import tctrl.processing
+					schema = tctrl.processing.ProcessAppSchema(appschema, **procargs)
+				else:
+					schema = appschema
 			else:
 				subpath = path[len('/AppSchema/'):]
 				schema = appschema.EvaluatePath(subpath)
