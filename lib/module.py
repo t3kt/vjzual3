@@ -182,22 +182,15 @@ class Module(base.Extension):
 	def GetSchema(self,
 	              pathprefix=None,
 	              typeonly=False):
-		helper = _ExtModuleSchemaHelper(
-			self,
+		builder = _ExtModuleSchemaBuilder(
 			comp=self.comp,
-			sourcesupplier=schema.SourceOptionsSupplier(nodes.GetAppNodes)
-		)
+			pathprefix=pathprefix)
 		if typeonly:
-			return schema.BuildModuleTypeSchema(
-				self,
+			return builder.BuildModuleTypeSchema(
 				comp=self.comp,
-				helper=helper,
 			)
-		modspec = schema.BuildModuleSchema(
-			self,
+		modspec = builder.BuildModuleSchema(
 			comp=self.comp,
-			pathprefix=pathprefix,
-			helper=helper,
 			tags=self._SchemaTags,
 		)
 		modspec.children = schema.BuildModuleSchemas(
@@ -261,14 +254,34 @@ class Module(base.Extension):
 	def GetParamsWithFlag(self, flag, defaultval=False):
 		return _ExpandTuplets(self.GetParamTupletsWithFlag(flag, defaultval))
 
-class _ExtModuleSchemaHelper(schema.ModuleSchemaHelper):
+class _SourceOptionsSupplier:
+	def __init__(self):
+		self.cache = None
+
+	def __call__(self, *args, **kwargs):
+		if self.cache is None:
+			self.cache = [
+				schema.ParamOption(n['id'], n['label'])
+				for n in nodes.GetAppNodes()
+			]
+		return self.cache
+
+_supplySourceOptions = _SourceOptionsSupplier()
+
+class _ExtModuleSchemaBuilder(schema.ModuleSchemaBuilder):
 	def __init__(self,
-	             module,
 	             comp,
-	             sourcesupplier=None):
-		self.module = module
-		self.comp = comp
-		self.sourcesupplier = sourcesupplier
+	             pathprefix=None):
+		super().__init__(
+			comp=comp,
+			pathprefix=pathprefix)
+		self.module = comp.extensions[0]
+
+	def _GetModuleParamTuplets(self):
+		return self.module.GetModParamTuplets(includePulse=True) + [
+			self.comp.par.Bypass.tuplet,
+			self.comp.par.Solo.tuplet,
+		]
 
 	def GetParamFlag(self, name, flag, defval):
 		return self.module._GetParameterFlag(name, flag, defval)
@@ -278,7 +291,7 @@ class _ExtModuleSchemaHelper(schema.ModuleSchemaHelper):
 
 	def GetParamOptions(self, name):
 		if self.GetParamFlag(name, 'source', False):
-			return self.sourcesupplier()
+			return _supplySourceOptions()
 		return None
 
 def _ExtractVal(x):

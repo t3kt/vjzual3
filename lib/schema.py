@@ -311,99 +311,84 @@ def _FilterParTuplets(tuplets, tupletfilter):
 	else:
 		return filter(lambda t: t[0].name in tupletfilter, tuplets)
 
-class SourceOptionsSupplier:
-	def __init__(self, getnodes):
-		self.cache = None
-		self.getnodes = getnodes
-
-	def __call__(self, *args, **kwargs):
-		if self.cache is None:
-			self.cache = [
-				ParamOption(n['id'], n['label'])
-				for n in self.getnodes()
-			]
-		return self.cache
-
-# NOTE: does NOT generate child modules!
-def BuildModuleSchema(module,
-                      comp,
-                      pathprefix=None,
-                      helper=None,
-                      tags=None):
-	master = comp.par.clone.eval()
-	mtype = master.path if master else None
-	key = comp.par.Modname.eval()
-	path = (pathprefix + comp.path) if pathprefix else None
-	parprefix = (path + ':') if path else None
-	params, paramgroups = _BuildModuleParamsAndParamGroups(
-		module=module,
-		comp=comp,
-		parprefix=parprefix,
-		helper=helper
-	)
-	return ModuleSpec(
-		key=key,
-		label=comp.par.Uilabel.eval(),
-		path=path,
-		moduletype=mtype,
-		tags=tags,
-		params=params,
-		paramgroups=paramgroups,
-	)
-
-def BuildModuleTypeSchema(module,
-                          comp,
-                          helper=None,
-                          ):
-	parprefix = ':'
-	params, paramgroups = _BuildModuleParamsAndParamGroups(
-		module=module,
-		comp=comp,
-		parprefix=parprefix,
-		helper=helper
-	)
-	return ModuleTypeSpec(
-		module.path,
-		label=comp.par.Uilabel.eval(),
-		params=params,
-		paramgroups=paramgroups,
-	)
-
-def _BuildModuleParamsAndParamGroups(module,
-                                     comp,
-                                     parprefix=None,
-                                     helper=None):
-	partuplets = module.GetModParamTuplets(includePulse=True) + [
-		comp.par.Bypass.tuplet,
-		comp.par.Solo.tuplet,
-	]
-	includedparamgroups = {t[0].page.name for t in partuplets}
-	paramgroups = [
-		GroupInfo(
-			page.name,
-			label=page.name,
-			tags=['special'] if page.name == 'Module' else []
-		) for page in comp.customPages
-		if page.name in includedparamgroups
-		]
-	params = [
-			SpecFromParTuplet(
-				t,
-				pathprefix=parprefix,
-				getoptions=helper.GetParamOptions,
-				metadata=helper.GetParamMeta(t[0].tupletName))
-			for t in partuplets
-		]
-	return params, paramgroups
-
 
 # noinspection PyMethodMayBeStatic
-class ModuleSchemaHelper:
+class ModuleSchemaBuilder:
+	def __init__(self,
+	             comp,
+	             pathprefix=None):
+		self.comp = comp
+		self.pathprefix = pathprefix
+
+	def BuildModuleParamSpecs(self,
+	                          parprefix):
+		partuplets = self._GetModuleParamTuplets()
+		return [
+				SpecFromParTuplet(
+					t,
+					pathprefix=parprefix,
+					getoptions=self.GetParamOptions,
+					metadata=self.GetParamMeta(t[0].tupletName))
+				for t in partuplets
+			]
+
+	def GetModuleParamGroups(self,
+	                         paramspecs):
+		includedparamgroups = {p.group for p in paramspecs}
+		return [
+			GroupInfo(
+				page.name,
+				label=page.name,
+				tags=['special'] if page.name == 'Module' else []
+			) for page in self.comp.customPages
+			if page.name in includedparamgroups
+			]
+
+	def _GetModuleParamTuplets(self):
+		return []
+
+	# noinspection PyUnusedLocal
 	def GetParamFlag(self, name, flag, defval):
 		return defval
 
+	# noinspection PyUnusedLocal
 	def GetParamMeta(self, name):
 		return {}
 
+	# noinspection PyUnusedLocal
 	def GetParamOptions(self, name):
 		return None
+
+	# NOTE: does NOT generate child modules!
+	def BuildModuleSchema(self,
+	                      comp,
+	                      tags=None):
+		master = comp.par.clone.eval()
+		mtype = master.path if master else None
+		key = comp.par.Modname.eval()
+		pathprefix = self.pathprefix
+		path = (pathprefix + comp.path) if pathprefix else None
+		parprefix = (path + ':') if path else None
+		params = self.BuildModuleParamSpecs(parprefix=parprefix)
+		paramgroups = self.GetModuleParamGroups(params)
+		return ModuleSpec(
+			key=key,
+			label=comp.par.Uilabel.eval(),
+			path=path,
+			moduletype=mtype,
+			tags=tags,
+			params=params,
+			paramgroups=paramgroups,
+		)
+
+	def BuildModuleTypeSchema(self,
+	                          comp):
+		parprefix = ':'
+		params = self.BuildModuleParamSpecs(parprefix=parprefix)
+		paramgroups = self.GetModuleParamGroups(params)
+		return ModuleTypeSpec(
+			comp.path,
+			label=comp.par.Uilabel.eval(),
+			params=params,
+			paramgroups=paramgroups,
+		)
