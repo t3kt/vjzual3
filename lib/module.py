@@ -179,7 +179,9 @@ class Module(base.Extension):
 		tags = self.comp.tags - {'tmod'}
 		return list(tags)
 
-	def GetSchema(self, pathprefix=None):
+	def GetSchema(self,
+	              pathprefix=None,
+	              typeonly=False):
 		master = self.comp.par.clone.eval()
 		mtype = master.path if master else None
 		key = self.comp.par.Modname.eval()
@@ -191,15 +193,7 @@ class Module(base.Extension):
 			self.comp.par.Bypass.tuplet,
 			self.comp.par.Solo.tuplet,
 		]
-		sourcecache = {}
-		def _getSourceOptions(*ignored):
-			self._LogEvent('_getSourceOptions() CALLED!!!')
-			if 'sources' not in sourcecache:
-				sourcecache['sources'] = [
-					schema.ParamOption(n['id'], n['label'])
-					for n in nodes.GetAppNodes()
-				]
-			return sourcecache['sources']
+		sourcesupplier = schema.SourceOptionsSupplier(nodes.GetAppNodes)
 		includedparamgroups = {t[0].page.name for t in partuplets}
 		paramgroups = [
 			schema.GroupInfo(
@@ -209,20 +203,28 @@ class Module(base.Extension):
 			) for page in self.comp.customPages
 			if page.name in includedparamgroups
 			]
+		params = [
+				schema.SpecFromParTuplet(
+					t,
+					pathprefix=parprefix,
+					getoptions=sourcesupplier if self._GetParameterFlag(t[0].tupletName, 'source', defaultval=False) else None,
+					metadata=self._GetParameterMetadata(t[0].tupletName))
+				for t in partuplets
+			]
+		if typeonly:
+			return schema.ModuleTypeSpec(
+				key=self.comp.path,
+				label=self.comp.par.Uilabel.eval(),
+				params=params,
+				paramgroups=paramgroups
+			)
 		return schema.ModuleSpec(
 			key=key,
 			label=self.comp.par.Uilabel.eval(),
 			path=path,
 			moduletype=mtype,
 			tags=self._SchemaTags or None,
-			params=[
-				schema.SpecFromParTuplet(
-					t,
-					pathprefix=parprefix,
-					getoptions=_getSourceOptions if self._GetParameterFlag(t[0].tupletName, 'source', defaultval=False) else None,
-					metadata=self._GetParameterMetadata(t[0].tupletName))
-				for t in partuplets
-			],
+			params=params,
 			paramgroups=paramgroups,
 			children=schema.BuildModuleSchemas(
 				self._SubModules,

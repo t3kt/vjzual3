@@ -17,7 +17,7 @@ if _pytctrlpath not in sys.path:
 	sys.path.append(_pytctrlpath)
 
 # export these so this module acts as a proxy
-from tctrl.schema import ParamType, ParamOption, ParamPartSpec, ParamSpec, ModuleSpec, ConnectionInfo, AppSchema, GroupInfo
+from tctrl.schema import ParamType, ParamOption, ParamPartSpec, ParamSpec, ModuleSpec, ConnectionInfo, AppSchema, GroupInfo, ModuleTypeSpec
 
 class _ParStyleHandler:
 	def SpecFromTuplet(self, tuplet): pass
@@ -257,10 +257,10 @@ def _OptionsFromPar(par):
 		options.append(ParamOption(key=name, label=label))
 	return options
 
-def _GetTupletAttrs(tuplet, attrname):
-	if len(tuplet) == 1:
-		return getattr(tuplet[0], attrname)
-	return [getattr(p, attrname) for p in tuplet]
+# def _GetTupletAttrs(tuplet, attrname):
+# 	if len(tuplet) == 1:
+# 		return getattr(tuplet[0], attrname)
+# 	return [getattr(p, attrname) for p in tuplet]
 
 def SpecFromParTuplet(tuplet, pathprefix=None, getoptions=None, metadata=None):
 	style = tuplet[0].style
@@ -269,21 +269,21 @@ def SpecFromParTuplet(tuplet, pathprefix=None, getoptions=None, metadata=None):
 	handler = _parStyleHandlers.get(style, _otherHandler)
 	return handler.SpecFromTuplet(tuplet, pathprefix=pathprefix, getoptions=getoptions, metadata=metadata)
 
-def SpecsFromParTuplets(tuplets, tupletfilter=None, pathprefix=None):
-	return [
-		SpecFromParTuplet(t, pathprefix=pathprefix)
-		for t in _FilterParTuplets(tuplets, tupletfilter)
-		]
+# def SpecsFromParTuplets(tuplets, tupletfilter=None, pathprefix=None):
+# 	return [
+# 		SpecFromParTuplet(t, pathprefix=pathprefix)
+# 		for t in _FilterParTuplets(tuplets, tupletfilter)
+# 		]
 
-def SpecsFromParPages(pages, tupletfilter=None, pagefilter=None, pathprefix=None):
-	specs = []
-	for page in _FilterByName(pages, pagefilter):
-		specs += SpecsFromParTuplets(
-			page.parTuplets,
-			tupletfilter=tupletfilter,
-			pathprefix=pathprefix
-		)
-	return specs
+# def SpecsFromParPages(pages, tupletfilter=None, pagefilter=None, pathprefix=None):
+# 	specs = []
+# 	for page in _FilterByName(pages, pagefilter):
+# 		specs += SpecsFromParTuplets(
+# 			page.parTuplets,
+# 			tupletfilter=tupletfilter,
+# 			pathprefix=pathprefix
+# 		)
+# 	return specs
 
 def BuildModuleSchemas(modules, pathprefix):
 	modules = sorted(modules, key=lambda m: m.par.order)
@@ -292,15 +292,15 @@ def BuildModuleSchemas(modules, pathprefix):
 		for m in modules
 	]
 
-def _FilterByName(objs, test):
-	if test is None:
-		return objs
-	elif callable(test):
-		return filter(test, objs)
-	elif isinstance(test, str):
-		return filter(lambda o: o.name == test, objs)
-	else:
-		return filter(lambda o: o.name in test, objs)
+# def _FilterByName(objs, test):
+# 	if test is None:
+# 		return objs
+# 	elif callable(test):
+# 		return filter(test, objs)
+# 	elif isinstance(test, str):
+# 		return filter(lambda o: o.name == test, objs)
+# 	else:
+# 		return filter(lambda o: o.name in test, objs)
 
 def _FilterParTuplets(tuplets, tupletfilter):
 	if tupletfilter is None:
@@ -311,3 +311,16 @@ def _FilterParTuplets(tuplets, tupletfilter):
 		return filter(lambda t: t[0].name == tupletfilter, tuplets)
 	else:
 		return filter(lambda t: t[0].name in tupletfilter, tuplets)
+
+class SourceOptionsSupplier:
+	def __init__(self, getnodes):
+		self.cache = None
+		self.getnodes = getnodes
+
+	def __call__(self, *args, **kwargs):
+		if self.cache is None:
+			self.cache = [
+				ParamOption(n['id'], n['label'])
+				for n in self.getnodes()
+			]
+		return self.cache
