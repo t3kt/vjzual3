@@ -163,21 +163,22 @@ class _OtherHandler(_ParStyleHandler):
 			tags=_GetTagsFromParMetadata(metadata),
 		)
 
-_parStyleHandlers = {}
-_parStyleHandlers['Pulse'] = _ButtonHandler(ParamType.trigger, hasvalue=False)
-_parStyleHandlers['Toggle'] = _ButtonHandler(ParamType.bool)
-_parStyleHandlers['Str'] = _SimpleHandler(ParamType.string)
-_parStyleHandlers['StrMenu'] = _SimpleHandler(ParamType.string, hasoptions=True, hasvalueindex=True)
-_parStyleHandlers['Menu'] = _SimpleHandler(ParamType.menu, hasoptions=True, hasvalueindex=True)
-_parStyleHandlers['RGB'] = _VectorHandler(ParamType.fvec)
-_parStyleHandlers['RGBA'] = _VectorHandler(ParamType.fvec)
-_parStyleHandlers['UV'] = _VectorHandler(ParamType.fvec)
-_parStyleHandlers['UVW'] = _VectorHandler(ParamType.fvec)
-_parStyleHandlers['XY'] = _VectorHandler(ParamType.fvec)
-_parStyleHandlers['XYZ'] = _VectorHandler(ParamType.fvec)
-_parStyleHandlers['WH'] = _VectorHandler(ParamType.fvec)
-_parStyleHandlers['Int'] = _VariableLengthHandler(singletype=ParamType.int, multitype=ParamType.ivec)
-_parStyleHandlers['Float'] = _VariableLengthHandler(singletype=ParamType.float, multitype=ParamType.fvec)
+_parStyleHandlers = {
+	'Pulse': _ButtonHandler(ParamType.trigger, hasvalue=False),
+	'Toggle': _ButtonHandler(ParamType.bool),
+	'Str': _SimpleHandler(ParamType.string),
+	'StrMenu': _SimpleHandler(ParamType.string, hasoptions=True, hasvalueindex=True),
+	'Menu': _SimpleHandler(ParamType.menu, hasoptions=True, hasvalueindex=True),
+	'RGB': _VectorHandler(ParamType.fvec),
+	'RGBA': _VectorHandler(ParamType.fvec),
+	'UV': _VectorHandler(ParamType.fvec),
+	'UVW': _VectorHandler(ParamType.fvec),
+	'XY': _VectorHandler(ParamType.fvec),
+	'XYZ': _VectorHandler(ParamType.fvec),
+	'WH': _VectorHandler(ParamType.fvec),
+	'Int': _VariableLengthHandler(singletype=ParamType.int, multitype=ParamType.ivec),
+	'Float': _VariableLengthHandler(singletype=ParamType.float, multitype=ParamType.fvec)
+}
 _otherHandler = _OtherHandler()
 
 ParamMetaKeys = [
@@ -278,9 +279,11 @@ def _FilterParTuplets(tuplets, tupletfilter):
 class ModuleSchemaBuilder:
 	def __init__(self,
 	             comp,
-	             pathprefix=None):
+	             pathprefix=None,
+	             specialpages=None):
 		self.comp = comp
 		self.pathprefix = pathprefix
+		self.specialpages = specialpages
 
 	def _GetModuleTags(self):
 		return list(self.comp.tags)
@@ -297,6 +300,9 @@ class ModuleSchemaBuilder:
 				for t in partuplets
 			]
 
+	def _GetParamPageTags(self, page):
+		pass
+
 	def _GetParamGroups(self,
 	                    paramspecs):
 		includedparamgroups = {p.group for p in paramspecs}
@@ -304,7 +310,7 @@ class ModuleSchemaBuilder:
 			GroupInfo(
 				page.name,
 				label=page.name,
-				tags=['special'] if page.name == 'Module' else []
+				tags=self._GetParamPageTags(page),
 			) for page in self.comp.customPages
 			if page.name in includedparamgroups
 			]
@@ -334,12 +340,15 @@ class ModuleSchemaBuilder:
 	def _GetParamOptions(self, name):
 		return None
 
+	def _GetModuleKey(self):
+		return self.comp.name
+
 	# NOTE: does NOT generate child modules!
 	def BuildModuleSchema(self):
 		comp = self.comp
 		master = comp.par.clone.eval()
 		mtype = master.path if master else None
-		key = comp.par.Modname.eval()
+		key = self._GetModuleKey()
 		pathprefix = self.pathprefix
 		path = (pathprefix + comp.path) if pathprefix else None
 		parprefix = (path + ':') if path else None
