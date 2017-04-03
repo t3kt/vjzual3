@@ -256,43 +256,12 @@ def _OptionsFromPar(par):
 		options.append(ParamOption(key=name, label=label))
 	return options
 
-# def _GetTupletAttrs(tuplet, attrname):
-# 	if len(tuplet) == 1:
-# 		return getattr(tuplet[0], attrname)
-# 	return [getattr(p, attrname) for p in tuplet]
-
 def SpecFromParTuplet(tuplet, pathprefix=None, getoptions=None, metadata=None):
 	style = tuplet[0].style
 	if not metadata:
 		metadata = {}
 	handler = _parStyleHandlers.get(style, _otherHandler)
 	return handler.SpecFromTuplet(tuplet, pathprefix=pathprefix, getoptions=getoptions, metadata=metadata)
-
-# def SpecsFromParTuplets(tuplets, tupletfilter=None, pathprefix=None):
-# 	return [
-# 		SpecFromParTuplet(t, pathprefix=pathprefix)
-# 		for t in _FilterParTuplets(tuplets, tupletfilter)
-# 		]
-
-# def SpecsFromParPages(pages, tupletfilter=None, pagefilter=None, pathprefix=None):
-# 	specs = []
-# 	for page in _FilterByName(pages, pagefilter):
-# 		specs += SpecsFromParTuplets(
-# 			page.parTuplets,
-# 			tupletfilter=tupletfilter,
-# 			pathprefix=pathprefix
-# 		)
-# 	return specs
-
-# def _FilterByName(objs, test):
-# 	if test is None:
-# 		return objs
-# 	elif callable(test):
-# 		return filter(test, objs)
-# 	elif isinstance(test, str):
-# 		return filter(lambda o: o.name == test, objs)
-# 	else:
-# 		return filter(lambda o: o.name in test, objs)
 
 def _FilterParTuplets(tuplets, tupletfilter):
 	if tupletfilter is None:
@@ -404,12 +373,6 @@ class ModuleSchemaBuilder:
 
 	def _GetChildModules(self):
 		return []
-
-	def _CreateChildModuleBuilder(self, childcomp):
-		return ModuleSchemaBuilder(
-			comp=childcomp,
-			pathprefix=self.pathprefix,
-		)
 
 	def _BuildChildModuleSchema(self, childcomp):
 		builder = ModuleSchemaBuilder(

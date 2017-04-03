@@ -267,7 +267,11 @@ class _ExtModuleSchemaBuilder(schema.ModuleSchemaBuilder):
 		return sorted(self.module._SubModules, key=lambda m: m.par.order)
 
 	def _BuildChildModuleSchema(self, childcomp):
-		return childcomp.extensions[0].GetSchema(pathprefix=self.pathprefix)
+		builder = _ExtModuleSchemaBuilder(
+			comp=childcomp,
+			pathprefix=self.pathprefix,
+		)
+		return builder.BuildModuleSchema()
 
 	def _GetModuleTags(self):
 		return list(self.comp.tags - {'tmod'})
