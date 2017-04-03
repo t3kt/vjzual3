@@ -28,7 +28,7 @@ class _SimpleHandler(_ParStyleHandler):
 		self.hasoptions = hasoptions
 		self.hasvalueindex = hasvalueindex
 
-	def SpecFromTuplet(self, tuplet, pathprefix=None, getoptions=None, metadata=None, **kwargs):
+	def SpecFromTuplet(self, tuplet, pathprefix=None, getoptions=None, metadata=None, includevalue=False, **kwargs):
 		par = tuplet[0]
 		options = getoptions(par.tupletName) if getoptions else None
 		if options is None:
@@ -43,8 +43,8 @@ class _SimpleHandler(_ParStyleHandler):
 			style=par.style,
 			group=par.page.name,
 			defaultval=par.default,
-			value=par.eval(),
-			valueindex=par.menuIndex if self.hasvalueindex else None,
+			value=par.eval() if includevalue else None,
+			valueindex=par.menuIndex if self.hasvalueindex and includevalue else None,
 			options=options,
 			help=metadata.get('help', None),
 			tags=_GetTagsFromParMetadata(metadata),
@@ -79,7 +79,7 @@ class _VectorHandler(_ParStyleHandler):
 	def __init__(self, ptype):
 		self.ptype = ptype
 
-	def SpecFromTuplet(self, tuplet, pathprefix=None, usenumbers=False, metadata=None, **kwargs):
+	def SpecFromTuplet(self, tuplet, pathprefix=None, usenumbers=False, metadata=None, includevalue=False, **kwargs):
 		if usenumbers:
 			partkeys = [str(i) for i in range(1, len(tuplet) + 1)]
 			partlabels = partkeys
@@ -88,7 +88,7 @@ class _VectorHandler(_ParStyleHandler):
 			partlabels = tuplet[0].style
 		path = (pathprefix + tuplet[0].tupletName) if pathprefix else None
 		parts = [
-			_PartFromPar(tuplet[i], partkeys[i], partlabels[i], pathprefix=path)
+			_PartFromPar(tuplet[i], partkeys[i], partlabels[i], pathprefix=path, includevalue=includevalue)
 			for i in range(len(tuplet))
 		]
 		if not metadata:
@@ -105,12 +105,12 @@ class _VectorHandler(_ParStyleHandler):
 			tags=_GetTagsFromParMetadata(metadata),
 		)
 
-def _PartFromPar(par, key, label, pathprefix=None):
+def _PartFromPar(par, key, label, pathprefix=None, includevalue=False):
 	return ParamPartSpec(
 		key,
 		label=label,
 		defaultval=par.default,
-		value=par.eval(),
+		value=par.eval() if includevalue else None,
 		minlimit=par.min if par.clampMin else None,
 		maxlimit=par.max if par.clampMax else None,
 		minnorm=par.normMin,
@@ -123,7 +123,7 @@ class _VariableLengthHandler(_ParStyleHandler):
 		self.singletype = singletype
 		self.vechandler = _VectorHandler(multitype)
 
-	def SpecFromTuplet(self, tuplet, pathprefix=None, metadata=None, **kwargs):
+	def SpecFromTuplet(self, tuplet, pathprefix=None, metadata=None, includevalue=False, **kwargs):
 		if len(tuplet) > 1:
 			return self.vechandler.SpecFromTuplet(tuplet, usenumbers=True, metadata=metadata)
 		par = tuplet[0]
@@ -142,7 +142,7 @@ class _VariableLengthHandler(_ParStyleHandler):
 			minnorm=attrs['minnorm'],
 			maxnorm=attrs['maxnorm'],
 			defaultval=attrs['default'],
-			value=attrs['value'],
+			value=attrs['value'] if includevalue else None,
 			help=metadata.get('help', None),
 			tags=_GetTagsFromParMetadata(metadata),
 		)
@@ -257,12 +257,12 @@ def _OptionsFromPar(par):
 		options.append(ParamOption(key=name, label=label))
 	return options
 
-def SpecFromParTuplet(tuplet, pathprefix=None, getoptions=None, metadata=None):
+def SpecFromParTuplet(tuplet, pathprefix=None, getoptions=None, metadata=None, includevalue=False):
 	style = tuplet[0].style
 	if not metadata:
 		metadata = {}
 	handler = _parStyleHandlers.get(style, _otherHandler)
-	return handler.SpecFromTuplet(tuplet, pathprefix=pathprefix, getoptions=getoptions, metadata=metadata)
+	return handler.SpecFromTuplet(tuplet, pathprefix=pathprefix, getoptions=getoptions, metadata=metadata, includevalue=includevalue)
 
 def _FilterParTuplets(tuplets, tupletfilter):
 	if tupletfilter is None:
@@ -329,6 +329,7 @@ class ModuleSchemaBuilder(_BaseSchemaBuilder):
 	             key=None,
 	             label=None,
 	             tags=None,
+	             addmissingmodtypes=True,
 	             appbuilder=None):
 		super().__init__(
 			comp=comp,
@@ -339,16 +340,19 @@ class ModuleSchemaBuilder(_BaseSchemaBuilder):
 		)
 		self.specialpages = specialpages
 		self.appbuilder = appbuilder
+		self.addmissingmodtypes = addmissingmodtypes
 
 	def _BuildParamSpecs(self,
-	                     parprefix):
+	                     parprefix,
+	                     includevalues=True):
 		partuplets = self._GetModuleParamTuplets()
 		return [
 				SpecFromParTuplet(
 					t,
 					pathprefix=parprefix,
 					getoptions=self._GetParamOptions,
-					metadata=self._GetParamMeta(t[0].tupletName))
+					metadata=self._GetParamMeta(t[0].tupletName),
+					includevalue=includevalues)
 				for t in partuplets
 			]
 
@@ -384,13 +388,19 @@ class ModuleSchemaBuilder(_BaseSchemaBuilder):
 	# NOTE: does NOT generate child modules!
 	def BuildModuleSchema(self):
 		comp = self.comp
-		master = comp.par.clone.eval()
-		mtype = master.path if master else None
 		pathprefix = self.pathprefix
 		path = (pathprefix + comp.path) if pathprefix else None
-		parprefix = (path + ':') if path else None
-		params = self._BuildParamSpecs(parprefix=parprefix)
-		paramgroups = self._GetParamGroups(params)
+		master = comp.par.clone.eval()
+		mtype = master.path if master else None
+		if mtype and self.appbuilder and self.appbuilder.GetModuleTypeSchema(mtype, addmissing=self.addmissingmodtypes):
+			params = None
+			paramgroups = None
+		else:
+			parprefix = (path + ':') if path else None
+			params = self._BuildParamSpecs(
+				parprefix=parprefix,
+				includevalues=True)
+			paramgroups = self._GetParamGroups(params)
 		children = self._BuildChildModuleSchemas()
 		childgroups = self._GetChildGroups(children)
 		return ModuleSpec(
@@ -408,11 +418,13 @@ class ModuleSchemaBuilder(_BaseSchemaBuilder):
 	def BuildModuleTypeSchema(self):
 		comp = self.comp
 		parprefix = ':'
-		params = self._BuildParamSpecs(parprefix=parprefix)
+		params = self._BuildParamSpecs(
+			parprefix=parprefix,
+			includevalues=False)
 		paramgroups = self._GetParamGroups(params)
 		return ModuleTypeSpec(
 			comp.path,
-			label=comp.par.Uilabel.eval(),
+			label=self.label,
 			params=params,
 			paramgroups=paramgroups,
 		)
@@ -424,6 +436,8 @@ class ModuleSchemaBuilder(_BaseSchemaBuilder):
 		builder = ModuleSchemaBuilder(
 			comp=childcomp,
 			pathprefix=self.pathprefix,
+			appbuilder=self.appbuilder,
+			addmissingmodtypes=self.addmissingmodtypes,
 		)
 		return builder.BuildModuleSchema()
 
@@ -441,6 +455,7 @@ class AppSchemaBuilder(_BaseSchemaBuilder):
 	             key=None,
 	             label=None,
 	             tags=None,
+	             addmissingmodtypes=True,
 	             description=None):
 		super().__init__(
 			comp=comp,
@@ -454,6 +469,7 @@ class AppSchemaBuilder(_BaseSchemaBuilder):
 		self.moduletypelookup = {}
 		self.optionlists = []
 		self.optionlistlookup = {}
+		self.addmissingmodtypes = addmissingmodtypes
 
 	def _BuildConnections(self):
 		return None
@@ -475,6 +491,9 @@ class AppSchemaBuilder(_BaseSchemaBuilder):
 		}
 		children = self._BuildChildModuleSchemas()
 		childgroups = self._GetChildGroups(children)
+		# print('BuildAppSchema() - moduletypelookup: %r' % self.moduletypelookup)
+		# print('BuildAppSchema() - moduletypes: %r' % self.moduletypes)
+		print('BuildAppSchema() - module type names: %r' % list(self.moduletypelookup.keys()))
 		return AppSchema(
 			self.key,
 			label=self.label,
@@ -484,16 +503,18 @@ class AppSchemaBuilder(_BaseSchemaBuilder):
 			childgroups=childgroups,
 			optionlists=self.optionlists,
 			connections=self._BuildConnections(),
-			moduletypes=self.moduletypes,
+			moduletypes=list(sorted(self.moduletypes, key=lambda m: m.key)),
 		)
 
 	# noinspection PyNoneFunctionAssignment
 	def GetModuleTypeSchema(self, typename, addmissing=False):
+		print('Checking for module type %r, addmissing=%r' % (typename, addmissing))
 		if typename in self.moduletypelookup:
 			return self.moduletypelookup[typename]
 		if addmissing:
 			modtype = self._BuildModuleTypeSchema(typename)
 			if modtype:
+				print('Adding module type %r: %r' % (typename, modtype))
 				self.moduletypelookup[typename] = modtype
 				self.moduletypes.append(modtype)
 				return modtype
@@ -518,8 +539,11 @@ class AppSchemaBuilder(_BaseSchemaBuilder):
 	def _BuildOptionList(self, listname):
 		return None
 
-def BuildModuleSchemas(modules, pathprefix):
-	return [
-		m.GetSchema(pathprefix=pathprefix)
-		for m in modules
-	]
+	def _BuildChildModuleSchema(self, childcomp):
+		builder = ModuleSchemaBuilder(
+			comp=childcomp,
+			pathprefix=self.pathprefix,
+			appbuilder=self,
+			addmissingmodtypes=self.addmissingmodtypes,
+		)
+		return builder.BuildModuleSchema()

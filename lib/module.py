@@ -255,14 +255,17 @@ class _SourceOptionsSupplier:
 class VjzModuleSchemaBuilder(schema.ModuleSchemaBuilder):
 	def __init__(self,
 	             comp,
-	             pathprefix=None):
+	             pathprefix=None,
+	             appbuilder=None):
 		super().__init__(
 			comp=comp,
 			pathprefix=pathprefix,
 			specialpages=['special'],
 			key=comp.par.Modname.eval(),
 			label=comp.par.Uilabel.eval(),
-			tags=list(comp.tags - {'tmod'}))
+			tags=list(comp.tags - {'tmod'}),
+			appbuilder=appbuilder,
+			addmissingmodtypes=True)
 		self.module = comp.extensions[0]
 		self.supplysourceoptions = _SourceOptionsSupplier()
 
@@ -273,6 +276,7 @@ class VjzModuleSchemaBuilder(schema.ModuleSchemaBuilder):
 		builder = VjzModuleSchemaBuilder(
 			comp=childcomp,
 			pathprefix=self.pathprefix,
+			appbuilder=self.appbuilder,
 		)
 		return builder.BuildModuleSchema()
 

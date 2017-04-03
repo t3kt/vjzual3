@@ -89,6 +89,7 @@ class _VjzAppSchemaBuilder(schema.AppSchemaBuilder):
 			key=app._Key,
 			label=comp.par.Title.eval(),
 			tags=[],
+			addmissingmodtypes=True,
 		)
 		self.app = app
 
@@ -112,6 +113,16 @@ class _VjzAppSchemaBuilder(schema.AppSchemaBuilder):
 		builder = module.VjzModuleSchemaBuilder(
 			comp=childcomp,
 			pathprefix=self.pathprefix,
+			appbuilder=self,
 		)
 		return builder.BuildModuleSchema()
+
+	def _BuildModuleTypeSchema(self, typename):
+		childcomp = self.comp.op(typename)
+		builder = module.VjzModuleSchemaBuilder(
+			comp=childcomp,
+			pathprefix=self.pathprefix,
+			appbuilder=self,
+		)
+		return builder.BuildModuleTypeSchema()
 
