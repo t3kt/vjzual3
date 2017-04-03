@@ -261,7 +261,9 @@ class _ExtModuleSchemaBuilder(schema.ModuleSchemaBuilder):
 		super().__init__(
 			comp=comp,
 			pathprefix=pathprefix,
-			specialpages=['special'])
+			specialpages=['special'],
+			modulekey=comp.par.Modname.eval(),
+			moduletags=list(comp.tags - {'tmod'}))
 		self.module = comp.extensions[0]
 
 	def _GetChildModules(self):
@@ -276,12 +278,6 @@ class _ExtModuleSchemaBuilder(schema.ModuleSchemaBuilder):
 
 	def _GetParamPageTags(self, page):
 		return ['special'] if page.name == 'Module' else []
-
-	def _GetModuleTags(self):
-		return list(self.comp.tags - {'tmod'})
-
-	def _GetModuleKey(self):
-		return self.comp.par.Modname.eval()
 
 	def _GetModuleParamTuplets(self):
 		return self.module.GetModParamTuplets(includePulse=True) + [

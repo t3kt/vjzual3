@@ -280,13 +280,14 @@ class ModuleSchemaBuilder:
 	def __init__(self,
 	             comp,
 	             pathprefix=None,
-	             specialpages=None):
+	             specialpages=None,
+	             modulekey=None,
+	             moduletags=None):
 		self.comp = comp
 		self.pathprefix = pathprefix
 		self.specialpages = specialpages
-
-	def _GetModuleTags(self):
-		return list(self.comp.tags)
+		self.modulekey = modulekey or comp.name
+		self.moduletags = moduletags if moduletags is not None else list(comp.tags)
 
 	def _BuildParamSpecs(self,
 	                     parprefix):
@@ -340,15 +341,12 @@ class ModuleSchemaBuilder:
 	def _GetParamOptions(self, name):
 		return None
 
-	def _GetModuleKey(self):
-		return self.comp.name
-
 	# NOTE: does NOT generate child modules!
 	def BuildModuleSchema(self):
 		comp = self.comp
 		master = comp.par.clone.eval()
 		mtype = master.path if master else None
-		key = self._GetModuleKey()
+		key = self.modulekey
 		pathprefix = self.pathprefix
 		path = (pathprefix + comp.path) if pathprefix else None
 		parprefix = (path + ':') if path else None
@@ -361,7 +359,7 @@ class ModuleSchemaBuilder:
 			label=comp.par.Uilabel.eval(),
 			path=path,
 			moduletype=mtype,
-			tags=self._GetModuleTags(),
+			tags=self.moduletags,
 			params=params,
 			paramgroups=paramgroups,
 			children=children,
