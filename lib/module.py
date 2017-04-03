@@ -252,8 +252,6 @@ class _SourceOptionsSupplier:
 			]
 		return self.cache
 
-_supplySourceOptions = _SourceOptionsSupplier()
-
 class _ExtModuleSchemaBuilder(schema.ModuleSchemaBuilder):
 	def __init__(self,
 	             comp,
@@ -265,6 +263,7 @@ class _ExtModuleSchemaBuilder(schema.ModuleSchemaBuilder):
 			modulekey=comp.par.Modname.eval(),
 			moduletags=list(comp.tags - {'tmod'}))
 		self.module = comp.extensions[0]
+		self.supplysourceoptions = _SourceOptionsSupplier()
 
 	def _GetChildModules(self):
 		return sorted(self.module._SubModules, key=lambda m: m.par.order)
@@ -293,7 +292,7 @@ class _ExtModuleSchemaBuilder(schema.ModuleSchemaBuilder):
 
 	def _GetParamOptions(self, name):
 		if self._GetParamFlag(name, 'source', False):
-			return _supplySourceOptions()
+			return self.supplysourceoptions()
 		return None
 
 def _ExtractVal(x):
