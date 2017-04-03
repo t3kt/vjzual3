@@ -30,9 +30,8 @@ class _SimpleHandler(_ParStyleHandler):
 
 	def SpecFromTuplet(self, tuplet, pathprefix=None, getoptions=None, metadata=None, **kwargs):
 		par = tuplet[0]
-		if getoptions:
-			options = getoptions()
-		else:
+		options = getoptions(par.tupletName) if getoptions else None
+		if options is None:
 			options = _OptionsFromPar(par) if self.hasoptions else None
 		if not metadata:
 			metadata = {}
@@ -324,3 +323,99 @@ class SourceOptionsSupplier:
 				for n in self.getnodes()
 			]
 		return self.cache
+
+# NOTE: does NOT generate child modules!
+def BuildModuleSchema(module,
+                      comp,
+                      pathprefix=None,
+                      helper=None,
+                      tags=None):
+	master = comp.par.clone.eval()
+	mtype = master.path if master else None
+	key = comp.par.Modname.eval()
+	path = (pathprefix + comp.path) if pathprefix else None
+	parprefix = (path + ':') if path else None
+	params, paramgroups = _BuildModuleParamsAndParamGroups(
+		module=module,
+		comp=comp,
+		parprefix=parprefix,
+		helper=helper
+	)
+	return ModuleSpec(
+		key=key,
+		label=comp.par.Uilabel.eval(),
+		path=path,
+		moduletype=mtype,
+		tags=tags,
+		params=params,
+		paramgroups=paramgroups,
+	)
+
+def BuildModuleTypeSchema(module,
+                          comp,
+                          helper=None,
+                          ):
+	parprefix = ':'
+	params, paramgroups = _BuildModuleParamsAndParamGroups(
+		module=module,
+		comp=comp,
+		parprefix=parprefix,
+		helper=helper
+	)
+	return ModuleTypeSpec(
+		module.path,
+		label=comp.par.Uilabel.eval(),
+		params=params,
+		paramgroups=paramgroups,
+	)
+
+def _BuildModuleParamsAndParamGroups(module,
+                                     comp,
+                                     parprefix=None,
+                                     helper=None):
+	partuplets = module.GetModParamTuplets(includePulse=True) + [
+		comp.par.Bypass.tuplet,
+		comp.par.Solo.tuplet,
+	]
+	includedparamgroups = {t[0].page.name for t in partuplets}
+	paramgroups = [
+		GroupInfo(
+			page.name,
+			label=page.name,
+			tags=['special'] if page.name == 'Module' else []
+		) for page in comp.customPages
+		if page.name in includedparamgroups
+		]
+	params = [
+			SpecFromParTuplet(
+				t,
+				pathprefix=parprefix,
+				getoptions=helper.GetParamOptions,
+				metadata=helper.GetParamMeta(t[0].tupletName))
+			for t in partuplets
+		]
+	return params, paramgroups
+
+class ModuleSchemaHelper:
+	def __init__(self,
+	             getparamflag=None,
+	             getparammeta=None,
+	             getparamoptions=None):
+		self.getparamflag = getparamflag
+		self.getparammeta = getparammeta
+		self.getparamoptions = getparamoptions
+
+	def GetParamFlag(self, name, flag, defval):
+		if self.getparamflag:
+			return self.getparamflag(name, flag, defval)
+		return defval
+
+	def GetParamMeta(self, name):
+		if self.getparammeta:
+			return self.getparammeta(name)
+		return {}
+
+	def GetParamOptions(self, name):
+		if self.getparamoptions:
+			return self.getparamoptions(name)
+		return None

@@ -182,53 +182,36 @@ class Module(base.Extension):
 	def GetSchema(self,
 	              pathprefix=None,
 	              typeonly=False):
-		master = self.comp.par.clone.eval()
-		mtype = master.path if master else None
-		key = self.comp.par.Modname.eval()
-		# path = (pathprefix + key) if pathprefix else None
-		path = (pathprefix + self.comp.path) if pathprefix else None
-		parprefix = (path + ':') if path else None
-		# childprefix = (path + '/') if path else None
-		partuplets = self.GetModParamTuplets(includePulse=True) + [
-			self.comp.par.Bypass.tuplet,
-			self.comp.par.Solo.tuplet,
-		]
 		sourcesupplier = schema.SourceOptionsSupplier(nodes.GetAppNodes)
-		includedparamgroups = {t[0].page.name for t in partuplets}
-		paramgroups = [
-			schema.GroupInfo(
-				page.name,
-				label=page.name,
-				tags=['special'] if page.name == 'Module' else []
-			) for page in self.comp.customPages
-			if page.name in includedparamgroups
-			]
-		params = [
-				schema.SpecFromParTuplet(
-					t,
-					pathprefix=parprefix,
-					getoptions=sourcesupplier if self._GetParameterFlag(t[0].tupletName, 'source', defaultval=False) else None,
-					metadata=self._GetParameterMetadata(t[0].tupletName))
-				for t in partuplets
-			]
+		def getparamflag(name, flag, defval):
+			return self._GetParameterFlag(name, flag, defval)
+		def getparammeta(name):
+			return self._GetParameterMetadata(name)
+		def getparamoptions(name):
+			if self._GetParameterFlag(name, 'source', False):
+				return sourcesupplier()
+		helper = schema.ModuleSchemaHelper(
+			getparamflag=getparamflag,
+			getparammeta=getparammeta,
+			getparamoptions=getparamoptions,
+		)
 		if typeonly:
-			return schema.ModuleTypeSpec(
-				key=self.comp.path,
-				label=self.comp.par.Uilabel.eval(),
-				params=params,
-				paramgroups=paramgroups
+			return schema.BuildModuleTypeSchema(
+				self,
+				comp=self.comp,
+				helper=helper,
 			)
-		return schema.ModuleSpec(
-			key=key,
-			label=self.comp.par.Uilabel.eval(),
-			path=path,
-			moduletype=mtype,
-			tags=self._SchemaTags or None,
-			params=params,
-			paramgroups=paramgroups,
-			children=schema.BuildModuleSchemas(
+		modspec = schema.BuildModuleSchema(
+			self,
+			comp=self.comp,
+			pathprefix=pathprefix,
+			helper=helper,
+			tags=self._SchemaTags,
+		)
+		modspec.children = schema.BuildModuleSchemas(
 				self._SubModules,
-				pathprefix=pathprefix))
+				pathprefix=pathprefix)
+		return modspec
 
 	def UpdateSolo(self):
 		solo = self.comp.par.Solo.eval()
