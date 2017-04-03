@@ -295,9 +295,9 @@ class VjzModuleSchemaBuilder(schema.ModuleSchemaBuilder):
 	def _GetParamMeta(self, name):
 		return self.module._GetParameterMetadata(name)
 
-	def _GetParamOptions(self, name):
+	def _GetParamOptionList(self, name):
 		if self._GetParamFlag(name, 'source', False):
-			return self.supplysourceoptions()
+			return 'sources'
 		return None
 
 def _ExtractVal(x):

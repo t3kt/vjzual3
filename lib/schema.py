@@ -17,7 +17,7 @@ if _pytctrlpath not in sys.path:
 	sys.path.append(_pytctrlpath)
 
 # export these so this module acts as a proxy
-from tctrl.schema import ParamType, ParamOption, ParamPartSpec, ParamSpec, ModuleSpec, ConnectionInfo, AppSchema, GroupInfo, ModuleTypeSpec
+from tctrl.schema import ParamType, ParamOption, ParamPartSpec, ParamSpec, ModuleSpec, ConnectionInfo, AppSchema, GroupInfo, ModuleTypeSpec, OptionList
 
 class _ParStyleHandler:
 	def SpecFromTuplet(self, tuplet): pass
@@ -28,11 +28,15 @@ class _SimpleHandler(_ParStyleHandler):
 		self.hasoptions = hasoptions
 		self.hasvalueindex = hasvalueindex
 
-	def SpecFromTuplet(self, tuplet, pathprefix=None, getoptions=None, metadata=None, includevalue=False, **kwargs):
+	def SpecFromTuplet(self, tuplet, pathprefix=None, getoptions=None, getoptionlist=None, metadata=None, includevalue=False, **kwargs):
 		par = tuplet[0]
-		options = getoptions(par.tupletName) if getoptions else None
-		if options is None:
-			options = _OptionsFromPar(par) if self.hasoptions else None
+		optionlist = getoptionlist(par.tupletName) if getoptionlist else None
+		if optionlist:
+			options = None
+		else:
+			options = getoptions(par.tupletName) if getoptions else None
+			if options is None:
+				options = _OptionsFromPar(par) if self.hasoptions else None
 		if not metadata:
 			metadata = {}
 		return ParamSpec(
@@ -46,6 +50,7 @@ class _SimpleHandler(_ParStyleHandler):
 			value=par.eval() if includevalue else None,
 			valueindex=par.menuIndex if self.hasvalueindex and includevalue else None,
 			options=options,
+			optionlist=optionlist,
 			help=metadata.get('help', None),
 			tags=_GetTagsFromParMetadata(metadata),
 		)
@@ -257,12 +262,12 @@ def _OptionsFromPar(par):
 		options.append(ParamOption(key=name, label=label))
 	return options
 
-def SpecFromParTuplet(tuplet, pathprefix=None, getoptions=None, metadata=None, includevalue=False):
+def SpecFromParTuplet(tuplet, pathprefix=None, getoptions=None, getoptionlist=None, metadata=None, includevalue=False):
 	style = tuplet[0].style
 	if not metadata:
 		metadata = {}
 	handler = _parStyleHandlers.get(style, _otherHandler)
-	return handler.SpecFromTuplet(tuplet, pathprefix=pathprefix, getoptions=getoptions, metadata=metadata, includevalue=includevalue)
+	return handler.SpecFromTuplet(tuplet, pathprefix=pathprefix, getoptions=getoptions, getoptionlist=getoptionlist, metadata=metadata, includevalue=includevalue)
 
 def _FilterParTuplets(tuplets, tupletfilter):
 	if tupletfilter is None:
@@ -351,6 +356,7 @@ class ModuleSchemaBuilder(_BaseSchemaBuilder):
 					t,
 					pathprefix=parprefix,
 					getoptions=self._GetParamOptions,
+					getoptionlist=self._GetParamOptionList,
 					metadata=self._GetParamMeta(t[0].tupletName),
 					includevalue=includevalues)
 				for t in partuplets
@@ -383,6 +389,10 @@ class ModuleSchemaBuilder(_BaseSchemaBuilder):
 
 	# noinspection PyUnusedLocal
 	def _GetParamOptions(self, name):
+		return None
+
+	# noinspection PyUnusedLocal
+	def _GetParamOptionList(self, name):
 		return None
 
 	# NOTE: does NOT generate child modules!

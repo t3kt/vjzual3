@@ -22,11 +22,14 @@ try:
 	import shell_schema as schema
 except ImportError:
 	import schema
-
 try:
 	import shell_module as module
 except ImportError:
 	import module
+try:
+	import shell_nodes as nodes
+except ImportError:
+	import nodes
 
 if False:
 	try:
@@ -125,4 +128,18 @@ class _VjzAppSchemaBuilder(schema.AppSchemaBuilder):
 			appbuilder=self,
 		)
 		return builder.BuildModuleTypeSchema()
+
+	def _BuildOptionLists(self):
+		return [
+			schema.OptionList(
+				'sources',
+				label='Sources',
+				options=[
+					schema.ParamOption(n['id'], n['label'])
+					for n in nodes.GetAppNodes()
+					]
+			)
+		]
+
+
 
