@@ -182,18 +182,10 @@ class Module(base.Extension):
 	def GetSchema(self,
 	              pathprefix=None,
 	              typeonly=False):
-		sourcesupplier = schema.SourceOptionsSupplier(nodes.GetAppNodes)
-		def getparamflag(name, flag, defval):
-			return self._GetParameterFlag(name, flag, defval)
-		def getparammeta(name):
-			return self._GetParameterMetadata(name)
-		def getparamoptions(name):
-			if self._GetParameterFlag(name, 'source', False):
-				return sourcesupplier()
-		helper = schema.ModuleSchemaHelper(
-			getparamflag=getparamflag,
-			getparammeta=getparammeta,
-			getparamoptions=getparamoptions,
+		helper = _ExtModuleSchemaHelper(
+			self,
+			comp=self.comp,
+			sourcesupplier=schema.SourceOptionsSupplier(nodes.GetAppNodes)
 		)
 		if typeonly:
 			return schema.BuildModuleTypeSchema(
@@ -268,6 +260,26 @@ class Module(base.Extension):
 
 	def GetParamsWithFlag(self, flag, defaultval=False):
 		return _ExpandTuplets(self.GetParamTupletsWithFlag(flag, defaultval))
+
+class _ExtModuleSchemaHelper(schema.ModuleSchemaHelper):
+	def __init__(self,
+	             module,
+	             comp,
+	             sourcesupplier=None):
+		self.module = module
+		self.comp = comp
+		self.sourcesupplier = sourcesupplier
+
+	def GetParamFlag(self, name, flag, defval):
+		return self.module._GetParameterFlag(name, flag, defval)
+
+	def GetParamMeta(self, name):
+		return self.module._GetParameterMetadata(name)
+
+	def GetParamOptions(self, name):
+		if self.GetParamFlag(name, 'source', False):
+			return self.sourcesupplier()
+		return None
 
 def _ExtractVal(x):
 	if x is None:

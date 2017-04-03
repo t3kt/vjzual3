@@ -396,26 +396,14 @@ def _BuildModuleParamsAndParamGroups(module,
 		]
 	return params, paramgroups
 
-class ModuleSchemaHelper:
-	def __init__(self,
-	             getparamflag=None,
-	             getparammeta=None,
-	             getparamoptions=None):
-		self.getparamflag = getparamflag
-		self.getparammeta = getparammeta
-		self.getparamoptions = getparamoptions
 
+# noinspection PyMethodMayBeStatic
+class ModuleSchemaHelper:
 	def GetParamFlag(self, name, flag, defval):
-		if self.getparamflag:
-			return self.getparamflag(name, flag, defval)
 		return defval
 
 	def GetParamMeta(self, name):
-		if self.getparammeta:
-			return self.getparammeta(name)
 		return {}
 
 	def GetParamOptions(self, name):
-		if self.getparamoptions:
-			return self.getparamoptions(name)
 		return None
