@@ -284,13 +284,6 @@ def SpecFromParTuplet(tuplet, pathprefix=None, getoptions=None, metadata=None):
 # 		)
 # 	return specs
 
-def BuildModuleSchemas(modules, pathprefix):
-	modules = sorted(modules, key=lambda m: m.par.order)
-	return [
-		m.GetSchema(pathprefix=pathprefix)
-		for m in modules
-	]
-
 # def _FilterByName(objs, test):
 # 	if test is None:
 # 		return objs
@@ -320,20 +313,23 @@ class ModuleSchemaBuilder:
 		self.comp = comp
 		self.pathprefix = pathprefix
 
-	def BuildModuleParamSpecs(self,
-	                          parprefix):
+	def _GetModuleTags(self):
+		return list(self.comp.tags)
+
+	def _BuildParamSpecs(self,
+	                     parprefix):
 		partuplets = self._GetModuleParamTuplets()
 		return [
 				SpecFromParTuplet(
 					t,
 					pathprefix=parprefix,
-					getoptions=self.GetParamOptions,
-					metadata=self.GetParamMeta(t[0].tupletName))
+					getoptions=self._GetParamOptions,
+					metadata=self._GetParamMeta(t[0].tupletName))
 				for t in partuplets
 			]
 
-	def GetModuleParamGroups(self,
-	                         paramspecs):
+	def _GetParamGroups(self,
+	                    paramspecs):
 		includedparamgroups = {p.group for p in paramspecs}
 		return [
 			GroupInfo(
@@ -344,51 +340,92 @@ class ModuleSchemaBuilder:
 			if page.name in includedparamgroups
 			]
 
+	def _GetChildGroups(self, children):
+		groups = []
+		for child in children:
+			if child.group and child.group not in groups:
+				groups.append(GroupInfo(
+					child.group,
+					label=child.group,
+				))
+		return groups
+
 	def _GetModuleParamTuplets(self):
 		return []
 
 	# noinspection PyUnusedLocal
-	def GetParamFlag(self, name, flag, defval):
+	def _GetParamFlag(self, name, flag, defval):
 		return defval
 
 	# noinspection PyUnusedLocal
-	def GetParamMeta(self, name):
+	def _GetParamMeta(self, name):
 		return {}
 
 	# noinspection PyUnusedLocal
-	def GetParamOptions(self, name):
+	def _GetParamOptions(self, name):
 		return None
 
 	# NOTE: does NOT generate child modules!
-	def BuildModuleSchema(self,
-	                      comp,
-	                      tags=None):
+	def BuildModuleSchema(self):
+		comp = self.comp
 		master = comp.par.clone.eval()
 		mtype = master.path if master else None
 		key = comp.par.Modname.eval()
 		pathprefix = self.pathprefix
 		path = (pathprefix + comp.path) if pathprefix else None
 		parprefix = (path + ':') if path else None
-		params = self.BuildModuleParamSpecs(parprefix=parprefix)
-		paramgroups = self.GetModuleParamGroups(params)
+		params = self._BuildParamSpecs(parprefix=parprefix)
+		paramgroups = self._GetParamGroups(params)
+		children = self._BuildChildModuleSchemas()
+		childgroups = self._GetChildGroups(children)
 		return ModuleSpec(
 			key=key,
 			label=comp.par.Uilabel.eval(),
 			path=path,
 			moduletype=mtype,
-			tags=tags,
+			tags=self._GetModuleTags(),
 			params=params,
 			paramgroups=paramgroups,
+			children=children,
+			childgroups=childgroups,
 		)
 
-	def BuildModuleTypeSchema(self,
-	                          comp):
+	def BuildModuleTypeSchema(self):
+		comp = self.comp
 		parprefix = ':'
-		params = self.BuildModuleParamSpecs(parprefix=parprefix)
-		paramgroups = self.GetModuleParamGroups(params)
+		params = self._BuildParamSpecs(parprefix=parprefix)
+		paramgroups = self._GetParamGroups(params)
 		return ModuleTypeSpec(
 			comp.path,
 			label=comp.par.Uilabel.eval(),
 			params=params,
 			paramgroups=paramgroups,
 		)
+
+	def _GetChildModules(self):
+		return []
+
+	def _CreateChildModuleBuilder(self, childcomp):
+		return ModuleSchemaBuilder(
+			comp=childcomp,
+			pathprefix=self.pathprefix,
+		)
+
+	def _BuildChildModuleSchema(self, childcomp):
+		builder = ModuleSchemaBuilder(
+			comp=childcomp,
+			pathprefix=self.pathprefix,
+		)
+		return builder.BuildModuleSchema()
+
+	def _BuildChildModuleSchemas(self):
+		return [
+			self._BuildChildModuleSchema(childcomp)
+			for childcomp in self._GetChildModules()
+		]
+
+def BuildModuleSchemas(modules, pathprefix):
+	return [
+		m.GetSchema(pathprefix=pathprefix)
+		for m in modules
+	]

@@ -174,11 +174,6 @@ class Module(base.Extension):
 		self.parAccessor.SetParTupletVals(self.parAccessor.GetCustomPage('Module').parTuplets, state)
 		self.parAccessor.SetParTupletVals(self.GetModParamTuplets(), state.get('params', {}))
 
-	@property
-	def _SchemaTags(self):
-		tags = self.comp.tags - {'tmod'}
-		return list(tags)
-
 	def GetSchema(self,
 	              pathprefix=None,
 	              typeonly=False):
@@ -186,17 +181,8 @@ class Module(base.Extension):
 			comp=self.comp,
 			pathprefix=pathprefix)
 		if typeonly:
-			return builder.BuildModuleTypeSchema(
-				comp=self.comp,
-			)
-		modspec = builder.BuildModuleSchema(
-			comp=self.comp,
-			tags=self._SchemaTags,
-		)
-		modspec.children = schema.BuildModuleSchemas(
-				self._SubModules,
-				pathprefix=pathprefix)
-		return modspec
+			return builder.BuildModuleTypeSchema()
+		return builder.BuildModuleSchema()
 
 	def UpdateSolo(self):
 		solo = self.comp.par.Solo.eval()
@@ -277,20 +263,29 @@ class _ExtModuleSchemaBuilder(schema.ModuleSchemaBuilder):
 			pathprefix=pathprefix)
 		self.module = comp.extensions[0]
 
+	def _GetChildModules(self):
+		return sorted(self.module._SubModules, key=lambda m: m.par.order)
+
+	def _BuildChildModuleSchema(self, childcomp):
+		return childcomp.extensions[0].GetSchema(pathprefix=self.pathprefix)
+
+	def _GetModuleTags(self):
+		return list(self.comp.tags - {'tmod'})
+
 	def _GetModuleParamTuplets(self):
 		return self.module.GetModParamTuplets(includePulse=True) + [
 			self.comp.par.Bypass.tuplet,
 			self.comp.par.Solo.tuplet,
 		]
 
-	def GetParamFlag(self, name, flag, defval):
+	def _GetParamFlag(self, name, flag, defval):
 		return self.module._GetParameterFlag(name, flag, defval)
 
-	def GetParamMeta(self, name):
+	def _GetParamMeta(self, name):
 		return self.module._GetParameterMetadata(name)
 
-	def GetParamOptions(self, name):
-		if self.GetParamFlag(name, 'source', False):
+	def _GetParamOptions(self, name):
+		if self._GetParamFlag(name, 'source', False):
 			return _supplySourceOptions()
 		return None
 

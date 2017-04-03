@@ -86,6 +86,6 @@ class ShellApp(base.Extension):
 				)
 			],
 			children=schema.BuildModuleSchemas(
-				self._ChildModules,
+				sorted(self._ChildModules, key=lambda m: m.par.order),
 				pathprefix=childprefix))
 
