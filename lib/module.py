@@ -177,7 +177,7 @@ class Module(base.Extension):
 	def GetSchema(self,
 	              pathprefix=None,
 	              typeonly=False):
-		builder = _ExtModuleSchemaBuilder(
+		builder = VjzModuleSchemaBuilder(
 			comp=self.comp,
 			pathprefix=pathprefix)
 		if typeonly:
@@ -252,7 +252,7 @@ class _SourceOptionsSupplier:
 			]
 		return self.cache
 
-class _ExtModuleSchemaBuilder(schema.ModuleSchemaBuilder):
+class VjzModuleSchemaBuilder(schema.ModuleSchemaBuilder):
 	def __init__(self,
 	             comp,
 	             pathprefix=None):
@@ -260,8 +260,9 @@ class _ExtModuleSchemaBuilder(schema.ModuleSchemaBuilder):
 			comp=comp,
 			pathprefix=pathprefix,
 			specialpages=['special'],
-			modulekey=comp.par.Modname.eval(),
-			moduletags=list(comp.tags - {'tmod'}))
+			key=comp.par.Modname.eval(),
+			label=comp.par.Uilabel.eval(),
+			tags=list(comp.tags - {'tmod'}))
 		self.module = comp.extensions[0]
 		self.supplysourceoptions = _SourceOptionsSupplier()
 
@@ -269,7 +270,7 @@ class _ExtModuleSchemaBuilder(schema.ModuleSchemaBuilder):
 		return sorted(self.module._SubModules, key=lambda m: m.par.order)
 
 	def _BuildChildModuleSchema(self, childcomp):
-		builder = _ExtModuleSchemaBuilder(
+		builder = VjzModuleSchemaBuilder(
 			comp=childcomp,
 			pathprefix=self.pathprefix,
 		)

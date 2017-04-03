@@ -23,6 +23,11 @@ try:
 except ImportError:
 	import schema
 
+try:
+	import shell_module as module
+except ImportError:
+	import module
+
 if False:
 	try:
 		from _stubs import *
@@ -39,7 +44,7 @@ class ShellApp(base.Extension):
 		return self.comp.findChildren(type=COMP, tags=['tmod'])
 
 	@property
-	def _ChildModules(self):
+	def _SubModules(self):
 		return self.comp.findChildren(type=COMP, tags=['tmod'], depth=1)
 
 	def GetChildModule(self, modname):
@@ -69,23 +74,44 @@ class ShellApp(base.Extension):
 
 	def GetSchema(self):
 		self._LogEvent('GetSchema()')
-		key = self._Key
-		childprefix = '/' + key
-		return schema.AppSchema(
-			key,
-			label=self._Title,
-			connections=[
-				schema.ConnectionInfo(
-					conntype='oscin',
-					port=self.comp.par.Oscinport.eval(),
-				),
-				schema.ConnectionInfo(
-					conntype='oscout',
-					host=self.comp.par.Oscouthost.eval() or self.comp.par.Oscouthost.default,
-					port=self.comp.par.Oscoutport.eval(),
-				)
-			],
-			children=schema.BuildModuleSchemas(
-				sorted(self._ChildModules, key=lambda m: m.par.order),
-				pathprefix=childprefix))
+		builder = _VjzAppSchemaBuilder(
+			app=self,
+			comp=self.comp,
+		)
+		return builder.BuildAppSchema()
+
+class _VjzAppSchemaBuilder(schema.AppSchemaBuilder):
+	def __init__(self,
+	             app,
+	             comp):
+		super().__init__(
+			comp=comp,
+			key=app._Key,
+			label=comp.par.Title.eval(),
+			tags=[],
+		)
+		self.app = app
+
+	def _BuildConnections(self):
+		return [
+			schema.ConnectionInfo(
+				conntype='oscin',
+				port=self.comp.par.Oscinport.eval(),
+			),
+			schema.ConnectionInfo(
+				conntype='oscout',
+				host=self.comp.par.Oscouthost.eval() or self.comp.par.Oscouthost.default,
+				port=self.comp.par.Oscoutport.eval(),
+			)
+		]
+
+	def _GetChildModules(self):
+		return sorted(self.app._SubModules, key=lambda m: m.par.order)
+
+	def _BuildChildModuleSchema(self, childcomp):
+		builder = module.VjzModuleSchemaBuilder(
+			comp=childcomp,
+			pathprefix=self.pathprefix,
+		)
+		return builder.BuildModuleSchema()
 

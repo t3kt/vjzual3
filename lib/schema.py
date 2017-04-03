@@ -274,20 +274,71 @@ def _FilterParTuplets(tuplets, tupletfilter):
 	else:
 		return filter(lambda t: t[0].name in tupletfilter, tuplets)
 
+# noinspection PyMethodMayBeStatic
+class _BaseSchemaBuilder:
+	def __init__(self,
+	             comp,
+	             pathprefix=None,
+	             key=None,
+	             label=None,
+	             tags=None):
+		self.comp = comp
+		self.pathprefix = pathprefix
+		self.key = key or comp.name
+		self.label = label or self.key
+		self.tags = tags if tags is not None else list(comp.tags)
+
+	def _GetConnections(self):
+		return None
+
+	def BuildAppSchema(self):
+		pass
+
+	def _GetChildModules(self):
+		return []
+
+	def _BuildChildModuleSchema(self, childcomp):
+		builder = ModuleSchemaBuilder(
+			comp=childcomp,
+			pathprefix=self.pathprefix,
+		)
+		return builder.BuildModuleSchema()
+
+	def _BuildChildModuleSchemas(self):
+		return [
+			self._BuildChildModuleSchema(childcomp)
+			for childcomp in self._GetChildModules()
+			]
+
+	def _GetChildGroups(self, children):
+		groups = []
+		for child in children:
+			if child.group and child.group not in groups:
+				groups.append(GroupInfo(
+					child.group,
+					label=child.group,
+				))
+		return groups
 
 # noinspection PyMethodMayBeStatic
-class ModuleSchemaBuilder:
+class ModuleSchemaBuilder(_BaseSchemaBuilder):
 	def __init__(self,
 	             comp,
 	             pathprefix=None,
 	             specialpages=None,
-	             modulekey=None,
-	             moduletags=None):
-		self.comp = comp
-		self.pathprefix = pathprefix
+	             key=None,
+	             label=None,
+	             tags=None,
+	             appbuilder=None):
+		super().__init__(
+			comp=comp,
+			pathprefix=pathprefix,
+			key=key or comp.name,
+			label=label,
+			tags=tags,
+		)
 		self.specialpages = specialpages
-		self.modulekey = modulekey or comp.name
-		self.moduletags = moduletags if moduletags is not None else list(comp.tags)
+		self.appbuilder = appbuilder
 
 	def _BuildParamSpecs(self,
 	                     parprefix):
@@ -304,9 +355,8 @@ class ModuleSchemaBuilder:
 	def _GetParamPageTags(self, page):
 		pass
 
-	def _GetParamGroups(self,
-	                    paramspecs):
-		includedparamgroups = {p.group for p in paramspecs}
+	def _GetParamGroups(self, params):
+		includedparamgroups = {p.group for p in params}
 		return [
 			GroupInfo(
 				page.name,
@@ -315,16 +365,6 @@ class ModuleSchemaBuilder:
 			) for page in self.comp.customPages
 			if page.name in includedparamgroups
 			]
-
-	def _GetChildGroups(self, children):
-		groups = []
-		for child in children:
-			if child.group and child.group not in groups:
-				groups.append(GroupInfo(
-					child.group,
-					label=child.group,
-				))
-		return groups
 
 	def _GetModuleParamTuplets(self):
 		return []
@@ -346,7 +386,6 @@ class ModuleSchemaBuilder:
 		comp = self.comp
 		master = comp.par.clone.eval()
 		mtype = master.path if master else None
-		key = self.modulekey
 		pathprefix = self.pathprefix
 		path = (pathprefix + comp.path) if pathprefix else None
 		parprefix = (path + ':') if path else None
@@ -355,11 +394,11 @@ class ModuleSchemaBuilder:
 		children = self._BuildChildModuleSchemas()
 		childgroups = self._GetChildGroups(children)
 		return ModuleSpec(
-			key=key,
-			label=comp.par.Uilabel.eval(),
+			key=self.key,
+			label=self.label,
 			path=path,
 			moduletype=mtype,
-			tags=self.moduletags,
+			tags=self.tags,
 			params=params,
 			paramgroups=paramgroups,
 			children=children,
@@ -393,6 +432,91 @@ class ModuleSchemaBuilder:
 			self._BuildChildModuleSchema(childcomp)
 			for childcomp in self._GetChildModules()
 		]
+
+# noinspection PyMethodMayBeStatic
+class AppSchemaBuilder(_BaseSchemaBuilder):
+	def __init__(self,
+	             comp,
+	             pathprefix=None,
+	             key=None,
+	             label=None,
+	             tags=None,
+	             description=None):
+		super().__init__(
+			comp=comp,
+			pathprefix=pathprefix or ('/' + key),
+			key=key,
+			label=label,
+			tags=tags,
+		)
+		self.description = description
+		self.moduletypes = []
+		self.moduletypelookup = {}
+		self.optionlists = []
+		self.optionlistlookup = {}
+
+	def _BuildConnections(self):
+		return None
+
+	def _BuildOptionLists(self):
+		return []
+
+	def _BuildModuleTypes(self):
+		return []
+
+	def BuildAppSchema(self):
+		self.moduletypes = self._BuildModuleTypes()
+		self.moduletypelookup = {
+			m.key: m for m in self.moduletypes
+		}
+		self.optionlists = self._BuildOptionLists()
+		self.optionlistlookup = {
+			l.key: l for l in self.optionlists
+		}
+		children = self._BuildChildModuleSchemas()
+		childgroups = self._GetChildGroups(children)
+		return AppSchema(
+			self.key,
+			label=self.label,
+			tags=self.tags,
+			description=self.description,
+			children=children,
+			childgroups=childgroups,
+			optionlists=self.optionlists,
+			connections=self._BuildConnections(),
+			moduletypes=self.moduletypes,
+		)
+
+	# noinspection PyNoneFunctionAssignment
+	def GetModuleTypeSchema(self, typename, addmissing=False):
+		if typename in self.moduletypelookup:
+			return self.moduletypelookup[typename]
+		if addmissing:
+			modtype = self._BuildModuleTypeSchema(typename)
+			if modtype:
+				self.moduletypelookup[typename] = modtype
+				self.moduletypes.append(modtype)
+				return modtype
+		return None
+
+	# noinspection PyUnusedLocal
+	def _BuildModuleTypeSchema(self, typename):
+		return None
+
+	# noinspection PyNoneFunctionAssignment
+	def GetOptionList(self, listname, addmissing=False):
+		if listname in self.optionlistlookup:
+			return self.optionlistlookup[listname]
+		if addmissing:
+			options = self._BuildOptionList(listname)
+			if options is not None:
+				self.optionlistlookup[listname] = options
+				self.optionlists.append(options)
+				return options
+
+	# noinspection PyUnusedLocal
+	def _BuildOptionList(self, listname):
+		return None
 
 def BuildModuleSchemas(modules, pathprefix):
 	return [
