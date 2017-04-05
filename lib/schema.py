@@ -28,8 +28,22 @@ class _SimpleHandler(_ParStyleHandler):
 		self.hasoptions = hasoptions
 		self.hasvalueindex = hasvalueindex
 
-	def SpecFromTuplet(self, tuplet, pathprefix=None, getoptions=None, getoptionlist=None, metadata=None, includevalue=False, **kwargs):
+	def SpecFromTuplet(self, tuplet,
+	                   pathprefix=None,
+	                   getoptions=None,
+	                   getoptionlist=None,
+	                   metadata=None,
+	                   includevalue=False,
+	                   includeschema=True,
+	                   **kwargs):
 		par = tuplet[0]
+		if not includeschema:
+			return ParamSpec(
+				par.tupletName,
+				ptype=None,
+				value=par.eval() if includevalue else None,
+				valueindex=par.menuIndex if self.hasvalueindex and includevalue else None,
+			)
 		optionlist = getoptionlist(par.tupletName) if getoptionlist else None
 		if optionlist:
 			options = None
@@ -60,8 +74,19 @@ class _ButtonHandler(_ParStyleHandler):
 		self.ptype = ptype
 		self.hasvalue = hasvalue
 
-	def SpecFromTuplet(self, tuplet, pathprefix=None, metadata=None, **kwargs):
+	def SpecFromTuplet(self, tuplet,
+	                   pathprefix=None,
+	                   metadata=None,
+	                   includevalue=False,
+	                   includeschema=True,
+	                   **kwargs):
 		par = tuplet[0]
+		if not includeschema:
+			return ParamSpec(
+				par.tupletName,
+				ptype=None,
+				value=par.eval() if includevalue and self.hasvalue else None,
+			)
 		if not metadata:
 			metadata = {}
 		return ParamSpec(
@@ -72,7 +97,7 @@ class _ButtonHandler(_ParStyleHandler):
 			style=par.style,
 			group=par.page.name,
 			defaultval=par.default if self.hasvalue else None,
-			value=par.eval() if self.hasvalue else None,
+			value=par.eval() if includevalue and self.hasvalue else None,
 			help=metadata.get('help', None),
 			offhelp=metadata.get('offhelp', None),
 			buttontext=metadata.get('btntext', None),
@@ -84,7 +109,13 @@ class _VectorHandler(_ParStyleHandler):
 	def __init__(self, ptype):
 		self.ptype = ptype
 
-	def SpecFromTuplet(self, tuplet, pathprefix=None, usenumbers=False, metadata=None, includevalue=False, **kwargs):
+	def SpecFromTuplet(self, tuplet,
+	                   pathprefix=None,
+	                   usenumbers=False,
+	                   metadata=None,
+	                   includevalue=False,
+	                   includeschema=True,
+	                   **kwargs):
 		if usenumbers:
 			partkeys = [str(i) for i in range(1, len(tuplet) + 1)]
 			partlabels = partkeys
@@ -93,9 +124,20 @@ class _VectorHandler(_ParStyleHandler):
 			partlabels = tuplet[0].style
 		path = (pathprefix + tuplet[0].tupletName) if pathprefix else None
 		parts = [
-			_PartFromPar(tuplet[i], partkeys[i], partlabels[i], pathprefix=path, includevalue=includevalue)
+			_PartFromPar(tuplet[i],
+			             key=partkeys[i],
+			             label=partlabels[i],
+			             pathprefix=path,
+			             includevalue=includevalue,
+			             includeschema=includeschema)
 			for i in range(len(tuplet))
 		]
+		if not includeschema:
+			return ParamSpec(
+				tuplet[0].tupletName,
+				ptype=None,
+				parts=parts,
+			)
 		if not metadata:
 			metadata = {}
 		return ParamSpec(
@@ -110,7 +152,15 @@ class _VectorHandler(_ParStyleHandler):
 			tags=_GetTagsFromParMetadata(metadata),
 		)
 
-def _PartFromPar(par, key, label, pathprefix=None, includevalue=False):
+def _PartFromPar(par, key, label,
+                 pathprefix=None,
+                 includevalue=False,
+                 includeschema=True):
+	if not includeschema:
+		return ParamPartSpec(
+			key,
+			value=par.eval() if includevalue else None,
+		)
 	return ParamPartSpec(
 		key,
 		label=label,
@@ -128,13 +178,30 @@ class _VariableLengthHandler(_ParStyleHandler):
 		self.singletype = singletype
 		self.vechandler = _VectorHandler(multitype)
 
-	def SpecFromTuplet(self, tuplet, pathprefix=None, metadata=None, includevalue=False, **kwargs):
+	def SpecFromTuplet(self,
+	                   tuplet,
+	                   pathprefix=None,
+	                   metadata=None,
+	                   includevalue=False,
+	                   includeschema=True,
+	                   **kwargs):
 		if len(tuplet) > 1:
-			return self.vechandler.SpecFromTuplet(tuplet, usenumbers=True, metadata=metadata)
+			return self.vechandler.SpecFromTuplet(
+				tuplet,
+				usenumbers=True,
+				metadata=metadata,
+				includevalue=includevalue,
+				includeschema=includeschema)
 		par = tuplet[0]
 		attrs = _NumberAttributesFromPar(par)
 		if not metadata:
 			metadata = {}
+		if not includeschema:
+			return ParamSpec(
+				par.tupletName,
+				ptype=None,
+				value=attrs['value'] if includevalue else None,
+			)
 		return ParamSpec(
 			par.tupletName,
 			ptype=self.singletype,
@@ -153,7 +220,10 @@ class _VariableLengthHandler(_ParStyleHandler):
 		)
 
 class _OtherHandler(_ParStyleHandler):
-	def SpecFromTuplet(self, tuplet, pathprefix=None, metadata=None, **kwargs):
+	def SpecFromTuplet(self, tuplet,
+	                   pathprefix=None,
+	                   metadata=None,
+	                   **kwargs):
 		if not metadata:
 			metadata = {}
 		par = tuplet[0]
@@ -262,12 +332,25 @@ def _OptionsFromPar(par):
 		options.append(ParamOption(key=name, label=label))
 	return options
 
-def SpecFromParTuplet(tuplet, pathprefix=None, getoptions=None, getoptionlist=None, metadata=None, includevalue=False):
+def SpecFromParTuplet(tuplet,
+                      pathprefix=None,
+                      getoptions=None,
+                      getoptionlist=None,
+                      metadata=None,
+                      includevalue=False,
+                      includeschema=True):
 	style = tuplet[0].style
 	if not metadata:
 		metadata = {}
 	handler = _parStyleHandlers.get(style, _otherHandler)
-	return handler.SpecFromTuplet(tuplet, pathprefix=pathprefix, getoptions=getoptions, getoptionlist=getoptionlist, metadata=metadata, includevalue=includevalue)
+	return handler.SpecFromTuplet(
+		tuplet,
+		pathprefix=pathprefix,
+		getoptions=getoptions,
+		getoptionlist=getoptionlist,
+		metadata=metadata,
+		includevalue=includevalue,
+		includeschema=includeschema)
 
 def _FilterParTuplets(tuplets, tupletfilter):
 	if tupletfilter is None:
@@ -349,7 +432,8 @@ class ModuleSchemaBuilder(_BaseSchemaBuilder):
 
 	def _BuildParamSpecs(self,
 	                     parprefix,
-	                     includevalues=True):
+	                     includevalues=True,
+	                     includeschemas=True):
 		partuplets = self._GetModuleParamTuplets()
 		return [
 				SpecFromParTuplet(
@@ -358,7 +442,8 @@ class ModuleSchemaBuilder(_BaseSchemaBuilder):
 					getoptions=self._GetParamOptions,
 					getoptionlist=self._GetParamOptionList,
 					metadata=self._GetParamMeta(t[0].tupletName),
-					includevalue=includevalues)
+					includevalue=includevalues,
+					includeschema=includeschemas)
 				for t in partuplets
 			]
 
@@ -395,21 +480,25 @@ class ModuleSchemaBuilder(_BaseSchemaBuilder):
 	def _GetParamOptionList(self, name):
 		return None
 
-	# NOTE: does NOT generate child modules!
 	def BuildModuleSchema(self):
 		comp = self.comp
 		pathprefix = self.pathprefix
 		path = (pathprefix + comp.path) if pathprefix else None
 		master = comp.par.clone.eval()
 		mtype = master.path if master else None
+		parprefix = (path + ':') if path else None
 		if mtype and self.appbuilder and self.appbuilder.GetModuleTypeSchema(mtype, addmissing=self.addmissingmodtypes):
-			params = None
-			paramgroups = None
-		else:
-			parprefix = (path + ':') if path else None
 			params = self._BuildParamSpecs(
 				parprefix=parprefix,
-				includevalues=True)
+				includevalues=True,
+				includeschemas=False)
+			# params = None
+			paramgroups = None
+		else:
+			params = self._BuildParamSpecs(
+				parprefix=parprefix,
+				includevalues=True,
+				includeschemas=True)
 			paramgroups = self._GetParamGroups(params)
 		children = self._BuildChildModuleSchemas()
 		childgroups = self._GetChildGroups(children)
