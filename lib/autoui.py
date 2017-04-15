@@ -15,10 +15,6 @@ except ImportError:
 	except ImportError:
 		import common.lib.util as util
 try:
-	import shell_mapping as mapping
-except ImportError:
-	import mapping
-try:
 	import shell_schema as schema
 except ImportError:
 	import schema

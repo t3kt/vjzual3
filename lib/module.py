@@ -15,10 +15,6 @@ except ImportError:
 	except ImportError:
 		import common.lib.util as util
 try:
-	import shell_mapping as mapping
-except ImportError:
-	import mapping
-try:
 	import shell_schema as schema
 except ImportError:
 	import schema
@@ -152,20 +148,13 @@ class Module(base.Extension):
 		self.parAccessor.SetParTupletVals(self.GetModParamTuplets(), params)
 
 	def GetStateDict(self):
-		state = util.MergeDicts(
+		return util.MergeDicts(
 			self.parAccessor.GetParTupletVals(self.parAccessor.GetCustomPage('Module').parTuplets),
 			{
 				'path': self.comp.path,
 				'params': self._GetModParamsDict(),
 			},
 		)
-		ctrlmappings = mapping.GetMappingsFromHost(self.comp)
-		ctrlmappings = {
-			parname: opts for parname, opts in ctrlmappings.items() if opts.get('ctrl')
-		}
-		if ctrlmappings:
-			state['mappings'] = ctrlmappings
-		return state
 
 	def LoadStateDict(self, state):
 		self._LogEvent('LoadStateDict(%r)' % state)
