@@ -80,10 +80,15 @@ class Module(base.Extension):
 
 	def UpdateHeight(self):
 		self._UpdateControlPanelHeight()
-		self._UpdateBodyPanelHeight()
-		h = self._HeaderHeight
-		h += self._BodyHeight
-		self.comp.par.h = h
+		if self.Shell.par.Autoheight:
+			self._UpdateBodyPanelHeight()
+			h = self._HeaderHeight
+			h += self._BodyHeight
+			self.comp.par.h = h
+		else:
+			panel = self.BodyPanel
+			if panel:
+				panel.par.h = self.comp.par.h - self._HeaderHeight
 
 	def _UpdateBodyPanelHeight(self):
 		panel = self.BodyPanel
