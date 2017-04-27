@@ -1,3 +1,0 @@
-path	chan
-chain1_coloradj/Level	ch1c1
-chain1_coloradj/Brightness	ch1c2
