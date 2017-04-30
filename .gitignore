@@ -5,5 +5,7 @@
 CrashAutoSave.toe
 TEMP*
 *-package-*.zip
-lcdq-content/*/*.mp4
-lcdq-content/*/*.mov
+lcdq-content/**/*.mp4
+lcdq-content/**/*.mov
+lcdq-content/**/*.pdf
+lcdq-content/**/*.txt
