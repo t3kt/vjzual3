@@ -71,24 +71,27 @@ class ShellApp(base.Extension):
 	def _Title(self):
 		return self.comp.par.Title.eval() or self._Key
 
-	def GetSchema(self):
-		self._LogEvent('GetSchema()')
+	def GetSchema(self,
+	              addmissingmodtypes=True):
+		self._LogEvent('GetSchema(addmissingmodtypes=%r)' % addmissingmodtypes)
 		builder = _VjzAppSchemaBuilder(
 			app=self,
 			comp=self.comp,
+			addmissingmodtypes=addmissingmodtypes,
 		)
 		return builder.BuildAppSchema()
 
 class _VjzAppSchemaBuilder(schema.AppSchemaBuilder):
 	def __init__(self,
 	             app,
-	             comp):
+	             comp,
+	             addmissingmodtypes=True):
 		super().__init__(
 			comp=comp,
 			key=app._Key,
 			label=comp.par.Title.eval(),
 			tags=[],
-			addmissingmodtypes=True,
+			addmissingmodtypes=addmissingmodtypes,
 		)
 		self.app = app
 
@@ -113,6 +116,7 @@ class _VjzAppSchemaBuilder(schema.AppSchemaBuilder):
 			comp=childcomp,
 			pathprefix=self.pathprefix,
 			appbuilder=self,
+			addmissingmodtypes=self.addmissingmodtypes,
 		)
 		return builder.BuildModuleSchema()
 
@@ -122,6 +126,7 @@ class _VjzAppSchemaBuilder(schema.AppSchemaBuilder):
 			comp=childcomp,
 			pathprefix=self.pathprefix,
 			appbuilder=self,
+			addmissingmodtypes=False,
 		)
 		return builder.BuildModuleTypeSchema()
 

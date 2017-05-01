@@ -170,10 +170,12 @@ class Module(base.Extension):
 
 	def GetSchema(self,
 	              pathprefix=None,
-	              typeonly=False):
+	              typeonly=False,
+	              addmissingmodtypes=True):
 		builder = VjzModuleSchemaBuilder(
 			comp=self.comp,
-			pathprefix=pathprefix)
+			pathprefix=pathprefix,
+			addmissingmodtypes=addmissingmodtypes)
 		if typeonly:
 			return builder.BuildModuleTypeSchema()
 		return builder.BuildModuleSchema()
@@ -250,7 +252,8 @@ class VjzModuleSchemaBuilder(schema.ModuleSchemaBuilder):
 	def __init__(self,
 	             comp,
 	             pathprefix=None,
-	             appbuilder=None):
+	             appbuilder=None,
+	             addmissingmodtypes=True):
 		super().__init__(
 			comp=comp,
 			pathprefix=pathprefix,
@@ -259,7 +262,7 @@ class VjzModuleSchemaBuilder(schema.ModuleSchemaBuilder):
 			label=comp.par.Uilabel.eval(),
 			tags=list(comp.tags - {'tmod'}),
 			appbuilder=appbuilder,
-			addmissingmodtypes=True)
+			addmissingmodtypes=addmissingmodtypes)
 		self.module = comp.extensions[0]
 		self.supplysourceoptions = _SourceOptionsSupplier()
 
@@ -271,6 +274,7 @@ class VjzModuleSchemaBuilder(schema.ModuleSchemaBuilder):
 			comp=childcomp,
 			pathprefix=self.pathprefix,
 			appbuilder=self.appbuilder,
+			addmissingmodtypes=self.addmissingmodtypes,
 		)
 		return builder.BuildModuleSchema()
 

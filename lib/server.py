@@ -104,7 +104,9 @@ class WebsocketServer(base.Extension):
 				else:
 					key, val = querystr.split('=')
 					queryparams[key] = val
-			appschema = op.App.GetSchema()
+			addmissingmodtypes = queryparams.get('addmissingmodtypes') == '1'
+			self._LogEvent('ZZZZZZZZZZZZZ addmissingmodtypes=%r, queryparams=%r' % (addmissingmodtypes, queryparams))
+			appschema = op.App.GetSchema(addmissingmodtypes=addmissingmodtypes)
 			if path in ('/AppSchema', '/AppSchema/', '/AppSchema.json'):
 				procargs = {}
 				for key in ('embedlists',

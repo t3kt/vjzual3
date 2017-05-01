@@ -487,6 +487,7 @@ class ModuleSchemaBuilder(_BaseSchemaBuilder):
 		master = comp.par.clone.eval()
 		mtype = master.path if master else None
 		parprefix = (path + ':') if path else None
+		print('BuildModuleSchema (path: %r, addmissingmodtypes=%r)' % (path, self.addmissingmodtypes))
 		if mtype and self.appbuilder and self.appbuilder.GetModuleTypeSchema(mtype, addmissing=self.addmissingmodtypes):
 			params = self._BuildParamSpecs(
 				parprefix=parprefix,
