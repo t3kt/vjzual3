@@ -197,6 +197,59 @@
               "type": "fvec"
             },
             {
+              "default": false,
+              "group": "Video Player",
+              "key": "Locktotimeline",
+              "label": "Lock To Timeline",
+              "path": "/vjzual3/_/app/sources/video_1:Locktotimeline",
+              "style": "Toggle",
+              "tags": [
+                "advanced",
+                "expose",
+                "store"
+              ],
+              "type": "bool",
+              "value": false
+            },
+            {
+              "default": "cycle",
+              "group": "Video Player",
+              "key": "Extendright",
+              "label": "Extend Right",
+              "options": [
+                {
+                  "key": "hold",
+                  "label": "Hold"
+                },
+                {
+                  "key": "cycle",
+                  "label": "Cycle"
+                },
+                {
+                  "key": "mirror",
+                  "label": "Mirror"
+                },
+                {
+                  "key": "black",
+                  "label": "Black"
+                },
+                {
+                  "key": "zero",
+                  "label": "Zero"
+                }
+              ],
+              "path": "/vjzual3/_/app/sources/video_1:Extendright",
+              "style": "Menu",
+              "tags": [
+                "advanced",
+                "expose",
+                "store"
+              ],
+              "type": "menu",
+              "value": "hold",
+              "valueIndex": 0
+            },
+            {
               "default": "fitoutside",
               "group": "Video Player",
               "key": "Fitmode",
@@ -232,13 +285,27 @@
               "tags": [
                 "advanced",
                 "expose",
-                "mappable",
                 "sequenceable",
                 "store"
               ],
               "type": "menu",
               "value": "fitoutside",
               "valueIndex": 4
+            },
+            {
+              "default": false,
+              "group": "Video Player",
+              "key": "Useinputres",
+              "label": "Use Input Resolution",
+              "path": "/vjzual3/_/app/sources/video_1:Useinputres",
+              "style": "Toggle",
+              "tags": [
+                "advanced",
+                "expose",
+                "store"
+              ],
+              "type": "bool",
+              "value": false
             },
             {
               "group": "Video Player",
@@ -820,6 +887,59 @@
               "type": "fvec"
             },
             {
+              "default": false,
+              "group": "Video Player",
+              "key": "Locktotimeline",
+              "label": "Lock To Timeline",
+              "path": "/vjzual3/_/app/sources/video_2:Locktotimeline",
+              "style": "Toggle",
+              "tags": [
+                "advanced",
+                "expose",
+                "store"
+              ],
+              "type": "bool",
+              "value": false
+            },
+            {
+              "default": "cycle",
+              "group": "Video Player",
+              "key": "Extendright",
+              "label": "Extend Right",
+              "options": [
+                {
+                  "key": "hold",
+                  "label": "Hold"
+                },
+                {
+                  "key": "cycle",
+                  "label": "Cycle"
+                },
+                {
+                  "key": "mirror",
+                  "label": "Mirror"
+                },
+                {
+                  "key": "black",
+                  "label": "Black"
+                },
+                {
+                  "key": "zero",
+                  "label": "Zero"
+                }
+              ],
+              "path": "/vjzual3/_/app/sources/video_2:Extendright",
+              "style": "Menu",
+              "tags": [
+                "advanced",
+                "expose",
+                "store"
+              ],
+              "type": "menu",
+              "value": "hold",
+              "valueIndex": 0
+            },
+            {
               "default": "fitoutside",
               "group": "Video Player",
               "key": "Fitmode",
@@ -855,13 +975,27 @@
               "tags": [
                 "advanced",
                 "expose",
-                "mappable",
                 "sequenceable",
                 "store"
               ],
               "type": "menu",
               "value": "fitoutside",
               "valueIndex": 4
+            },
+            {
+              "default": false,
+              "group": "Video Player",
+              "key": "Useinputres",
+              "label": "Use Input Resolution",
+              "path": "/vjzual3/_/app/sources/video_2:Useinputres",
+              "style": "Toggle",
+              "tags": [
+                "advanced",
+                "expose",
+                "store"
+              ],
+              "type": "bool",
+              "value": false
             },
             {
               "group": "Video Player",
@@ -1443,6 +1577,59 @@
               "type": "fvec"
             },
             {
+              "default": false,
+              "group": "Video Player",
+              "key": "Locktotimeline",
+              "label": "Lock To Timeline",
+              "path": "/vjzual3/_/app/sources/video_3:Locktotimeline",
+              "style": "Toggle",
+              "tags": [
+                "advanced",
+                "expose",
+                "store"
+              ],
+              "type": "bool",
+              "value": false
+            },
+            {
+              "default": "cycle",
+              "group": "Video Player",
+              "key": "Extendright",
+              "label": "Extend Right",
+              "options": [
+                {
+                  "key": "hold",
+                  "label": "Hold"
+                },
+                {
+                  "key": "cycle",
+                  "label": "Cycle"
+                },
+                {
+                  "key": "mirror",
+                  "label": "Mirror"
+                },
+                {
+                  "key": "black",
+                  "label": "Black"
+                },
+                {
+                  "key": "zero",
+                  "label": "Zero"
+                }
+              ],
+              "path": "/vjzual3/_/app/sources/video_3:Extendright",
+              "style": "Menu",
+              "tags": [
+                "advanced",
+                "expose",
+                "store"
+              ],
+              "type": "menu",
+              "value": "hold",
+              "valueIndex": 0
+            },
+            {
               "default": "fitoutside",
               "group": "Video Player",
               "key": "Fitmode",
@@ -1478,13 +1665,27 @@
               "tags": [
                 "advanced",
                 "expose",
-                "mappable",
                 "sequenceable",
                 "store"
               ],
               "type": "menu",
               "value": "fitoutside",
               "valueIndex": 4
+            },
+            {
+              "default": false,
+              "group": "Video Player",
+              "key": "Useinputres",
+              "label": "Use Input Resolution",
+              "path": "/vjzual3/_/app/sources/video_3:Useinputres",
+              "style": "Toggle",
+              "tags": [
+                "advanced",
+                "expose",
+                "store"
+              ],
+              "type": "bool",
+              "value": false
             },
             {
               "group": "Video Player",
@@ -2066,6 +2267,59 @@
               "type": "fvec"
             },
             {
+              "default": false,
+              "group": "Video Player",
+              "key": "Locktotimeline",
+              "label": "Lock To Timeline",
+              "path": "/vjzual3/_/app/sources/video_4:Locktotimeline",
+              "style": "Toggle",
+              "tags": [
+                "advanced",
+                "expose",
+                "store"
+              ],
+              "type": "bool",
+              "value": false
+            },
+            {
+              "default": "cycle",
+              "group": "Video Player",
+              "key": "Extendright",
+              "label": "Extend Right",
+              "options": [
+                {
+                  "key": "hold",
+                  "label": "Hold"
+                },
+                {
+                  "key": "cycle",
+                  "label": "Cycle"
+                },
+                {
+                  "key": "mirror",
+                  "label": "Mirror"
+                },
+                {
+                  "key": "black",
+                  "label": "Black"
+                },
+                {
+                  "key": "zero",
+                  "label": "Zero"
+                }
+              ],
+              "path": "/vjzual3/_/app/sources/video_4:Extendright",
+              "style": "Menu",
+              "tags": [
+                "advanced",
+                "expose",
+                "store"
+              ],
+              "type": "menu",
+              "value": "hold",
+              "valueIndex": 0
+            },
+            {
               "default": "fitoutside",
               "group": "Video Player",
               "key": "Fitmode",
@@ -2101,13 +2355,27 @@
               "tags": [
                 "advanced",
                 "expose",
-                "mappable",
                 "sequenceable",
                 "store"
               ],
               "type": "menu",
               "value": "fitoutside",
               "valueIndex": 4
+            },
+            {
+              "default": false,
+              "group": "Video Player",
+              "key": "Useinputres",
+              "label": "Use Input Resolution",
+              "path": "/vjzual3/_/app/sources/video_4:Useinputres",
+              "style": "Toggle",
+              "tags": [
+                "advanced",
+                "expose",
+                "store"
+              ],
+              "type": "bool",
+              "value": false
             },
             {
               "group": "Video Player",
@@ -2689,6 +2957,59 @@
               "type": "fvec"
             },
             {
+              "default": false,
+              "group": "Video Player",
+              "key": "Locktotimeline",
+              "label": "Lock To Timeline",
+              "path": "/vjzual3/_/app/sources/video_5:Locktotimeline",
+              "style": "Toggle",
+              "tags": [
+                "advanced",
+                "expose",
+                "store"
+              ],
+              "type": "bool",
+              "value": false
+            },
+            {
+              "default": "cycle",
+              "group": "Video Player",
+              "key": "Extendright",
+              "label": "Extend Right",
+              "options": [
+                {
+                  "key": "hold",
+                  "label": "Hold"
+                },
+                {
+                  "key": "cycle",
+                  "label": "Cycle"
+                },
+                {
+                  "key": "mirror",
+                  "label": "Mirror"
+                },
+                {
+                  "key": "black",
+                  "label": "Black"
+                },
+                {
+                  "key": "zero",
+                  "label": "Zero"
+                }
+              ],
+              "path": "/vjzual3/_/app/sources/video_5:Extendright",
+              "style": "Menu",
+              "tags": [
+                "advanced",
+                "expose",
+                "store"
+              ],
+              "type": "menu",
+              "value": "hold",
+              "valueIndex": 0
+            },
+            {
               "default": "fitoutside",
               "group": "Video Player",
               "key": "Fitmode",
@@ -2724,13 +3045,27 @@
               "tags": [
                 "advanced",
                 "expose",
-                "mappable",
                 "sequenceable",
                 "store"
               ],
               "type": "menu",
               "value": "fitoutside",
               "valueIndex": 4
+            },
+            {
+              "default": false,
+              "group": "Video Player",
+              "key": "Useinputres",
+              "label": "Use Input Resolution",
+              "path": "/vjzual3/_/app/sources/video_5:Useinputres",
+              "style": "Toggle",
+              "tags": [
+                "advanced",
+                "expose",
+                "store"
+              ],
+              "type": "bool",
+              "value": false
             },
             {
               "group": "Video Player",
