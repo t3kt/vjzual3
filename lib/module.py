@@ -15,10 +15,6 @@ except ImportError:
 	except ImportError:
 		import common.lib.util as util
 try:
-	import shell_mapping as mapping
-except ImportError:
-	import mapping
-try:
 	import shell_schema as schema
 except ImportError:
 	import schema
@@ -84,10 +80,15 @@ class Module(base.Extension):
 
 	def UpdateHeight(self):
 		self._UpdateControlPanelHeight()
-		self._UpdateBodyPanelHeight()
-		h = self._HeaderHeight
-		h += self._BodyHeight
-		self.comp.par.h = h
+		if self.Shell.par.Autoheight:
+			self._UpdateBodyPanelHeight()
+			h = self._HeaderHeight
+			h += self._BodyHeight
+			self.comp.par.h = h
+		else:
+			panel = self.BodyPanel
+			if panel:
+				panel.par.h = self.comp.par.h - self._HeaderHeight
 
 	def _UpdateBodyPanelHeight(self):
 		panel = self.BodyPanel
@@ -152,20 +153,13 @@ class Module(base.Extension):
 		self.parAccessor.SetParTupletVals(self.GetModParamTuplets(), params)
 
 	def GetStateDict(self):
-		state = util.MergeDicts(
+		return util.MergeDicts(
 			self.parAccessor.GetParTupletVals(self.parAccessor.GetCustomPage('Module').parTuplets),
 			{
 				'path': self.comp.path,
 				'params': self._GetModParamsDict(),
 			},
 		)
-		ctrlmappings = mapping.GetMappingsFromHost(self.comp)
-		ctrlmappings = {
-			parname: opts for parname, opts in ctrlmappings.items() if opts.get('ctrl')
-		}
-		if ctrlmappings:
-			state['mappings'] = ctrlmappings
-		return state
 
 	def LoadStateDict(self, state):
 		self._LogEvent('LoadStateDict(%r)' % state)

@@ -1,17 +1,18 @@
 out Vertex {
 	vec4 color;
-	vec3 camSpaceVert;
+	vec3 worldSpacePos;
+	vec3 worldSpaceNorm;
 	vec3 texCoord0;
 	vec3 texCoord1;
+	flat int cameraIndex;
 }vVert;
 
 void main()
 {
 	// First deform the vertex and normal
 	// TDDeform always returns values in world space
-	vec4 worldSpaceVert =TDDeform(P);
-	vec4 camSpaceVert = uTDMats[TDCameraIndex()].cam * worldSpaceVert;
-	gl_Position = TDWorldToProj(TDDeform(camSpaceVert));
+	vec4 worldSpacePos =TDDeform(P);
+	gl_Position = TDWorldToProj(worldSpacePos);
 
 	// This is here to ensure we only execute lighting etc. code
 	// when we need it. If picking is active we don't need this, so
@@ -23,14 +24,15 @@ void main()
 	{ // Avoid duplicate variable defs
 		vec3 texcoord = TDInstanceTexCoord(uv[0]);
 		vVert.texCoord0.stp = texcoord.stp;
-		//vVert.texCoord0.p = texcoord.p + sColorMapPOffset;
 	}
 	{
-		vVert.texCoord1.stp = uv[1];
+		vVert.texCoord1.stp = uv[0].stp;
 	}
-	vec3 camSpaceNorm = uTDMats[TDCameraIndex()].camForNormals * TDDeformNorm(N).xyz;
-	vVert.camSpaceVert.xyz = camSpaceVert.xyz;
+	vVert.cameraIndex = TDCameraIndex();
+	vVert.worldSpacePos.xyz = worldSpacePos.xyz;
 	vVert.color = TDInstanceColor(Cd);
+	vec3 worldSpaceNorm = TDDeformNorm(N);
+	vVert.worldSpaceNorm = normalize(worldSpaceNorm);
 
 #else // TD_PICKING_ACTIVE
 
