@@ -9,3 +9,7 @@ lcdq-content/**/*.mp4
 lcdq-content/**/*.mov
 lcdq-content/**/*.pdf
 lcdq-content/**/*.txt
+lcdq-content/**/*.mocha
+lcdq-content/**/*.jpg
+lcdq-content/**/*.psd
+lcdq-content/**/*.png
