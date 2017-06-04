@@ -48,6 +48,17 @@ class Module(base.Extension):
 		self.BodyPanel = comp.op('./body_panel')
 		self.ControlPanel = comp.op('./controls_panel')
 		self.ParameterMetadata = comp.op('./shell/parameter_metadata')
+		if not hasattr(comp.par, 'Resetstate'):
+			page = comp.appendCustomPage('Module')
+			page.appendPulse('Resetstate', label='Reset State')
+
+	def ResetState(self):
+		self._LogBegin('ResetState()')
+		try:
+			for child in self._SubModules:
+				child.ResetState()
+		finally:
+			self._LogEnd('ResetState()')
 
 	@property
 	def _HeaderHeight(self):
