@@ -120,7 +120,7 @@ class NodeSelectorPopup(base.Extension):
 
 	def List_onInitCell(self, row, col, attribs):
 		if col == 0:
-			attribs.text = self._Nodes[row, 'label']
+			attribs.text = self._Nodes[row, 'indentedlabel']
 		elif col == 1:
 			attribs.text = self._Nodes[row, 'path']
 		elif col == 2:
