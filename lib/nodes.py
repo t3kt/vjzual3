@@ -68,6 +68,9 @@ class NodeSelectorPopup(base.Extension):
 		return pars[0] if pars else None
 
 	def _SelectRow(self, row):
+		nodetype = self._GetRowAttr(row, 'nodetype')
+		if nodetype != 'data':
+			return
 		selid = self._GetRowId(row) or ''
 		self.comp.par.Selnodeid.val = selid
 		self._PushValue()
@@ -80,10 +83,13 @@ class NodeSelectorPopup(base.Extension):
 		par.val = selid
 
 	def _GetRowId(self, row):
+		return self._GetRowAttr(row, 'id')
+
+	def _GetRowAttr(self, row, name):
 		nodes = self._Nodes
 		if not row or row == -1 or row >= nodes.numRows:
 			return None
-		return nodes[row, 'id'].val
+		return nodes[row, name].val
 
 	def LoadValueFromTarget(self):
 		par = self._TargetPar
@@ -120,9 +126,15 @@ class NodeSelectorPopup(base.Extension):
 
 	def List_onInitCell(self, row, col, attribs):
 		if col == 0:
-			attribs.text = self._Nodes[row, 'indentedlabel']
+			if row == 0:
+				attribs.text = 'label'
+			else:
+				attribs.text = self._Nodes[row, 'indentedlabel']
 		elif col == 1:
-			attribs.text = self._Nodes[row, 'path']
+			if row == 0:
+				attribs.text = 'path'
+			else:
+				attribs.text = self._Nodes[row, 'path']
 		elif col == 2:
 			if row > 0:
 				attribs.top = op(self._Nodes[row, 'video'])
@@ -141,8 +153,10 @@ class NodeSelectorPopup(base.Extension):
 			attribs.bgColor = [0.1, 0.1, 0.1, 1]
 			attribs.textColor = [0.9, 0.9, 0.9, 1]
 			attribs.rowHeight = 20
+			attribs.fontItalic = False
 		else:
 			attribs.rowHeight = 60 if self.comp.par.Inlinepreviews else 20
+			attribs.fontItalic = self._Nodes[row, 'nodetype'] != 'data'
 		#highlight = False
 		#DropMenu._ApplyItemOverrideColors(attribs, highlight=highlight, rollover=False)
 		pass
@@ -160,10 +174,14 @@ class NodeSelectorPopup(base.Extension):
 		self._UpdateRowHighlights()
 
 	def List_onRollover(self, row, col, prevrow, prevcol):
+		if self._GetRowAttr(row, 'nodetype') != 'data':
+			return
 		self._UpdateRowHighlights(rolloverrow=row)
 
 	def List_onSelect(self, startrow, startcol, startcoords, endrow, endcol, endcoords, start, end):
 		# self._LogEvent('List_onSelect(%r)' % {'startrow':startrow,'startcol':startcol,'startcoords':startcoords,'endrow':endrow,'endcol':endcol,'endcoords':endcoords,'start':start,'end':end})
+		if self._GetRowAttr(endrow, 'nodetype') != 'data':
+			return
 		self._SelectRow(endrow)
 		pass
 
@@ -187,6 +205,7 @@ class NodeBank(base.Extension):
 	def __init__(self, comp):
 		super().__init__(comp)
 		self._NodeTable = comp.op('./data_nodes')
+		self._PopupWindow = comp.op('./selector_popup_window')
 
 	@property
 	def _Popup(self):
@@ -194,10 +213,6 @@ class NodeBank(base.Extension):
 			# trick pycharm
 			return NodeSelectorPopup(None)
 		return self.comp.op('./selector_popup')
-
-	@property
-	def _PopupWindow(self):
-		return self.comp.op('./selector_popup_window')
 
 	def ShowPopup(self, targetop, targetpar, nodetype='video'):
 		self._Popup.Initialize(targetop, targetpar, nodetype=nodetype)
@@ -209,6 +224,69 @@ class NodeBank(base.Extension):
 			for i in range(1, self._NodeTable.numRows)
 			if not datatype or self._NodeTable[i, datatype] != ''
 		]
+
+	def BuildNodeTreeList(self, outdat):
+		outdat.clear()
+		indat = outdat.inputs[0]
+		bankroot = self.comp.par.Rootop.eval()
+		cols = ['id', 'path', 'nodetype', 'label', 'indentedlabel', 'video', 'audio', 'texbuf']
+		outdat.appendRow(cols)
+		nodesbypath = {}
+		for i in range(1, indat.numRows):
+			path = indat[i, 'path'].val
+			parentpath = indat[i, 'parentpath'].val
+			parts = parentpath.split('/')
+			nodedepth = 1 + len(parts)
+			nodesbypath[path] = {
+				'id': indat[i, 'id'].val,
+				'path': path,
+				'indentedlabel': (' ' * nodedepth) + indat[i, 'label'].val,
+				'label': indat[i, 'label'].val,
+				'video': indat[i, 'video'].val,
+				'audio': indat[i, 'audio'].val,
+				'texbuf': indat[i, 'texbuf'].val,
+				'nodetype': 'data',
+				'parentpath': parentpath,
+				'depth': nodedepth,
+			}
+			for depth in range(len(parts)):
+				containerpath = '/'.join(parts[:depth + 1])
+				if containerpath not in nodesbypath:
+					label = _getContainerLabel(containerpath, bankroot)
+					nodesbypath[containerpath] = {
+						'path': containerpath,
+						'nodetype': 'container',
+						'parentpath': '/'.join(parts[:depth]),
+						'label': label,
+						'indentedlabel': (' ' * depth) + label,
+						'depth': depth,
+					}
+
+		def _outputWithDescendants(node):
+			if node['nodetype'] == 'data':
+				outdat.appendRow([node[col] for col in cols])
+			else:
+				cntrpath = node['path']
+				outdat.appendRow([])
+				row = outdat.numRows - 1
+				outdat[row, 'path'] = bankroot.path + '/' + cntrpath
+				outdat[row, 'nodetype'] = 'container'
+				outdat[row, 'label'] = node['label']
+				outdat[row, 'indentedlabel'] = node['indentedlabel']
+				childnodes = sorted([child for child in nodesbypath.values() if child['parentpath'] == cntrpath], key=lambda c: c['path'])
+				for child in childnodes:
+					_outputWithDescendants(child)
+
+		toplevelnodes = sorted([node for node in nodesbypath.values() if not node['parentpath']], key=lambda c: c['path'])
+		for node in toplevelnodes:
+			_outputWithDescendants(node)
+
+def _getContainerLabel(path, bankroot):
+	container = bankroot.op(path)
+	if hasattr(container.par, 'Modname'):
+		return container.par.Modname.eval()
+	else:
+		return container.par.opshortcut.eval() or container.name
 
 def GetAppNodeBank():
 	app = getattr(op, 'App', None)
