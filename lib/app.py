@@ -38,6 +38,14 @@ class ShellApp(base.Extension):
 		super().__init__(comp)
 		self.DataNodeBank = comp.par.Datanodebank.eval()
 
+	def ResetState(self):
+		self._LogBegin('ResetState()')
+		try:
+			for child in self._SubModules:
+				child.ResetState()
+		finally:
+			self._LogEnd('ResetState()')
+
 	@property
 	def AllModules(self):
 		return self.comp.findChildren(type=COMP, tags=['tmod'])
