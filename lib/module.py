@@ -576,3 +576,77 @@ class SubModules(base.Extension):
 			self._ConnectModules()
 		finally:
 			self._LogEnd()
+
+class MacroCore(base.Extension):
+	def __init__(self, comp):
+		super().__init__(comp)
+		self.Macros = [
+			MacroCore.Macro(comp, i)
+			for i in range(1, 9)
+		]
+		self.Targets = MacroCore.TargetOptions(comp)
+
+	def BuildExportTable(self, dat):
+		dat.clear()
+		dat.appendRow(['path', 'parameter', 'value', 'enable'])
+		for i in range(1, 9):
+			active = getattr(self.comp.par, 'Mapactive%d' % i).eval()
+			source = getattr(self.comp.par, 'Mapsrc%d' % i)
+			target = getattr(self.comp.par, 'Maptarget%d' % i).eval()
+			param = getattr(self.comp.par, 'Mapparam%d' % i).eval()
+			active = active and target and param
+			dat.appendRow([
+				target,
+				param,
+				('op("%s").par.%s' % (self.comp.path, source)),
+				1 if active else 0,
+			])
+
+	class Macro:
+		def __init__(self, m, i):
+			self.Label = getattr(m.par, 'Label%d' % i)
+			self.Value = getattr(m.par, 'Value%d' % i)
+			self.Default = getattr(m.par, 'Default%d' % i)
+			self.TargetParams = MacroCore.ParamOptions(m, i)
+
+	class TargetOptions:
+		def __init__(self, m):
+			self.m = m
+
+		@property
+		def _Root(self): return self.m.par.Scoperoot.eval() or op.App
+
+		@property
+		def _Targets(self):
+			root = self._Root
+			targets = []
+			if 'tmod' in root.tags:
+				targets.append(root)
+			return targets + root.findChildren(tags=['tmod'])
+
+		@property
+		def menuNames(self): return [t.path for t in self._Targets]
+
+		@property
+		def menuLabels(self):
+			rootpathlen = len(self._Root.path)
+			return [t.path[rootpathlen:] for t in self._Targets]
+
+	class ParamOptions:
+		def __init__(self, m, i):
+			self.m = m
+			self.target = getattr(m.par, 'Maptarget%d' % i)
+
+		@property
+		def _Pars(self):
+			target = self.target.eval()
+			target = target and self.m.op(target)
+			if not target or not hasattr(target, 'ExposedModParamNames'):
+				return []
+			return [getattr(target.par, p) for p in target.ExposedModParamNames]
+
+		@property
+		def menuNames(self): return [p.name for p in self._Pars]
+
+		@property
+		def menuLabels(self): return [p.label for p in self._Pars]
