@@ -586,21 +586,27 @@ class MacroCore(base.Extension):
 		]
 		self.Targets = MacroCore.TargetOptions(comp)
 
-	def BuildExportTable(self, dat):
-		dat.clear()
-		dat.appendRow(['path', 'parameter', 'value', 'enable'])
+	@property
+	def _Exports(self):
+		if self.comp.par.Bypass:
+			return []
+		results = []
 		for i in range(1, 9):
 			active = getattr(self.comp.par, 'Mapactive%d' % i).eval()
 			source = getattr(self.comp.par, 'Mapsrc%d' % i)
 			target = getattr(self.comp.par, 'Maptarget%d' % i).eval()
 			param = getattr(self.comp.par, 'Mapparam%d' % i).eval()
-			active = active and target and param
-			dat.appendRow([
-				target,
-				param,
-				('op("%s").par.%s' % (self.comp.path, source)),
-				1 if active else 0,
-			])
+			if active and source and target and param:
+				results.append([source, '%s:%s' % (target, param)])
+		return results
+
+	@property
+	def ExportSelectChans(self):
+		return [e[0] for e in self._Exports]
+
+	@property
+	def ExportTargets(self):
+		return [e[1] for e in self._Exports]
 
 	class Macro:
 		def __init__(self, m, i):
