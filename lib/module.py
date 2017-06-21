@@ -225,7 +225,7 @@ class Module(base.Extension):
 			result = defaultval
 		else:
 			result = _CoerceBool(cell.val)
-		self._LogEvent('_GetParameterFlag(name: %r, key: %r, defaultval: %r) result: %r' % (name, key, defaultval, result))
+		# self._LogEvent('_GetParameterFlag(name: %r, key: %r, defaultval: %r) result: %r' % (name, key, defaultval, result))
 		return result
 
 	def _GetParameterMetadata(self, name):
@@ -634,9 +634,7 @@ class MacroCore(base.Extension):
 		def menuNames(self): return [t.path for t in self._Targets]
 
 		@property
-		def menuLabels(self):
-			rootpathlen = len(self._Root.path)
-			return [t.path[rootpathlen:] for t in self._Targets]
+		def menuLabels(self): return [t.par.Modname for t in self._Targets]
 
 	class ParamOptions:
 		def __init__(self, m, i):
@@ -647,9 +645,9 @@ class MacroCore(base.Extension):
 		def _Pars(self):
 			target = self.target.eval()
 			target = target and self.m.op(target)
-			if not target or not hasattr(target, 'ExposedModParamNames'):
+			if not target or not hasattr(target, 'GetParamsWithFlag'):
 				return []
-			return [getattr(target.par, p) for p in target.ExposedModParamNames]
+			return target.GetParamsWithFlag('mappable')
 
 		@property
 		def menuNames(self): return [p.name for p in self._Pars]
