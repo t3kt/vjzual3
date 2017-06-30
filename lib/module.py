@@ -48,9 +48,10 @@ class Module(base.Extension):
 		self.BodyPanel = comp.op('./body_panel')
 		self.ControlPanel = comp.op('./controls_panel')
 		self.ParameterMetadata = comp.op('./shell/parameter_metadata')
-		if not hasattr(comp.par, 'Resetstate'):
-			page = comp.appendCustomPage('Module')
-			page.appendPulse('Resetstate', label='Reset State')
+
+	@property
+	def HasApp(self):
+		return _GetApp()
 
 	def ResetState(self):
 		self._LogBegin('ResetState()')
@@ -195,6 +196,8 @@ class Module(base.Extension):
 		solo = self.comp.par.Solo.eval()
 		outnode = self.comp.op(self.Shell.par.Solonode.eval() or self.Shell.par.Solonode.default)
 		mainoutsrc = _GetGlobalSourcePar()
+		if mainoutsrc is None:
+			return
 		if solo and outnode:
 			for m in _GetOtherModules(self.comp.path):
 				m.par.Solo = False
