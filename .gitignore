@@ -4,4 +4,5 @@
 *.dmp
 CrashAutoSave.toe
 TEMP*
+_TEMP*
 *-package-*.zip
