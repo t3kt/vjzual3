@@ -43,7 +43,6 @@ class Module(base.Extension):
 	def __init__(self, comp):
 		super().__init__(comp)
 		comp.tags.add('tmod')
-		self.parAccessor = ParAccessor(comp)
 		self.Shell = comp.op('./shell')
 		self.BodyPanel = comp.op('./body_panel')
 		self.ControlPanel = comp.op('./controls_panel')
@@ -110,32 +109,6 @@ class Module(base.Extension):
 
 	def GetModParamTuplets(self):
 		return _GetModParamTuplets(self.comp)
-
-	def _GetModParamsDict(self):
-		return self.parAccessor.GetParTupletVals(self.GetModParamTuplets())
-
-	def _LoadModParamsDict(self, params):
-		self._LogEvent('_LoadModParamsDict(%r)' % params)
-		if not params:
-			return
-		self.parAccessor.SetParTupletVals(self.GetModParamTuplets(), params)
-
-	def GetStateDict(self):
-		return util.MergeDicts(
-			self.parAccessor.GetParTupletVals(self.parAccessor.GetCustomPage('Module').parTuplets),
-			{
-				'path': self.comp.path,
-				'params': self._GetModParamsDict(),
-			},
-		)
-
-	def LoadStateDict(self, state):
-		self._LogEvent('LoadStateDict(%r)' % state)
-		if not state:
-			return
-		self.parAccessor.SetParTupletVals(self.parAccessor.GetCustomPage('Module').parTuplets, state)
-		self.parAccessor.SetParTupletVals(
-			_ExcludePulsePars(self.GetModParamTuplets()), state.get('params', {}))
 
 	def GetSchema(
 			self,
@@ -215,11 +188,30 @@ def _GetModParamTuplets(comp):
 		for t in page.parTuplets
 	]
 
-# class ModuleStateController:
-# 	def __init__(self, comp):
-# 		if False:
-# 			self.comp = Module(comp)
-# 		self.comp = comp
+class ModuleStateController(base.Extension):
+	def __init__(self, comp):
+		super().__init__(comp)
+		self.parAccessor = _ParAccessor(comp)
+
+	def GetModParamTuplets(self):
+		return _GetModParamTuplets(self.comp)
+
+	def GetStateDict(self):
+		return util.MergeDicts(
+			self.parAccessor.GetParTupletVals(self.parAccessor.GetCustomPage('Module').parTuplets),
+			{
+				'path': self.comp.path,
+				'params': self.parAccessor.GetParTupletVals(self.GetModParamTuplets()),
+			},
+		)
+
+	def LoadStateDict(self, state):
+		self._LogEvent('LoadStateDict(%r)' % state)
+		if not state:
+			return
+		self.parAccessor.SetParTupletVals(self.parAccessor.GetCustomPage('Module').parTuplets, state)
+		self.parAccessor.SetParTupletVals(
+			_ExcludePulsePars(self.GetModParamTuplets()), state.get('params', {}))
 
 def _ExtractVal(x):
 	if x is None:
@@ -239,10 +231,9 @@ def _ExpandTuplets(tuplets):
 			pars += t
 	return pars
 
-class ParAccessor(base.Extension):
-	def __init__(self, comp, getkey=None, floatdecimals=4):
+class _ParAccessor(base.Extension):
+	def __init__(self, comp, floatdecimals=4):
 		super().__init__(comp)
-		self.getkey = getkey
 		self.floatdecimals = floatdecimals
 
 	def SetParVal(self, par, value):
