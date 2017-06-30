@@ -80,12 +80,6 @@ class Module(base.Extension):
 	def SubModuleOpNames(self):
 		return [m.name for m in self._SubModules]
 
-	def GetChildModule(self, modname):
-		mods = self.comp.findChildren(depth=1, tags=['tmod'], parName='Modname', parValue=modname)
-		if not mods:
-			return None
-		return mods[0]
-
 	@property
 	def SelectorOpNames(self):
 		return [s.name for s in self.comp.findChildren(depth=1, parName='clone', parValue='*_selector')]
@@ -113,10 +107,6 @@ class Module(base.Extension):
 			panel.par.h = util.GetVisibleChildCOMPsHeight(panel)
 
 	@property
-	def _ModParamTupleNames(self):
-		return util.ParseStringList(self.Shell.par.Modparamtuples.eval())
-
-	@property
 	def _ModParamPageNames(self):
 		return util.ParseStringList(self.Shell.par.Modparampages.eval())
 
@@ -131,29 +121,13 @@ class Module(base.Extension):
 		return names
 
 	def GetModParamTuplets(self, includePulse=False):
-		tupletnames = self._ModParamTupleNames
-		pagenames = self._ModParamPageNames
 		tuplets = []
-		if not pagenames:
-			for page in self.comp.customPages:
-				if page.name != 'Module':
-					tuplets += page.parTuplets
-		else:
-			for page in self.comp.customPages:
-				if page.name in pagenames:
-					tuplets += page.parTuplets
-		for t in self.comp.customTuplets:
-			if t[0].tupletName in tupletnames:
-				tuplets.append(t)
+		for page in self.comp.customPages:
+			if page.name != 'Module':
+				tuplets += page.parTuplets
 		if not includePulse:
 			tuplets = list(_ExcludePulsePars(tuplets))
 		return tuplets
-
-	def GetInspectableModParamScope(self):
-		parts = []
-		for t in self.GetModParamTuplets(includePulse=True):
-			parts.append(t[0].tupletName)
-		return parts
 
 	def _GetModParamsDict(self):
 		return self.parAccessor.GetParTupletVals(self.GetModParamTuplets())
@@ -222,33 +196,39 @@ class Module(base.Extension):
 		for tuplet in self.GetModParamTuplets(includePulse=True):
 			_addPar(tuplet[0])
 
-	def _GetParameterFlag(self, name, key, defaultval=False):
-		cell = self.ParameterMetadata[name, key]
+	def _GetParameterFlag(self, parname, key, defaultval=False):
+		cell = self.ParameterMetadata[parname, key]
 		if cell is None:
 			result = defaultval
 		else:
 			result = _CoerceBool(cell.val)
-		# self._LogEvent('_GetParameterFlag(name: %r, key: %r, defaultval: %r) result: %r' % (name, key, defaultval, result))
+		# self._LogEvent('_GetParameterFlag(parname: %r, key: %r, defaultval: %r) result: %r' % (name, key, defaultval, result))
 		return result
 
-	def _GetParameterMetadata(self, name):
-		if self.ParameterMetadata[name, 'name'] is None:
+	def _GetParameterMetadata(self, parname):
+		if self.ParameterMetadata[parname, 'name'] is None:
 			return {
 				key: ''
 				for key in schema.ParamMetaKeys
 			}
 		return {
-			key: _ExtractVal(self.ParameterMetadata[name, key])
+			key: _ExtractVal(self.ParameterMetadata[parname, key])
 			for key in schema.ParamMetaKeys
 		}
 
-	def GetParamTupletsWithFlag(self, flag, defaultval=False):
+	def _GetParamTupletsWithFlag(self, flag, defaultval=False):
 		def _predicate(tuplet):
 			return self._GetParameterFlag(tuplet[0].tupletName, flag, defaultval)
 		return filter(_predicate, self.comp.customTuplets)
 
 	def GetParamsWithFlag(self, flag, defaultval=False):
-		return _ExpandTuplets(self.GetParamTupletsWithFlag(flag, defaultval))
+		return _ExpandTuplets(self._GetParamTupletsWithFlag(flag, defaultval))
+
+# class ModuleStateController:
+# 	def __init__(self, comp):
+# 		if False:
+# 			self.comp = Module(comp)
+# 		self.comp = comp
 
 def _ExtractVal(x):
 	if x is None:
@@ -276,7 +256,7 @@ class ParAccessor(base.Extension):
 
 	def SetParVal(self, par, value):
 		if par.isToggle:
-			value = self._CoerceBool(value)
+			value = _CoerceBool(value)
 		if par.mode != ParMode.CONSTANT:
 			self._LogEvent('SetParVal() - cannot set value of par %r which has mode %r' % (par, par.mode))
 		elif par.isPulse:
@@ -287,18 +267,8 @@ class ParAccessor(base.Extension):
 	def GetParVal(self, par):
 		val = par.eval()
 		if isinstance(val, float):
-			return self._CleanFloat(val)
+			return _CleanFloat(val, floatdecimals=self.floatdecimals)
 		return val
-
-	def _CleanFloat(self, value):
-		return round(value, self.floatdecimals) if self.floatdecimals else value
-
-	@staticmethod
-	def _CoerceBool(value):
-		return _CoerceBool(value)
-
-	def _GetKey(self, parname):
-		return self.getkey(parname) if self.getkey else parname.lower()
 
 	def _GetPars(self, parnames):
 		if isinstance(parnames, str):
@@ -317,14 +287,14 @@ class ParAccessor(base.Extension):
 		if hasattr(tuplets, 'parTuplets'):
 			tuplets = tuplets.parTuplets
 		return {
-			self._GetKey(t[0].tupletName):
+			t[0].tupletName.lower():
 				[self.GetParVal(p) for p in t] if len(t) > 1 else self.GetParVal(t[0])
 			for t in tuplets
 		}
 
 	def GetParVals(self, parnames):
 		return {
-			self._GetKey(p.name): self.GetParVal(p)
+			p.name.lower(): self.GetParVal(p)
 			for p in self._GetPars(parnames)
 		}
 
@@ -332,7 +302,7 @@ class ParAccessor(base.Extension):
 		if hasattr(tuplets, 'parTuplets'):
 			tuplets = tuplets.parTuplets
 		for t in tuplets:
-			key = self._GetKey(t[0].tupletName)
+			key = t[0].tupletName.lower()
 			vals = state.get(key)
 			if vals is None or vals == '' or vals == []:
 				if usedefaults:
@@ -356,6 +326,9 @@ def _CoerceBool(value):
 	if isinstance(value, (int, float)):
 		return bool(value)
 	return value in ('1', 'true', 'TRUE', 't', 'T')
+
+def _CleanFloat(value, floatdecimals=4):
+	return round(value, floatdecimals) if floatdecimals else value
 
 def _IsNotPulse(t):
 	if isinstance(t, tuple):

@@ -54,15 +54,9 @@ class ShellApp(base.Extension):
 	def _SubModules(self):
 		return self.comp.findChildren(type=COMP, tags=['tmod'], depth=1)
 
-	def GetChildModule(self, modname):
-		mods = self.comp.findChildren(depth=1, tags=['tmod'], parName='Modname', parValue=modname)
-		if not mods:
-			return None
-		return mods[0]
-
 	@property
 	def _GlobalChain(self):
-		g = getattr(op, 'Global')
+		g = getattr(op, 'Global', None)
 		if not g:
 			raise Exception('Global chain not found!')
 		return g
