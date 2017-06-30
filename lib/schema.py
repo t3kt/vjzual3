@@ -1,10 +1,7 @@
 print('shell/schema.py initializing')
 
 if False:
-	try:
 		from _stubs import *
-	except ImportError:
-		from common.lib._stubs import *
 
 import sys
 import os
@@ -255,20 +252,6 @@ _parStyleHandlers = {
 	'Float': _VariableLengthHandler(singletype=ParamType.float, multitype=ParamType.fvec)
 }
 _otherHandler = _OtherHandler()
-
-ParamMetaKeys = [
-	'store',
-	'source',
-	'advanced',
-	'expose',
-	'help',
-	'offhelp',
-	'btntext',
-	'btnofftext',
-	'mappable',
-	'filterable',
-	'sequenceable',
-]
 
 def _CreateStyleMetadata(mappable=1, filterable=1, sequenceable=1, store=1, source=0, advanced=0, expose=1):
 	return {

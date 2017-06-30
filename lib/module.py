@@ -18,16 +18,9 @@ try:
 	import shell_schema as schema
 except ImportError:
 	import schema
-try:
-	import shell_nodes as nodes
-except ImportError:
-	import nodes
 
 if False:
-	try:
 		from _stubs import *
-	except ImportError:
-		from common.lib._stubs import *
 
 def InitializeModule(comp):
 	if not comp:
@@ -115,7 +108,7 @@ class Module(base.Extension):
 			pathprefix=None,
 			typeonly=False,
 			addmissingmodtypes=True):
-		builder = schema.VjzModuleSchemaBuilder(
+		builder = mod.shell_schema.VjzModuleSchemaBuilder(
 			comp=self.comp,
 			pathprefix=pathprefix,
 			addmissingmodtypes=addmissingmodtypes)
@@ -142,11 +135,11 @@ class Module(base.Extension):
 
 	def BuildDefaultParameterMetadata(self, dat):
 		dat.clear()
-		dat.appendRow(['name'] + schema.ParamMetaKeys)
+		dat.appendRow(['name'] + _ParamMetaKeys)
 		def _addPar(par):
 			dat.appendRow([par.tupletName])
-			metadata = schema.GetDefaultMetadataForStyle(par.style)
-			for key in schema.ParamMetaKeys:
+			metadata = mod.shell_schema.GetDefaultMetadataForStyle(par.style)
+			for key in _ParamMetaKeys:
 				dat[par.tupletName, key] = metadata.get(key, 0)
 		_addPar(self.comp.par.Bypass)
 		_addPar(self.comp.par.Solo)
@@ -166,11 +159,11 @@ class Module(base.Extension):
 		if self.ParameterMetadata[parname, 'name'] is None:
 			return {
 				key: ''
-				for key in schema.ParamMetaKeys
+				for key in _ParamMetaKeys
 			}
 		return {
 			key: _ExtractVal(self.ParameterMetadata[parname, key])
-			for key in schema.ParamMetaKeys
+			for key in _ParamMetaKeys
 		}
 
 	def _GetParamTupletsWithFlag(self, flag, defaultval=False):
@@ -179,7 +172,21 @@ class Module(base.Extension):
 		return filter(_predicate, self.comp.customTuplets)
 
 	def GetParamsWithFlag(self, flag, defaultval=False):
-		return _ExpandTuplets(self._GetParamTupletsWithFlag(flag, defaultval))
+		return [p for t in self._GetParamTupletsWithFlag(flag, defaultval) for p in t]
+
+_ParamMetaKeys = [
+	'store',
+	'source',
+	'advanced',
+	'expose',
+	'help',
+	'offhelp',
+	'btntext',
+	'btnofftext',
+	'mappable',
+	'filterable',
+	'sequenceable',
+]
 
 def _GetModParamTuplets(comp):
 	return [
@@ -188,31 +195,6 @@ def _GetModParamTuplets(comp):
 		for t in page.parTuplets
 	]
 
-class ModuleStateController(base.Extension):
-	def __init__(self, comp):
-		super().__init__(comp)
-		self.parAccessor = _ParAccessor(comp)
-
-	def GetModParamTuplets(self):
-		return _GetModParamTuplets(self.comp)
-
-	def GetStateDict(self):
-		return util.MergeDicts(
-			self.parAccessor.GetParTupletVals(self.parAccessor.GetCustomPage('Module').parTuplets),
-			{
-				'path': self.comp.path,
-				'params': self.parAccessor.GetParTupletVals(self.GetModParamTuplets()),
-			},
-		)
-
-	def LoadStateDict(self, state):
-		self._LogEvent('LoadStateDict(%r)' % state)
-		if not state:
-			return
-		self.parAccessor.SetParTupletVals(self.parAccessor.GetCustomPage('Module').parTuplets, state)
-		self.parAccessor.SetParTupletVals(
-			_ExcludePulsePars(self.GetModParamTuplets()), state.get('params', {}))
-
 def _ExtractVal(x):
 	if x is None:
 		return None
@@ -220,105 +202,12 @@ def _ExtractVal(x):
 		return x.val
 	return x
 
-def _ExpandTuplets(tuplets):
-	if not tuplets:
-		return []
-	pars = []
-	for t in tuplets:
-		if isinstance(t, tuple):
-			pars += t
-		else:
-			pars += t
-	return pars
-
-class _ParAccessor(base.Extension):
-	def __init__(self, comp, floatdecimals=4):
-		super().__init__(comp)
-		self.floatdecimals = floatdecimals
-
-	def SetParVal(self, par, value):
-		if par.isToggle:
-			value = _CoerceBool(value)
-		if par.mode != ParMode.CONSTANT:
-			self._LogEvent('SetParVal() - cannot set value of par %r which has mode %r' % (par, par.mode))
-		elif par.isPulse:
-			self._LogEvent('SetParVal() - cannot set value of pulse par %r' % par)
-		else:
-			par.val = value
-
-	def GetParVal(self, par):
-		val = par.eval()
-		if isinstance(val, float):
-			return _CleanFloat(val, floatdecimals=self.floatdecimals)
-		return val
-
-	def _GetPars(self, parnames):
-		if isinstance(parnames, str):
-			parnames = [parnames]
-		if not parnames:
-			return []
-		pars = []
-		for parname in parnames:
-			if isinstance(parname, str):
-				pars += self.comp.pars(parname)
-			else:
-				pars += [parname]
-		return pars
-
-	def GetParTupletVals(self, tuplets):
-		if hasattr(tuplets, 'parTuplets'):
-			tuplets = tuplets.parTuplets
-		return {
-			t[0].tupletName.lower():
-				[self.GetParVal(p) for p in t] if len(t) > 1 else self.GetParVal(t[0])
-			for t in tuplets
-		}
-
-	def GetParVals(self, parnames):
-		return {
-			p.name.lower(): self.GetParVal(p)
-			for p in self._GetPars(parnames)
-		}
-
-	def SetParTupletVals(self, tuplets, state, usedefaults=False):
-		if hasattr(tuplets, 'parTuplets'):
-			tuplets = tuplets.parTuplets
-		for t in tuplets:
-			key = t[0].tupletName.lower()
-			vals = state.get(key)
-			if vals is None or vals == '' or vals == []:
-				if usedefaults:
-					vals = [p.default for p in t]
-				else:
-					continue
-			if not isinstance(vals, (list, tuple)):
-				vals = [vals]
-			for i, p in enumerate(t):
-				val = vals[i if i < len(vals) else 0]
-				self.SetParVal(p, val)
-
-	def GetCustomPage(self, pagename):
-		for page in self.comp.customPages:
-			if page.name == pagename:
-				return page
-
 def _CoerceBool(value):
 	if isinstance(value, bool):
 		return value
 	if isinstance(value, (int, float)):
 		return bool(value)
 	return value in ('1', 'true', 'TRUE', 't', 'T')
-
-def _CleanFloat(value, floatdecimals=4):
-	return round(value, floatdecimals) if floatdecimals else value
-
-def _IsNotPulse(t):
-	if isinstance(t, tuple):
-		t = t[0]
-	return not getattr(t, 'isPulse', False)
-
-def _ExcludePulsePars(pars):
-	return filter(_IsNotPulse, pars)
 
 def _GetGlobalSourcePar():
 	appOp = _GetApp()

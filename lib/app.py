@@ -8,30 +8,16 @@ except ImportError:
 	except ImportError:
 		import common.lib.base as base
 try:
-	import common_util as util
-except ImportError:
-	try:
-		import util
-	except ImportError:
-		import common.lib.util as util
-try:
 	import shell_schema as schema
 except ImportError:
 	import schema
-try:
-	import shell_module as module
-except ImportError:
-	import module
 try:
 	import shell_nodes as nodes
 except ImportError:
 	import nodes
 
 if False:
-	try:
 		from _stubs import *
-	except ImportError:
-		from common.lib._stubs import *
 
 class ShellApp(base.Extension):
 	def __init__(self, comp):
@@ -55,15 +41,11 @@ class ShellApp(base.Extension):
 		return self.comp.findChildren(type=COMP, tags=['tmod'], depth=1)
 
 	@property
-	def _GlobalChain(self):
-		g = getattr(op, 'Global', None)
-		if not g:
-			raise Exception('Global chain not found!')
-		return g
-
-	@property
 	def OutputSource(self):
-		return self._GlobalChain.par.Source
+		g = getattr(op, 'Global', None)
+		if g is None:
+			return None
+		return g.par.Source
 
 	@property
 	def _Key(self):
@@ -73,8 +55,9 @@ class ShellApp(base.Extension):
 	def _Title(self):
 		return self.comp.par.Title.eval() or self._Key
 
-	def GetSchema(self,
-	              addmissingmodtypes=True):
+	def GetSchema(
+			self,
+			addmissingmodtypes=True):
 		self._LogEvent('GetSchema(addmissingmodtypes=%r)' % addmissingmodtypes)
 		builder = _VjzAppSchemaBuilder(
 			app=self,
@@ -84,10 +67,11 @@ class ShellApp(base.Extension):
 		return builder.BuildAppSchema()
 
 class _VjzAppSchemaBuilder(schema.AppSchemaBuilder):
-	def __init__(self,
-	             app,
-	             comp,
-	             addmissingmodtypes=True):
+	def __init__(
+			self,
+			app,
+			comp,
+			addmissingmodtypes=True):
 		super().__init__(
 			comp=comp,
 			key=app._Key,
