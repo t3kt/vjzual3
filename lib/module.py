@@ -14,10 +14,6 @@ except ImportError:
 		import util
 	except ImportError:
 		import common.lib.util as util
-try:
-	import shell_schema as schema
-except ImportError:
-	import schema
 
 if False:
 		from _stubs import *
