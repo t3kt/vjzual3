@@ -183,7 +183,7 @@ class Module(base.Extension):
 	              pathprefix=None,
 	              typeonly=False,
 	              addmissingmodtypes=True):
-		builder = VjzModuleSchemaBuilder(
+		builder = schema.VjzModuleSchemaBuilder(
 			comp=self.comp,
 			pathprefix=pathprefix,
 			addmissingmodtypes=addmissingmodtypes)
@@ -246,68 +246,6 @@ class Module(base.Extension):
 
 	def GetParamsWithFlag(self, flag, defaultval=False):
 		return _ExpandTuplets(self.GetParamTupletsWithFlag(flag, defaultval))
-
-class _SourceOptionsSupplier:
-	def __init__(self):
-		self.cache = None
-
-	def __call__(self, *args, **kwargs):
-		if self.cache is None:
-			self.cache = [
-				schema.ParamOption(n['id'], n['label'])
-				for n in nodes.GetAppNodes()
-			]
-		return self.cache
-
-class VjzModuleSchemaBuilder(schema.ModuleSchemaBuilder):
-	def __init__(self,
-	             comp,
-	             pathprefix=None,
-	             appbuilder=None,
-	             addmissingmodtypes=True):
-		super().__init__(
-			comp=comp,
-			pathprefix=pathprefix,
-			specialpages=['special'],
-			key=comp.par.Modname.eval(),
-			label=comp.par.Uilabel.eval(),
-			tags=list(comp.tags - {'tmod'}),
-			appbuilder=appbuilder,
-			addmissingmodtypes=addmissingmodtypes)
-		self.module = comp.extensions[0]
-		self.supplysourceoptions = _SourceOptionsSupplier()
-
-	def _GetChildModules(self):
-		return sorted(self.module._SubModules, key=lambda m: m.par.order)
-
-	def _BuildChildModuleSchema(self, childcomp):
-		builder = VjzModuleSchemaBuilder(
-			comp=childcomp,
-			pathprefix=self.pathprefix,
-			appbuilder=self.appbuilder,
-			addmissingmodtypes=self.addmissingmodtypes,
-		)
-		return builder.BuildModuleSchema()
-
-	def _GetParamPageTags(self, page):
-		return ['special'] if page.name == 'Module' else []
-
-	def _GetModuleParamTuplets(self):
-		return self.module.GetModParamTuplets(includePulse=True) + [
-			self.comp.par.Bypass.tuplet,
-			self.comp.par.Solo.tuplet,
-		]
-
-	def _GetParamFlag(self, name, flag, defval):
-		return self.module._GetParameterFlag(name, flag, defval)
-
-	def _GetParamMeta(self, name):
-		return self.module._GetParameterMetadata(name)
-
-	def _GetParamOptionList(self, name):
-		if self._GetParamFlag(name, 'source', False):
-			return 'sources'
-		return None
 
 def _ExtractVal(x):
 	if x is None:
@@ -425,11 +363,19 @@ def _ExcludePulsePars(pars):
 	return filter(_IsNotPulse, pars)
 
 def _GetGlobalSourcePar():
-	return op.App.OutputSource
+	appOp = _GetApp()
+	if appOp is None:
+		return None
+	return getattr(appOp, 'OutputSource', None)
 
 def _GetOtherModules(exceptPath):
-	return [m for m in op.App.AllModules if m.path != exceptPath]
+	appOp = _GetApp()
+	if appOp is None:
+		return []
+	return [m for m in appOp.AllModules if m.path != exceptPath]
 
+def _GetApp():
+	return getattr(op, 'App', None)
 
 class SubModules(base.Extension):
 	def __init__(self, comp):
@@ -620,11 +566,13 @@ class MacroCore(base.Extension):
 			self.m = m
 
 		@property
-		def _Root(self): return self.m.par.Scoperoot.eval() or op.App
+		def _Root(self): return self.m.par.Scoperoot.eval() or _GetApp()
 
 		@property
 		def _Targets(self):
 			root = self._Root
+			if root is None:
+				return []
 			targets = []
 			if 'tmod' in root.tags:
 				targets.append(root)

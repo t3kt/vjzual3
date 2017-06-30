@@ -647,3 +647,70 @@ class AppSchemaBuilder(_BaseSchemaBuilder):
 			addmissingmodtypes=self.addmissingmodtypes,
 		)
 		return builder.BuildModuleSchema()
+
+class VjzModuleSchemaBuilder(ModuleSchemaBuilder):
+	def __init__(self,
+	             comp,
+	             pathprefix=None,
+	             appbuilder=None,
+	             addmissingmodtypes=True):
+		super().__init__(
+			comp=comp,
+			pathprefix=pathprefix,
+			specialpages=['special'],
+			key=comp.par.Modname.eval(),
+			label=comp.par.Uilabel.eval(),
+			tags=list(comp.tags - {'tmod'}),
+			appbuilder=appbuilder,
+			addmissingmodtypes=addmissingmodtypes)
+		self.module = comp.extensions[0]
+		self.supplysourceoptions = _SourceOptionsSupplier()
+
+	def _GetChildModules(self):
+		return sorted(self.module._SubModules, key=lambda m: m.par.order)
+
+	def _BuildChildModuleSchema(self, childcomp):
+		builder = VjzModuleSchemaBuilder(
+			comp=childcomp,
+			pathprefix=self.pathprefix,
+			appbuilder=self.appbuilder,
+			addmissingmodtypes=self.addmissingmodtypes,
+		)
+		return builder.BuildModuleSchema()
+
+	def _GetParamPageTags(self, page):
+		return ['special'] if page.name == 'Module' else []
+
+	def _GetModuleParamTuplets(self):
+		return self.module.GetModParamTuplets(includePulse=True) + [
+			self.comp.par.Bypass.tuplet,
+			self.comp.par.Solo.tuplet,
+		]
+
+	def _GetParamFlag(self, name, flag, defval):
+		return self.module._GetParameterFlag(name, flag, defval)
+
+	def _GetParamMeta(self, name):
+		return self.module._GetParameterMetadata(name)
+
+	def _GetParamOptionList(self, name):
+		if self._GetParamFlag(name, 'source', False):
+			return 'sources'
+		return None
+
+class _SourceOptionsSupplier:
+	def __init__(self):
+		self.cache = None
+
+	def __call__(self, *args, **kwargs):
+		if self.cache is None:
+			self.cache = [
+				ParamOption(n['id'], n['label'])
+				for n in _GetAppNodes()
+			]
+		return self.cache
+
+def _GetAppNodes():
+	if hasattr(mod, 'shell_nodes'):
+		return mod.shell_nodes.GetAppNodes()
+	return []

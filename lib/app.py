@@ -120,7 +120,7 @@ class _VjzAppSchemaBuilder(schema.AppSchemaBuilder):
 		return sorted(self.app._SubModules, key=lambda m: m.par.order)
 
 	def _BuildChildModuleSchema(self, childcomp):
-		builder = module.VjzModuleSchemaBuilder(
+		builder = schema.VjzModuleSchemaBuilder(
 			comp=childcomp,
 			pathprefix=self.pathprefix,
 			appbuilder=self,
@@ -130,7 +130,7 @@ class _VjzAppSchemaBuilder(schema.AppSchemaBuilder):
 
 	def _BuildModuleTypeSchema(self, typename):
 		childcomp = self.comp.op(typename)
-		builder = module.VjzModuleSchemaBuilder(
+		builder = schema.VjzModuleSchemaBuilder(
 			comp=childcomp,
 			pathprefix=self.pathprefix,
 			appbuilder=self,
