@@ -682,7 +682,7 @@ class VjzModuleSchemaBuilder(ModuleSchemaBuilder):
 		return ['special'] if page.name == 'Module' else []
 
 	def _GetModuleParamTuplets(self):
-		return self.module.GetModParamTuplets(includePulse=True) + [
+		return self.module.GetModParamTuplets() + [
 			self.comp.par.Bypass.tuplet,
 			self.comp.par.Solo.tuplet,
 		]
@@ -691,7 +691,7 @@ class VjzModuleSchemaBuilder(ModuleSchemaBuilder):
 		return self.module._GetParameterFlag(name, flag, defval)
 
 	def _GetParamMeta(self, name):
-		return self.module._GetParameterMetadata(name)
+		return self.module.GetParameterMetadata(name)
 
 	def _GetParamOptionList(self, name):
 		if self._GetParamFlag(name, 'source', False):

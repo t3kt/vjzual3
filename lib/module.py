@@ -76,14 +76,6 @@ class Module(base.Extension):
 	def _SubModules(self):
 		return self.comp.findChildren(depth=1, tags=['tmod'])
 
-	@property
-	def SubModuleOpNames(self):
-		return [m.name for m in self._SubModules]
-
-	@property
-	def SelectorOpNames(self):
-		return [s.name for s in self.comp.findChildren(depth=1, parName='clone', parValue='*_selector')]
-
 	def UpdateHeight(self):
 		self._UpdateControlPanelHeight()
 		if self.Shell.par.Autoheight:
@@ -107,27 +99,17 @@ class Module(base.Extension):
 			panel.par.h = util.GetVisibleChildCOMPsHeight(panel)
 
 	@property
-	def _ModParamPageNames(self):
-		return util.ParseStringList(self.Shell.par.Modparampages.eval())
-
-	@property
 	def ExposedModParamNames(self):
 		names = []
-		for t in self.GetModParamTuplets(includePulse=True):
+		for t in self.GetModParamTuplets():
 			if self.ParameterMetadata[t[0].tupletName, 'expose'] == '0':
 				continue
 			for p in t:
 				names.append(p.name)
 		return names
 
-	def GetModParamTuplets(self, includePulse=False):
-		tuplets = []
-		for page in self.comp.customPages:
-			if page.name != 'Module':
-				tuplets += page.parTuplets
-		if not includePulse:
-			tuplets = list(_ExcludePulsePars(tuplets))
-		return tuplets
+	def GetModParamTuplets(self):
+		return _GetModParamTuplets(self.comp)
 
 	def _GetModParamsDict(self):
 		return self.parAccessor.GetParTupletVals(self.GetModParamTuplets())
@@ -152,12 +134,14 @@ class Module(base.Extension):
 		if not state:
 			return
 		self.parAccessor.SetParTupletVals(self.parAccessor.GetCustomPage('Module').parTuplets, state)
-		self.parAccessor.SetParTupletVals(self.GetModParamTuplets(), state.get('params', {}))
+		self.parAccessor.SetParTupletVals(
+			_ExcludePulsePars(self.GetModParamTuplets()), state.get('params', {}))
 
-	def GetSchema(self,
-	              pathprefix=None,
-	              typeonly=False,
-	              addmissingmodtypes=True):
+	def GetSchema(
+			self,
+			pathprefix=None,
+			typeonly=False,
+			addmissingmodtypes=True):
 		builder = schema.VjzModuleSchemaBuilder(
 			comp=self.comp,
 			pathprefix=pathprefix,
@@ -193,7 +177,7 @@ class Module(base.Extension):
 				dat[par.tupletName, key] = metadata.get(key, 0)
 		_addPar(self.comp.par.Bypass)
 		_addPar(self.comp.par.Solo)
-		for tuplet in self.GetModParamTuplets(includePulse=True):
+		for tuplet in self.GetModParamTuplets():
 			_addPar(tuplet[0])
 
 	def _GetParameterFlag(self, parname, key, defaultval=False):
@@ -205,7 +189,7 @@ class Module(base.Extension):
 		# self._LogEvent('_GetParameterFlag(parname: %r, key: %r, defaultval: %r) result: %r' % (name, key, defaultval, result))
 		return result
 
-	def _GetParameterMetadata(self, parname):
+	def GetParameterMetadata(self, parname):
 		if self.ParameterMetadata[parname, 'name'] is None:
 			return {
 				key: ''
@@ -223,6 +207,13 @@ class Module(base.Extension):
 
 	def GetParamsWithFlag(self, flag, defaultval=False):
 		return _ExpandTuplets(self._GetParamTupletsWithFlag(flag, defaultval))
+
+def _GetModParamTuplets(comp):
+	return [
+		t for page in comp.customPages
+		if page.name != 'Module'
+		for t in page.parTuplets
+	]
 
 # class ModuleStateController:
 # 	def __init__(self, comp):
