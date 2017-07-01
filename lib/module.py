@@ -64,6 +64,10 @@ class Module(base.Extension):
 	def _SubModules(self):
 		return self.comp.findChildren(depth=1, tags=['tmod'])
 
+	@property
+	def SubModuleOpNames(self):
+		return [m.name for m in self._SubModules]
+
 	def UpdateHeight(self):
 		self._UpdateControlPanelHeight()
 		if self.Shell.par.Autoheight:
