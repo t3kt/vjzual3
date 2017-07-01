@@ -68,6 +68,10 @@ class Module(base.Extension):
 	def SubModuleOpNames(self):
 		return [m.name for m in self._SubModules]
 
+	@property
+	def SelectorOpNames(self):
+		return [s.name for s in self.comp.findChildren(depth=1, parName='clone', parValue='*_selector')]
+
 	def UpdateHeight(self):
 		self._UpdateControlPanelHeight()
 		if self.Shell.par.Autoheight:
