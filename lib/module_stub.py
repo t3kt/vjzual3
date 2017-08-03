@@ -1,14 +1,3 @@
-# print('shell/module_stub.py initializing')
-
-import json
-import sys
-
-if False:
-		from _stubs import *
-
-def _CreateRealModule(comp):
-	return mod.shell_module.Module(comp)
-
 def IsHosted():
 	try:
 		getattr(mod, 'shell_module')
@@ -26,9 +15,6 @@ def CreateModule(comp):
 class ModuleStub:
 	def __init__(self, comp):
 		self.comp = comp
-		# self._RegUnsup('ResetState')
-		# self._RegUnsup('SubModuleOpNames', [])
-		# self._RegUnsup('SelectorOpNames', [])
 
 	@property
 	def IsModuleStub(self): return True
@@ -36,30 +22,11 @@ class ModuleStub:
 	@property
 	def HasApp(self): return False
 
-	def _Log(self, message, iswarning=False):
-		print('[{}] ModuleStub: {}'.format(self.comp.path, message), file=sys.stderr if iswarning else sys.stdout)
-
 	def _NotSupported(self, action, iserror=False):
 		message = 'Unsupported action: {}'.format(action)
-		self._Log(message)#, iswarning=True)
+		print('[{}] ModuleStub: {}'.format(self.comp.path, message))
 		if iserror:
 			raise Exception(message)
-
-	def _RegUnsup(self, method, retval=None, isprop=False):
-		if not method:
-			return
-
-		def _func(*args, **kwargs):
-			self._NotSupported('{0}({1!r}, {1!r})'.format(args, kwargs))
-			if isinstance(retval, list):
-				return list(retval)
-			if callable(retval):
-				return retval()
-			return retval
-		if isprop:
-			setattr(self, method, property(_func))
-		else:
-			setattr(self, method, _func)
 
 	def ResetState(self): self._NotSupported('ResetState')
 
@@ -85,15 +52,13 @@ class ModuleStub:
 		return [s.name for s in self.comp.findChildren(depth=1, parName='clone', parValue='*_selector')]
 
 	@property
-	def ExposedModParamNames(self):
-		# self._NotSupported('ExposedModParamNames')
-		return []
+	def ExposedModParamNames(self): return []
 
 def ParseStringList(val):
 	if not val:
 		return []
 	if val.startswith('['):
-		return json.loads(val)
+		return mod.json.loads(val)
 	else:
 		for sep in [',', ' ']:
 			if sep in val:
