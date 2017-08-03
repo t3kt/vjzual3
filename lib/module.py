@@ -38,6 +38,9 @@ class Module(base.Extension):
 		self.ParameterMetadata = comp.op('./shell/parameter_metadata')
 
 	@property
+	def IsModuleStub(self): return False
+
+	@property
 	def HasApp(self):
 		return _GetApp()
 
@@ -48,17 +51,6 @@ class Module(base.Extension):
 				child.ResetState()
 		finally:
 			self._LogEnd('ResetState()')
-
-	@property
-	def _HeaderHeight(self):
-		return 20 if self.comp.par.Collapsed else 40
-
-	@property
-	def _BodyHeight(self):
-		if self.comp.par.Collapsed:
-			return 0
-		panel = self.BodyPanel
-		return panel.par.h if panel else 20
 
 	@property
 	def _SubModules(self):
@@ -73,26 +65,21 @@ class Module(base.Extension):
 		return [s.name for s in self.comp.findChildren(depth=1, parName='clone', parValue='*_selector')]
 
 	def UpdateHeight(self):
-		self._UpdateControlPanelHeight()
+		ctrlpanel = self.ControlPanel
+		if ctrlpanel:
+			ctrlpanel.par.h = util.GetVisibleChildCOMPsHeight(ctrlpanel)
+		bodypanel = self.BodyPanel
+		headerheight = 20 if self.comp.par.Collapsed else 40
 		if self.Shell.par.Autoheight:
-			self._UpdateBodyPanelHeight()
-			h = self._HeaderHeight
-			h += self._BodyHeight
+			if bodypanel:
+				bodypanel.par.h = util.GetVisibleChildCOMPsHeight(bodypanel)
+			h = headerheight
+			if not self.comp.par.Collapsed:
+				h += bodypanel.par.h if bodypanel else 20
 			self.comp.par.h = h
 		else:
-			panel = self.BodyPanel
-			if panel:
-				panel.par.h = self.comp.par.h - self._HeaderHeight
-
-	def _UpdateBodyPanelHeight(self):
-		panel = self.BodyPanel
-		if panel:
-			panel.par.h = util.GetVisibleChildCOMPsHeight(panel)
-
-	def _UpdateControlPanelHeight(self):
-		panel = self.ControlPanel
-		if panel:
-			panel.par.h = util.GetVisibleChildCOMPsHeight(panel)
+			if bodypanel:
+				bodypanel.par.h = self.comp.par.h - headerheight
 
 	@property
 	def ExposedModParamNames(self):

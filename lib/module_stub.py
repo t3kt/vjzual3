@@ -31,6 +31,9 @@ class ModuleStub:
 		# self._RegUnsup('SelectorOpNames', [])
 
 	@property
+	def IsModuleStub(self): return True
+
+	@property
 	def HasApp(self): return False
 
 	def _Log(self, message, iswarning=False):
