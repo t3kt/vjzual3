@@ -28,33 +28,47 @@ def InitializeModule(comp):
 		comp.par.promoteextension1 = True
 		comp.initializeExtensions()
 
-class Module(base.Extension):
+class ModuleBase:
 	def __init__(self, comp):
-		super().__init__(comp)
+		self.comp = comp
 		comp.tags.add('tmod')
 		self.Shell = comp.op('./shell')
 		self.BodyPanel = comp.op('./body_panel')
 		self.ControlPanel = comp.op('./controls_panel')
+
+	@property
+	def IsModuleStub(self): return True
+
+	@property
+	def HasApp(self): return False
+
+	@property
+	def _SubModules(self):
+		return self.comp.findChildren(depth=1, tags=['tmod'])
+
+	def ResetState(self):
+		if hasattr(self.comp.par, 'Resetstatescript'):
+			script = self.comp.par.Resetstatescript.eval()
+			if script:
+				script.run()
+		for child in self._SubModules:
+			child.ResetState()
+
+class Module(base.Extension, ModuleBase):
+	def __init__(self, comp):
+		super().__init__(comp)
+		ModuleBase.__init__(self, comp)
 		self.ParameterMetadata = comp.op('./shell/parameter_metadata')
 
 	@property
 	def IsModuleStub(self): return False
 
-	@property
-	def HasApp(self):
-		return _GetApp()
-
 	def ResetState(self):
 		self._LogBegin('ResetState()')
 		try:
-			for child in self._SubModules:
-				child.ResetState()
+			super().ResetState()
 		finally:
 			self._LogEnd('ResetState()')
-
-	@property
-	def _SubModules(self):
-		return self.comp.findChildren(depth=1, tags=['tmod'])
 
 	@property
 	def SubModuleOpNames(self):
