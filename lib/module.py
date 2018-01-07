@@ -40,7 +40,7 @@ class ModuleBase:
 	def IsModuleStub(self): return True
 
 	@property
-	def HasApp(self): return False
+	def HasApp(self): return _GetApp() is not None
 
 	@property
 	def _SubModules(self):
