@@ -28,9 +28,9 @@ def InitializeModule(comp):
 		comp.par.promoteextension1 = True
 		comp.initializeExtensions()
 
-class ModuleBase:
+class ModuleBase(base.Extension):
 	def __init__(self, comp):
-		self.comp = comp
+		super().__init__(comp)
 		comp.tags.add('tmod')
 		self.Shell = comp.op('./shell')
 		self.BodyPanel = comp.op('./body_panel')
@@ -54,10 +54,9 @@ class ModuleBase:
 		for child in self._SubModules:
 			child.ResetState()
 
-class Module(base.Extension, ModuleBase):
+class Module(ModuleBase):
 	def __init__(self, comp):
 		super().__init__(comp)
-		ModuleBase.__init__(self, comp)
 		self.ParameterMetadata = comp.op('./shell/parameter_metadata')
 
 	@property
