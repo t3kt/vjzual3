@@ -82,7 +82,12 @@ class Module(ModuleBase):
 		if ctrlpanel:
 			ctrlpanel.par.h = util.GetVisibleChildCOMPsHeight(ctrlpanel)
 		bodypanel = self.BodyPanel
-		headerheight = 20 if self.comp.par.Collapsed else 40
+		try:
+			headerheight = 20 if self.comp.par.Collapsed else 40
+		except td.AttributeError as e:
+			print('ERROR in UpdateHeight: comp:', self.comp)
+			print('-- pars: ', [p.name for p in self.comp.pars('[A-Z]*')])
+			raise e
 		if self.Shell.par.Autoheight:
 			if bodypanel:
 				bodypanel.par.h = util.GetVisibleChildCOMPsHeight(bodypanel)

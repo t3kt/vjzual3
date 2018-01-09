@@ -70,19 +70,19 @@ class ModuleStub:
 		if self.realmod:
 			self.realmod.BuildDefaultParameterMetadata(*args)
 		else:
-			self._NotSupported('BuildDefaultParameterMetadata')
+			self._NotSupported('BuildDefaultParameterMetadata', iserror=False)
 
 	def GetParameterMetadata(self, parname):
 		if self.realmod:
 			return self.realmod.GetParameterMetadata(parname)
 		else:
-			self._NotSupported('GetParameterMetadata({0!r})'.format(parname))
+			self._NotSupported('GetParameterMetadata({0!r})'.format(parname), iserror=False)
 
 	def GetParamsWithFlag(self, flag, **kwargs):
 		if self.realmod:
 			return self.realmod.GetParamsWithFlag(flag, **kwargs)
 		else:
-			self._NotSupported('GetParamsWithFlag({0!r}, {1!r})'.format(flag, kwargs))
+			self._NotSupported('GetParamsWithFlag({0!r}, {1!r})'.format(flag, kwargs), iserror=False)
 			return []
 
 	@property
