@@ -54,6 +54,14 @@ class ModuleBase(base.Extension):
 		for child in self._SubModules:
 			child.ResetState()
 
+def _LoadSchemaMod():
+	try:
+		return mod.shell_schema
+	except ImportError:
+		return None
+
+shell_schema = _LoadSchemaMod()
+
 class Module(ModuleBase):
 	def __init__(self, comp):
 		super().__init__(comp)
@@ -117,7 +125,9 @@ class Module(ModuleBase):
 			pathprefix=None,
 			typeonly=False,
 			addmissingmodtypes=True):
-		builder = mod.shell_schema.VjzModuleSchemaBuilder(
+		if not shell_schema:
+			return None
+		builder = shell_schema.VjzModuleSchemaBuilder(
 			comp=self.comp,
 			pathprefix=pathprefix,
 			addmissingmodtypes=addmissingmodtypes)
@@ -145,9 +155,11 @@ class Module(ModuleBase):
 	def BuildDefaultParameterMetadata(self, dat):
 		dat.clear()
 		dat.appendRow(['name'] + _ParamMetaKeys)
+		if not shell_schema:
+			return
 		def _addPar(par):
 			dat.appendRow([par.tupletName])
-			metadata = mod.shell_schema.GetDefaultMetadataForStyle(par.style)
+			metadata = shell_schema.GetDefaultMetadataForStyle(par.style)
 			for key in _ParamMetaKeys:
 				dat[par.tupletName, key] = metadata.get(key, 0)
 		_addPar(self.comp.par.Bypass)

@@ -8,10 +8,6 @@ except ImportError:
 	except ImportError:
 		import common.lib.base as base
 try:
-	import shell_schema as schema
-except ImportError:
-	import schema
-try:
 	import shell_nodes as nodes
 except ImportError:
 	import nodes
@@ -66,67 +62,86 @@ class ShellApp(base.Extension):
 		)
 		return builder.BuildAppSchema()
 
-class _VjzAppSchemaBuilder(schema.AppSchemaBuilder):
-	def __init__(
-			self,
-			app,
-			comp,
-			addmissingmodtypes=True):
-		super().__init__(
-			comp=comp,
-			key=app._Key,
-			label=comp.par.Title.eval(),
-			tags=[],
-			addmissingmodtypes=addmissingmodtypes,
-		)
-		self.app = app
 
-	def _BuildConnections(self):
-		return [
-			schema.ConnectionInfo(
-				conntype='oscin',
-				port=self.comp.par.Oscinport.eval(),
-			),
-			schema.ConnectionInfo(
-				conntype='oscout',
-				host=self.comp.par.Oscouthost.eval() or self.comp.par.Oscouthost.default,
-				port=self.comp.par.Oscoutport.eval(),
+def _LoadSchemaMod():
+	try:
+		return mod.shell_schema
+	except ImportError:
+		return None
+
+
+schema = _LoadSchemaMod()
+
+if schema is not None:
+	class _VjzAppSchemaBuilder(schema.AppSchemaBuilder):
+		def __init__(
+				self,
+				app,
+				comp,
+				addmissingmodtypes=True):
+			super().__init__(
+				comp=comp,
+				key=app._Key,
+				label=comp.par.Title.eval(),
+				tags=[],
+				addmissingmodtypes=addmissingmodtypes,
 			)
-		]
+			self.app = app
 
-	def _GetChildModules(self):
-		return sorted(self.app._SubModules, key=lambda m: m.par.order)
+		def _BuildConnections(self):
+			return [
+				schema.ConnectionInfo(
+					conntype='oscin',
+					port=self.comp.par.Oscinport.eval(),
+				),
+				schema.ConnectionInfo(
+					conntype='oscout',
+					host=self.comp.par.Oscouthost.eval() or self.comp.par.Oscouthost.default,
+					port=self.comp.par.Oscoutport.eval(),
+				)
+			]
 
-	def _BuildChildModuleSchema(self, childcomp):
-		builder = schema.VjzModuleSchemaBuilder(
-			comp=childcomp,
-			pathprefix=self.pathprefix,
-			appbuilder=self,
-			addmissingmodtypes=self.addmissingmodtypes,
-		)
-		return builder.BuildModuleSchema()
+		def _GetChildModules(self):
+			return sorted(self.app._SubModules, key=lambda m: m.par.order)
 
-	def _BuildModuleTypeSchema(self, typename):
-		childcomp = self.comp.op(typename)
-		builder = schema.VjzModuleSchemaBuilder(
-			comp=childcomp,
-			pathprefix=self.pathprefix,
-			appbuilder=self,
-			addmissingmodtypes=False,
-		)
-		return builder.BuildModuleTypeSchema()
-
-	def _BuildOptionLists(self):
-		return [
-			schema.OptionList(
-				'sources',
-				label='Sources',
-				options=[
-					schema.ParamOption(n['id'], n['label'])
-					for n in nodes.GetAppNodes()
-					]
+		def _BuildChildModuleSchema(self, childcomp):
+			builder = schema.VjzModuleSchemaBuilder(
+				comp=childcomp,
+				pathprefix=self.pathprefix,
+				appbuilder=self,
+				addmissingmodtypes=self.addmissingmodtypes,
 			)
-		]
+			return builder.BuildModuleSchema()
+
+		def _BuildModuleTypeSchema(self, typename):
+			childcomp = self.comp.op(typename)
+			builder = schema.VjzModuleSchemaBuilder(
+				comp=childcomp,
+				pathprefix=self.pathprefix,
+				appbuilder=self,
+				addmissingmodtypes=False,
+			)
+			return builder.BuildModuleTypeSchema()
+
+		def _BuildOptionLists(self):
+			return [
+				schema.OptionList(
+					'sources',
+					label='Sources',
+					options=[
+						schema.ParamOption(n['id'], n['label'])
+						for n in nodes.GetAppNodes()
+						]
+				)
+			]
+else:
+	class _VjzAppSchemaBuilder:
+		def __init__(self, *args, **kwargs):
+			pass
+
+		def BuildAppSchema(self):
+			pass
+
 
 
 
