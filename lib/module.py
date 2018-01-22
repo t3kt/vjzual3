@@ -92,7 +92,7 @@ class Module(ModuleBase):
 		bodypanel = self.BodyPanel
 		try:
 			headerheight = 20 if self.comp.par.Collapsed else 40
-		except td.AttributeError as e:
+		except Exception as e:
 			print('ERROR in UpdateHeight: comp:', self.comp)
 			print('-- pars: ', [p.name for p in self.comp.pars('[A-Z]*')])
 			raise e
