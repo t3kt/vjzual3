@@ -65,7 +65,6 @@ shell_schema = _LoadSchemaMod()
 class Module(ModuleBase):
 	def __init__(self, comp):
 		super().__init__(comp)
-		self.ParameterMetadata = comp.op('./shell/parameter_metadata')
 
 	@property
 	def IsModuleStub(self): return False
@@ -110,8 +109,9 @@ class Module(ModuleBase):
 	@property
 	def ExposedModParamNames(self):
 		names = []
+		overrides = _GetModuleParamMetadatOverrides(self.comp)
 		for t in self.GetModParamTuplets():
-			if self.ParameterMetadata[t[0].tupletName, 'expose'] == '0':
+			if overrides and overrides[t[0].tupletName, 'expose'] == '0':
 				continue
 			for p in t:
 				names.append(p.name)
@@ -168,24 +168,12 @@ class Module(ModuleBase):
 			_addPar(tuplet[0])
 
 	def _GetParameterFlag(self, parname, key, defaultval=False):
-		cell = self.ParameterMetadata[parname, key]
-		if cell is None:
-			result = defaultval
-		else:
-			result = _CoerceBool(cell.val)
-		# self._LogEvent('_GetParameterFlag(parname: %r, key: %r, defaultval: %r) result: %r' % (name, key, defaultval, result))
+		meta = self.GetParameterMetadata(parname)
+		result = meta.get(key, defaultval)
 		return result
 
 	def GetParameterMetadata(self, parname):
-		if self.ParameterMetadata[parname, 'name'] is None:
-			return {
-				key: ''
-				for key in _ParamMetaKeys
-			}
-		return {
-			key: _ExtractVal(self.ParameterMetadata[parname, key])
-			for key in _ParamMetaKeys
-		}
+		return _GetMetadataForParameter(self.comp, parname)
 
 	def _GetParamTupletsWithFlag(self, flag, defaultval=False):
 		def _predicate(tuplet):
@@ -194,6 +182,41 @@ class Module(ModuleBase):
 
 	def GetParamsWithFlag(self, flag, defaultval=False):
 		return [p for t in self._GetParamTupletsWithFlag(flag, defaultval) for p in t]
+
+def _GetParTuplet(o, tupletname):
+	for t in o.customTuplets:
+		if t[0].tupletName == tupletname:
+			return t
+
+def _GetModuleParamMetadatOverrides(m):
+	return m.op('./shell').par.Parammetaoverrides.eval()
+
+def _GetMetadataForParameter(m, parname):
+	if not shell_schema:
+		return {}
+	tuplet = _GetParTuplet(m, parname)
+	if tuplet is None:
+		return {}
+	par = tuplet[0]
+	meta = shell_schema.GetDefaultMetadataForStyle(par.style)
+	overrides = _GetModuleParamMetadatOverrides(m)
+	if overrides and overrides[parname, 'name']:
+		for a in [
+			'store',
+			'source',
+			'advanced',
+			'expose',
+			'mappable',
+			'filterable',
+			'sequenceable']:
+			cell = overrides[parname, a]
+			if cell is not None:
+				meta[a] = cell == '1'
+		for a in ['help', 'offhelp', 'btntext', 'btnofftext']:
+			cell = overrides[parname, a]
+			if cell is not None:
+				meta[a] = cell.val
+	return meta
 
 _ParamMetaKeys = [
 	'store',
