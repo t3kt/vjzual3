@@ -152,21 +152,6 @@ class Module(ModuleBase):
 		self._LogEvent('UpdateSolo() - setting solo to %r' % nodeId)
 		mainoutsrc.val = nodeId
 
-	def BuildDefaultParameterMetadata(self, dat):
-		dat.clear()
-		dat.appendRow(['name'] + _ParamMetaKeys)
-		if not shell_schema:
-			return
-		def _addPar(par):
-			dat.appendRow([par.tupletName])
-			metadata = shell_schema.GetDefaultMetadataForStyle(par.style)
-			for key in _ParamMetaKeys:
-				dat[par.tupletName, key] = metadata.get(key, 0)
-		_addPar(self.comp.par.Bypass)
-		_addPar(self.comp.par.Solo)
-		for tuplet in self.GetModParamTuplets():
-			_addPar(tuplet[0])
-
 	def _GetParameterFlag(self, parname, key, defaultval=False):
 		meta = self.GetParameterMetadata(parname)
 		result = meta.get(key, defaultval)
