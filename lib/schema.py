@@ -631,6 +631,19 @@ class AppSchemaBuilder(_BaseSchemaBuilder):
 		)
 		return builder.BuildModuleSchema()
 
+def GetSchemaForModule(
+		comp,
+		pathprefix=None,
+		typeonly=False,
+		addmissingmodtypes=True):
+	builder = VjzModuleSchemaBuilder(
+		comp=comp,
+		pathprefix=pathprefix,
+		addmissingmodtypes=addmissingmodtypes)
+	if typeonly:
+		return builder.BuildModuleTypeSchema()
+	return builder.BuildModuleSchema()
+
 class VjzModuleSchemaBuilder(ModuleSchemaBuilder):
 	def __init__(self,
 	             comp,
@@ -671,10 +684,10 @@ class VjzModuleSchemaBuilder(ModuleSchemaBuilder):
 		]
 
 	def _GetParamFlag(self, name, flag, defval):
-		return self.module._GetParameterFlag(name, flag, defval)
+		return GetFlagForParameter(self.module.comp, name, flag, defval)
 
 	def _GetParamMeta(self, name):
-		return self.module.GetParameterMetadata(name)
+		return GetMetadataForParameter(self.module.comp, name)
 
 	def _GetParamOptionList(self, name):
 		if self._GetParamFlag(name, 'source', False):
@@ -697,3 +710,61 @@ def _GetAppNodes():
 	if hasattr(mod, 'shell_nodes'):
 		return mod.shell_nodes.GetAppNodes()
 	return []
+
+def _LoadModuleMod():
+	try:
+		return mod.shell_module
+	except ImportError:
+		try:
+			import shell_module
+		except ImportError:
+			try:
+				import module
+			except ImportError:
+				return None
+
+def _GetParTuplet(o, tupletname):
+	for t in o.customTuplets:
+		if t[0].tupletName == tupletname:
+			return t
+
+def GetModuleParamMetadatOverrides(m):
+	return m.op('./shell').par.Parammetaoverrides.eval()
+
+def GetFlagForParameter(m, parname, key, defaultval=False):
+	tuplet = _GetParTuplet(m, parname)
+	if tuplet is None:
+		return defaultval
+	par = tuplet[0]
+	overrides = GetModuleParamMetadatOverrides(m)
+	if overrides:
+		cell = overrides[parname, key]
+		if cell is not None:
+			return cell == '1'
+	meta = GetDefaultMetadataForStyle(par.style)
+	return meta.get(key, defaultval)
+
+def GetMetadataForParameter(m, parname):
+	tuplet = _GetParTuplet(m, parname)
+	if tuplet is None:
+		return {}
+	par = tuplet[0]
+	meta = GetDefaultMetadataForStyle(par.style)
+	overrides = GetModuleParamMetadatOverrides(m)
+	if overrides and overrides[parname, 'name']:
+		for a in [
+			'store',
+			'source',
+			'advanced',
+			'expose',
+			'mappable',
+			'filterable',
+			'sequenceable']:
+			cell = overrides[parname, a]
+			if cell is not None:
+				meta[a] = cell == '1'
+		for a in ['help', 'offhelp', 'btntext', 'btnofftext']:
+			cell = overrides[parname, a]
+			if cell is not None:
+				meta[a] = cell.val
+	return meta

@@ -54,12 +54,6 @@ class ModuleStub:
 		else:
 			self._NotSupported('UpdateHeight')
 
-	def GetSchema(self, **kwargs):
-		if self.realmod:
-			return self.realmod.GetSchema(**kwargs)
-		else:
-			self._NotSupported('GetSchema', iserror=True)
-
 	def UpdateSolo(self):
 		if self.realmod:
 			self.realmod.UpdateSolo()
@@ -71,12 +65,6 @@ class ModuleStub:
 			self.realmod.BuildDefaultParameterMetadata(*args)
 		else:
 			self._NotSupported('BuildDefaultParameterMetadata', iserror=False)
-
-	def GetParameterMetadata(self, parname):
-		if self.realmod:
-			return self.realmod.GetParameterMetadata(parname)
-		else:
-			self._NotSupported('GetParameterMetadata({0!r})'.format(parname), iserror=False)
 
 	def GetParamsWithFlag(self, flag, **kwargs):
 		if self.realmod:

@@ -18,6 +18,10 @@ try:
 	import shell_schema as schema
 except ImportError:
 	import schema
+try:
+	import shell_module
+except ImportError:
+	import module as shell_module
 
 import json
 
@@ -51,7 +55,7 @@ class AutoUI(base.Extension):
 			if not m:
 				self._LogEvent('Rebuild() - no target module')
 				return
-			modspec = m.GetSchema()
+			modspec = schema.GetSchemaForModule(m.comp)
 			oldctrls = m.findChildren(tags=['autoctrl'], maxDepth=1)
 			for ctrl in oldctrls:
 				ctrl.destroy()
