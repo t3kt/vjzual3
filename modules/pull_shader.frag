@@ -92,7 +92,11 @@ float getDistancePullWeight(float distRatio) {
 	}
 }
 
-void handleTarget(in vec2 uv, in vec2 relPos, in float sampleFraction, inout Result result) {
+void handleTarget(
+		in vec2 uv,
+		in vec2 relPos,
+		in float sampleFraction,
+		inout Result result) {
 	vec4 color = texture(sampleTex, uv + relPos);
 	float score = getScore(color);
 	if (score < scoreRange.x || score > scoreRange.y) {
@@ -109,6 +113,26 @@ void handleTarget(in vec2 uv, in vec2 relPos, in float sampleFraction, inout Res
 	#endif
 }
 
+#ifdef SAMPLE_MODE_GRID
+
+void handleTargetGrid(
+		in vec2 uv,
+		in vec2 step,
+		in float sampleFraction,
+		inout Result result) {
+	vec2 stepSign = sign(step);
+	vec2 relPos = stepSign *
+		map(abs(step),
+			vec2(0), vec2(numSteps)-vec2(1),
+			sampleRangeMin, sampleRangeMax);
+	handleTarget(
+		uv,
+		relPos,
+		sampleFraction,
+		result);
+}
+#endif
+
 Result produceResult() {
 	vec2 uv = vUV.st;
 	Result result;
@@ -117,17 +141,30 @@ Result produceResult() {
 		result.score = 0;
 	#endif
 
+	float centerScore = getScore(texture(sampleTex, uv));
+	if (centerScore > scoreRange.y) {
+		#ifdef SELECTION_MODE_BEST
+			result.score = centerScore;
+		#endif
+		return result;
+	}
+
 	#ifdef SAMPLE_MODE_CROSS
+		float sampleFraction = 1 / ((float(numSteps.x)*2) + (float(numSteps.y)*2));
+
+
 
 		// TODO!
 
 	#else // GRID
 		float sampleFraction = 1.0 / float(numSteps.x * numSteps.y);
 
-		for (int x = -numSteps.x + 1; x < numSteps.x; x++) {
-			for (int y = -numSteps.y + 1; y < numSteps.y; y++) {
-				vec2 relPos = map(vec2(x, y), -numSteps, numSteps, sampleRangeMin, sampleRangeMax);
-				handleTarget(uv, relPos, sampleFraction, result);
+		for (int x = 0; x < numSteps.x; x++) {
+			for (int y = 0; y < numSteps.y; y++) {
+				handleTargetGrid(uv, vec2(x, y), sampleFraction, result);
+				handleTargetGrid(uv, vec2(-x, y), sampleFraction, result);
+				handleTargetGrid(uv, vec2(x, -y), sampleFraction, result);
+				handleTargetGrid(uv, vec2(-x, -y), sampleFraction, result);
 			}
 		}
 
@@ -145,7 +182,13 @@ void outputResult(Result result) {
 	vec2 normalizedRelPos = sign(result.targetRelPos) * map(abs(result.targetRelPos), sampleRangeMin, sampleRangeMax, vec2(0), vec2(1));
 
 	targetOut = vec4(map(normalizedRelPos, vec2(-1), vec2(1), vec2(0), vec2(1)), 0, result.weight);
-	offsetOut = vec4(map(normalizedRelPos * result.weight, vec2(-1), vec2(1), vec2(0), vec2(1)), 0, result.weight);
+//	if (result.weight <= 0) {
+//		offsetOut = vec4(0.5, 0.5, 0, 0);
+//	} else {
+		offsetOut = vec4(
+			map(-normalizedRelPos * result.weight, vec2(-1), vec2(1), vec2(0), vec2(1)),
+			0, result.weight);
+//	}
 }
 
 void main()
