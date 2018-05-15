@@ -19,14 +19,7 @@ if False:
 		from _stubs import *
 
 def InitializeModule(comp):
-	if not comp:
-		return
-	util.Log('InitializeModule(%r)' % comp)
-	comp.par.parentshortcut = 'tmod'
-	if not comp.par.extension1:
-		comp.par.extension1 = 'mod.shell_module.Module(me)'
-		comp.par.promoteextension1 = True
-		comp.initializeExtensions()
+	raise DeprecationWarning()
 
 class ModuleBase(base.Extension):
 	def __init__(self, comp):
@@ -106,18 +99,7 @@ class Module(ModuleBase):
 
 	@property
 	def ExposedModParamNames(self):
-		names = []
-		shell_schema = _LoadSchemaMod()
-		if not shell_schema:
-			overrides = None
-		else:
-			overrides = shell_schema.GetModuleParamMetadatOverrides(self.comp)
-		for t in self.GetModParamTuplets():
-			if overrides and overrides[t[0].tupletName, 'expose'] == '0':
-				continue
-			for p in t:
-				names.append(p.name)
-		return names
+		raise DeprecationWarning()
 
 	def GetModParamTuplets(self):
 		return _GetModParamTuplets(self.comp)
